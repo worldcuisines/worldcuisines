@@ -1,0 +1,7 @@
+torch
+protobuf
+accelerate
+datasets
+evaluate
+pillow
+seaborn
