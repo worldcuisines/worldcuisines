@@ -36,12 +36,12 @@ class WikipediaAnalyzer:
         lang_code = link.a.get("lang")
 
         # in case wikipedia writes in "{cuisine name} - {language}" format
-        if "–" in interlanguage_link_title: 
+        if "–" in interlanguage_link_title:
             components = interlanguage_link_title.split("–")
             cuisine_name = components[0].split("(")[0].strip()  # sometimes Wikipedia writes as XXX (food)
             language_name = components[1].strip()
         # in the case wikipedia writes in "{cuisine name} ({language})" format
-        else:  
+        else:
             components = interlanguage_link_title.split("(")
             cuisine_name = components[0].strip()
             language_name = "?"
@@ -147,14 +147,14 @@ async def process_inputs(df: pd.DataFrame, analyzer: WikipediaAnalyzer, cutoff: 
         for i in range(n):
             new_row = []
             info = aliases_to_ordered_dict(all_aliases[i])
-            aliases_json_dump =  json.dumps(info, ensure_ascii=False)
+            aliases_json_dump = json.dumps(info, ensure_ascii=False)
             new_row.append(aliases_json_dump)
             for lang in unique_languages:
-                new_row.append(info[lang] if lang in info else "")    
+                new_row.append(info[lang] if lang in info else "")
             new_data.append(new_row)
-        
+
         # combine new data to old data
-        column_names = ['json_aliases']
+        column_names = ["json_aliases"]
         column_names.extend(unique_languages)
         new_df = pd.DataFrame(data=new_data, columns=column_names)
         if cutoff is not None:
