@@ -8,7 +8,7 @@ from utils import *
 
 def sample_an_image(food_id, food_df):
     # Get the image list for the food_id from food_df
-    image_list = food_df.loc[food_df['food_id'] == food_id, 'ImageUrls']
+    image_list = food_df.loc[food_df['food_id'] == food_id, 'ImageUrls'].values[0]
     try:
         image_list = ast.literal_eval(image_list)      
         if isinstance(image_list, list) and len(image_list) > 0:
@@ -22,11 +22,11 @@ def sample_an_image(food_id, food_df):
         return None, None
     
 def sample_an_answer(row, food_df):
-    if row['action'] == 'Food':
+    if row['action'] == 'Name':
         return row['Answer']
     else:
         food_id = row['food_id']
-        countries = food_df.loc[food_df['food_id'] == food_id, 'Countries']
+        countries = food_df.loc[food_df['food_id'] == food_id, 'Countries'].values[0]
         try:
             countries = ast.literal_eval(countries)  
             # Sample random countries
@@ -83,9 +83,9 @@ def sample_rows(filtered_full_df, sampled_dataset, food_df, need_sample, num_ite
 def get_food_indices_given_row(row):
     # Get indices for the nearest answers
     index_map = {
-        'Top_15_Same_Fine_Category': row['Top_15_Same_Fine_Category'],
-        'Top_15_Same_Coarse_Category': row['Top_15_Same_Coarse_Category'],
-        'Top_15_Similar_Foods': row['Top_15_Similar_Foods']
+        'Top_15_Same_Fine_Category': row['Top_15_Same_Fine_Category'].values[0],
+        'Top_15_Same_Coarse_Category': row['Top_15_Same_Coarse_Category'].values[0],
+        'Top_15_Similar_Foods': row['Top_15_Similar_Foods'].values[0]
     }
     try:
         index_map['Top_15_Same_Fine_Category'] = ast.literal_eval(index_map['Top_15_Same_Fine_Category'])
@@ -125,7 +125,7 @@ def generate_translate_food_alias_aware(row, food_df, all_indices_sets, language
             alias_dict = ast.literal_eval(food_df.loc[index, 'Alias'])
             alias_dict = {lang.split(' - ')[-1]: alias_dict[lang] for lang in alias_dict}
 
-            for lang in LANGUAGES:
+            for lang in languages_used:
                 translation = food_df.loc[index, 'Name']
                 no_alias = True
                 for alias_lang in ALIAS_MAPPING[lang]:
@@ -147,19 +147,21 @@ def generate_translate_food_alias_aware(row, food_df, all_indices_sets, language
     
     # Get 2 answers from food in fine-grained
     if len(adversarial_answers) != MAX_ANS_ALL and len(first_indices) > 0:
-        random_fine_answers = random.sample(first_indices, min(MAX_ANS_FROM_FINEGRAINED, len(first_indices)))
-        adversarial_answers.extend(random_fine_answers)
+        sample_size = min(MAX_ANS_FROM_FINEGRAINED, len(first_indices))
+        random_fine_answers = np.random.choice(list(first_indices), size=sample_size, replace=False)
+        adversarial_answers.extend(random_fine_answers.tolist())
     
     # Get 1 answer from food in coarse-grained
     if len(adversarial_answers) != MAX_ANS_ALL and len(second_indices) > 0:
-        random_coarse_answers = random.sample(second_indices, min(MAX_ANS_FROM_COARSEGRAINED - len(adversarial_answers),
-                                                                len(second_indices)))
-        adversarial_answers.extend(random_coarse_answers)
+        sample_size = min(MAX_ANS_FROM_COARSEGRAINED - len(adversarial_answers), len(second_indices))
+        random_coarse_answers = np.random.choice(list(second_indices), size=sample_size, replace=False)
+        adversarial_answers.extend(random_coarse_answers.tolist())
     
     # Get remaining answer 
     if len(adversarial_answers) != MAX_ANS_ALL and len(third_indices) > 0:
-        random_remain_answers = random.sample(third_indices, min(MAX_ANS_ALL - len(adversarial_answers), len(third_indices)))
-        adversarial_answers.extend(random_remain_answers)
+        sample_size = min(MAX_ANS_ALL - len(adversarial_answers), len(third_indices))
+        random_remain_answers = np.random.choice(list(third_indices), size=sample_size, replace=False)
+        adversarial_answers.extend(random_remain_answers.tolist())
 
     # Convert id to name and return only the required number of answers
     adversarial_answers = [food_df.loc[idx, 'Name'] for idx in adversarial_answers]
@@ -169,12 +171,12 @@ def generate_translate_food_alias_aware(row, food_df, all_indices_sets, language
     translation_dict = {}
     lang_status = 'full'
     for ans in shuffled_answers:
-        index = food_df[food_df['Name'].strip() == ans.strip()].index[0]
+        index = food_df[food_df['Name'].str.strip() == ans.strip()].index[0]
         # Assuming 'Alias' is a string representation of a dictionary
         alias_dict = ast.literal_eval(food_df.loc[index, 'Alias'])
         alias_dict = {lang.split(' - ')[-1]: alias_dict[lang] for lang in alias_dict}
 
-        for lang in LANGUAGES:
+        for lang in languages_used:
             translation = food_df.loc[index, 'Name']
             no_alias = True
             for alias_lang in ALIAS_MAPPING[lang]:
@@ -203,19 +205,21 @@ def generate_translate_food_default(row, food_df, all_indices_sets, languages_us
 
     # Get 2 answers from food in fine-grained
     if len(first_indices) > 0:
-        random_fine_answers = random.sample(first_indices, min(MAX_ANS_FROM_FINEGRAINED, len(first_indices)))
-        adversarial_answers.extend(random_fine_answers)
+        sample_size = min(MAX_ANS_FROM_FINEGRAINED, len(first_indices))
+        random_fine_answers = np.random.choice(list(first_indices), size=sample_size, replace=False)
+        adversarial_answers.extend(random_fine_answers.tolist())
     
     # Get 1 answer from food in coarse-grained
     if len(second_indices) > 0:
-        random_coarse_answers = random.sample(second_indices, min(MAX_ANS_FROM_COARSEGRAINED - len(adversarial_answers),
-                                                                len(second_indices)))
-        adversarial_answers.extend(random_coarse_answers)
+        sample_size =  min(MAX_ANS_FROM_COARSEGRAINED - len(adversarial_answers), len(second_indices))
+        random_coarse_answers = np.random.choice(list(second_indices), size=sample_size, replace=False)
+        adversarial_answers.extend(random_coarse_answers.tolist())
     
     # Get remaining answer 
     if len(third_indices) > 0:
-        random_remain_answers = random.sample(third_indices, min(MAX_ANS_ALL - len(adversarial_answers), len(third_indices)))
-        adversarial_answers.extend(random_remain_answers)
+        sample_size = min(MAX_ANS_ALL - len(adversarial_answers), len(third_indices))
+        random_remain_answers = np.random.choice(list(third_indices), size=sample_size, replace=False)
+        adversarial_answers.extend(random_remain_answers.tolist())
 
     # Convert id to name and return only the required number of answers
     adversarial_answers = [food_df.loc[idx, 'Name'] for idx in adversarial_answers]
@@ -225,12 +229,12 @@ def generate_translate_food_default(row, food_df, all_indices_sets, languages_us
     translation_dict = {}
     lang_status = 'full'
     for ans in shuffled_answers:
-        index = food_df[food_df['Name'].strip() == ans.strip()].index[0]
+        index = food_df[food_df['Name'].str.strip() == ans.strip()].index[0]
         # Assuming 'Alias' is a string representation of a dictionary
         alias_dict = ast.literal_eval(food_df.loc[index, 'Alias'])
         alias_dict = {lang.split(' - ')[-1]: alias_dict[lang] for lang in alias_dict}
 
-        for lang in LANGUAGES:
+        for lang in languages_used:
             translation = food_df.loc[index, 'Name']
             no_alias = True
             for alias_lang in ALIAS_MAPPING[lang]:
@@ -288,8 +292,9 @@ def generate_location_base_answers(row, food_df, all_indices_sets):
     fine_grained_answers = fine_grained_answers - set(possible_base_answers)
     if len(fine_grained_answers) > 0:
         # Randomly sample up to 2 answers from fine_grained_answers
-        random_fine_answers = random.sample(fine_grained_answers, min(MAX_ANS_FROM_FINEGRAINED, len(fine_grained_answers)))
-        adversarial_answers.extend(random_fine_answers)
+        sample_size = min(MAX_ANS_FROM_FINEGRAINED, len(fine_grained_answers))
+        random_fine_answers = np.random.choice(list(fine_grained_answers), size=sample_size, replace=False)
+        adversarial_answers.extend(random_fine_answers.tolist())
         
     # Get max 3 answers in adversarial answers (random) countries in coarse-grained
     coarse_grained_answers = set()
@@ -306,9 +311,9 @@ def generate_location_base_answers(row, food_df, all_indices_sets):
     coarse_grained_answers = coarse_grained_answers - set(possible_base_answers) - set(adversarial_answers)
     if len(coarse_grained_answers) > 0:
         # Randomly sample up to 3 answers from coarse_grained_answers
-        random_coarse_answers = random.sample(coarse_grained_answers, min(MAX_ANS_FROM_COARSEGRAINED - len(adversarial_answers),
-                                                                          len(coarse_grained_answers)))
-        adversarial_answers.extend(random_coarse_answers)
+        sample_size = min(MAX_ANS_FROM_COARSEGRAINED - len(adversarial_answers), len(coarse_grained_answers))
+        random_coarse_answers = np.random.choice(list(coarse_grained_answers), size=sample_size, replace=False)
+        adversarial_answers.extend(random_coarse_answers.tolist())
         
     # Get remaining answers in adversarial answers (random) countries
     remain_answers = set()
@@ -325,16 +330,16 @@ def generate_location_base_answers(row, food_df, all_indices_sets):
     remain_answers = remain_answers - set(possible_base_answers) - set(adversarial_answers)
     if len(remain_answers) > 0:
         # Randomly sample up to 4 answers from coarse_grained_answers
-        random_remain_answers = random.sample(remain_answers, min(MAX_ANS_ALL - len(adversarial_answers),
-                                                                          len(remain_answers)))
-        adversarial_answers.extend(random_remain_answers)
+        random_remain_answers = np.random.choice(list(remain_answers), min(MAX_ANS_ALL - len(adversarial_answers),
+                                                 len(remain_answers)))
+        adversarial_answers.extend(random_remain_answers.tolist())  # Convert NumPy array to list before extending
     
     # Not yet full? sample from the rest
     if len(adversarial_answers) != MAX_ANS_ALL:
         answers_unite = fine_grained_answers.union(coarse_grained_answers).union(remain_answers) - set(adversarial_answers) - set(possible_base_answers)
-        random_unite_answers = random.sample(answers_unite, min(MAX_ANS_ALL - len(adversarial_answers),
-                                                                          len(answers_unite)))
-        adversarial_answers.extend(random_unite_answers)
+        sample_size = min(MAX_ANS_ALL - len(adversarial_answers), len(answers_unite))
+        random_unite_answers = np.random.choice(list(answers_unite), size=sample_size, replace=False)
+        adversarial_answers.extend(random_unite_answers.tolist())
         
     if len(adversarial_answers) != MAX_ANS_ALL:
         logging.warning(f"For some reason number of adversarial answers for location is not {MAX_ANS_ALL}")
@@ -348,12 +353,12 @@ def generate_location_base_answers(row, food_df, all_indices_sets):
 def translate_location_languages(all_answers, location_cuisine_df, languages_used):
     translation_dict = {}
     for ans in all_answers:
-        index = location_cuisine_df[location_cuisine_df['English_<LOCATION>'].strip() == ans.strip()].index[0]
+        index = location_cuisine_df[location_cuisine_df['English_<LOCATION>'].str.strip() == ans.strip()].index[0]
 
         # Create a dictionary for the translations
         translations = {
             lang: location_cuisine_df.loc[index, LOCATION_MAPPING[lang]] 
-            for lang in LANGUAGES
+            for lang in languages_used
         }
         
         # Update translation_dict for each answer
@@ -368,15 +373,15 @@ def translate_location_languages(all_answers, location_cuisine_df, languages_use
     return translation_dict
     
 def generate_answers_per_language(row, food_df, location_cuisine_df,
-                                  answer_type, all_indices_sets, languages_used, alias_aware=False):
-    if answer_type == 'Name':
+                                  all_indices_sets, languages_used, alias_aware=False):
+    if row['action'] == 'Name':
         # If the question is about food name, cautious about aliases
         if alias_aware:
             translation_dict, correct_index, lang_status = generate_translate_food_alias_aware(row, food_df, all_indices_sets, languages_used)
         else:
             translation_dict, correct_index, lang_status = generate_translate_food_default(row, food_df, all_indices_sets, languages_used)
         return translation_dict, correct_index, lang_status
-    elif answer_type == 'Location':
+    elif row['action'] == 'Location':
         # Otherwise, pretty sure other languages will have the translation
         all_answers, correct_index = generate_location_base_answers(row, food_df, all_indices_sets)
         if len(all_answers) != (MAX_ANS_ALL + 1):
@@ -384,13 +389,12 @@ def generate_answers_per_language(row, food_df, location_cuisine_df,
         translation_dict = translate_location_languages(all_answers, location_cuisine_df, languages_used)
         return translation_dict, correct_index, "full" # Assume always successful translation
     else:
-        raise NotImplementedError(f"Answer type {answer_type} has not yet been implemented")
+        raise NotImplementedError(f"Answer type {row['action']} has not yet been implemented")
 
 def get_nearest_answers(filtered_sampled_df, food_df, location_cuisine_df, languages_used, alias_aware=False):
     # Iterate through each row in the subset_df
     for idx, row in filtered_sampled_df.iterrows():
         food_id = row['food_id']
-        answer_type = row['action']
         food_row = food_df.loc[food_df['food_id'] == food_id]
         index_map = get_food_indices_given_row(food_row)
 
@@ -410,9 +414,9 @@ def get_nearest_answers(filtered_sampled_df, food_df, location_cuisine_df, langu
         
         # Get answers per languages
         answers_dict, correct_index, lang_status = generate_answers_per_language(row, food_df, location_cuisine_df,
-                                                              answer_type, all_indices_sets, languages_used, alias_aware)
+                                                              all_indices_sets, languages_used, alias_aware)
         for lang, answers in answers_dict.items():
-            filtered_sampled_df.at[idx, f'Answer_{lang}'] = answers
+            filtered_sampled_df.at[idx, f'Answer_{lang}'] = str(answers)
         filtered_sampled_df.at[idx, 'correct_index'] = correct_index
         filtered_sampled_df.at[idx, 'lang_status'] = lang_status
         
@@ -426,7 +430,7 @@ def filter_full_dataset(full_df, query_context_df, food_df, location_cuisine_df)
     drop_rows = query_context_df[query_context_df['action'] == '<DROP>']
     filtered_full_df = full_df[~full_df['prompt_id'].isin(drop_rows['prompt_id'])]
     action_df = query_context_df[['prompt_id', 'action']]
-    filtered_full_df = filtered_full_df.merge(action_df, on='prompt_id', how='left') # Get action_df for later
+    filtered_full_df = pd.merge(filtered_full_df, action_df, on='prompt_id', how='left') # Get action_df for later
     
     # Filter dataset where location is not proper (not in location_cuisine_df)
     standardized_locations = location_cuisine_df['English_<LOCATION>'].to_list()
@@ -461,7 +465,7 @@ def filter_full_dataset(full_df, query_context_df, food_df, location_cuisine_df)
     return filtered_full_df
     
 
-def sample_dataset(full_df, query_context_df, food_df, location_cuisine_df, n=200000, sample_batch=-1, max_attempts=3, alias_aware=False):
+def sample_dataset(full_df, query_context_df, food_df, location_cuisine_df, n=20000, sample_batch=-1, max_attempts=3, alias_aware=False):
     sampled_dataset = pd.DataFrame()
     
     filtered_full_df = filter_full_dataset(full_df, query_context_df, food_df, location_cuisine_df)
@@ -500,6 +504,7 @@ def sample_dataset(full_df, query_context_df, food_df, location_cuisine_df, n=20
             break
         else:
             logging.warning(f"Warning: Ran out of valid samples after {max_attempts} attempts.")
+            break
     
     # Drop action as it was originally used for getting answer type
     sampled_dataset = sampled_dataset.drop(columns=['action'])
@@ -513,16 +518,39 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--full_df_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "full_df.csv"), help="Path used to load full dataframe")
     parser.add_argument('-o', '--food_df_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_df.csv"), help="Path used to load food dataframe")
     parser.add_argument('-q', '--query_context_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "query_ctx.csv"), help="Path used to load the query context CSV")
-    parser.add_argument('-l', '--loc_suic_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "loc_cuis.csv"), help="Path used to load the use location/cuisine CSV")
+    parser.add_argument('-l', '--loc_cuis_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "loc_cuis.csv"), help="Path used to load the use location/cuisine CSV")
+    parser.add_argument('-n', '--num_samples', type=int, required=False, default=20000, help="Number of samples")
+    parser.add_argument('-m', '--max_attempts', type=int, required=False, default=3, help="Maximum number of attempts resampling in case new subset cannot be found")
     args = parser.parse_args()
     
     os.makedirs(RESOURCE_DIR, exist_ok=True)
     
-    full_df = pd.read_csv(args.full_df_path)
-    food_df = pd.read_csv(args.food_df_path)
-    query_context_df = pd.read_csv(args.query_context_path)
-    location_cuisine_dict = pd.read_csv(args.loc_suic_path)
+    # full_df = pd.read_csv(args.full_df_path)
+    # food_df = pd.read_csv(args.food_df_path)
+    # query_context_df = pd.read_csv(args.query_context_path)
+    # location_cuisine_dict = pd.read_csv(args.loc_suic_path)
+    
+    from datasets import load_dataset
+    import pandas as pd
+    import numpy as np
+    from huggingface_hub import login
+
+    # Log in with your API key
+    login("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")
+    
+    # Load your private dataset by its name or path in your account
+    dataset = load_dataset("Exqrch/cuisine-location_and_cuisine")
+    location_cuisine_df = pd.DataFrame(dataset['train'])
+
+    dataset = load_dataset("Exqrch/cuisine-query_and_context")
+    query_context_df = pd.DataFrame(dataset['train'])
+
+    dataset = load_dataset("Exqrch/cuisine-food")
+    food_df = pd.DataFrame(dataset['train'])
+
+    # Took 1 min
+    dataset = load_dataset("Exqrch/cuisine-v1")
+    full_df = pd.DataFrame(dataset['train'])
  
     
-    sample_dataset(full_df, query_context_df, food_df, location_cuisine_dict,
-                   args.n, 2, args.max_attempts, args.alias_aware)
+    sample_dataset(full_df, query_context_df, food_df, location_cuisine_df, n=args.num_samples)
