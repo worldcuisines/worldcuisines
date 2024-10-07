@@ -479,7 +479,7 @@ def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df
 
     return final_df
 
-def generate_prompt(prompt, language, food_row, location_cuisine_df):
+def generate_prompt(prompt, language, food_row, location_cuisine_df, rnd_int):
     prompts = ""
     matches = re.findall(r'<(.*?)>', prompt)
     country_list = ast.literal_eval(food_row['Countries'])
@@ -494,7 +494,7 @@ def generate_prompt(prompt, language, food_row, location_cuisine_df):
         # Get random location that is not in country_list
         all_countries = set(location_cuisine_df['base_key'].to_list())
         random_country_list = list(all_countries - set(country_list))
-        base_key = random_country_list[0] # Keep it deteministic
+        base_key = random_country_list[rnd_int % len(random_country_list)] # Keep it psuedo-random
 
     if len(matches) == 0:
         return prompt  # No placeholders to replace
@@ -522,15 +522,16 @@ def generate_prompt(prompt, language, food_row, location_cuisine_df):
         
     return prompts
 
-def apply_generate_prompt(row, lang, location_cuisine_df):
+def apply_generate_prompt(row, lang, location_cuisine_df, rnd_int):
     prompt = row[LANGUAGE_CODE_MAPPING[lang]]
     food_row = row  # Treat the whole row as food_row
-    return generate_prompt(prompt, lang, food_row, location_cuisine_df)
+    return generate_prompt(prompt, lang, food_row, location_cuisine_df, rnd_int)
 
 def generate_prompt_dataset(sampled_df, qc_df, location_cuisine_df, languages_used):
+    random_int_for_adversarial_indexing = np.random.randint(0, 1000, size=1)[0]
     temp_df = pd.merge(sampled_df[["prompt_id", "answer", "Countries"]], qc_df, how='left', on=['prompt_id'])
     for language in languages_used:
-        sampled_df[f"prompt_{language}"] = temp_df.apply(apply_generate_prompt, axis=1, lang=language, location_cuisine_df=location_cuisine_df)
+        sampled_df[f"prompt_{language}"] = temp_df.apply(apply_generate_prompt, axis=1, lang=language, location_cuisine_df=location_cuisine_df, rnd_int=random_int_for_adversarial_indexing)
         
     return sampled_df
         
