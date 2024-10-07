@@ -106,48 +106,43 @@ def eval_model(model, processor, image_files, query, options, device='cuda'):
     return all_preds
 
 def main():
-    #------ ARGPARSE VERSION------#
-    parser = argparse.ArgumentParser(description='InstructBLIP Evaluation')
-    parser.add_argument('--model_path', type=str, default="Salesforce/instructblip-vicuna-13b",
-                        help='Path to the pretrained model')
-    parser.add_argument('--image_files', type=str, required=True,
-                        help='Comma-separated list of image URLs or file paths')
-    parser.add_argument('--query', type=str, required=True,
-                        help='Query to be evaluated with the images')
-    parser.add_argument('--options', type=str, required=True,
-                        help='Comma-separated list of options for evaluation')
-    parser.add_argument('--fp16', action='store_true', default=True, help='Use float16 precision if supported')
-    
-    args = parser.parse_args()
+    use_hardcoded = True
 
+    if use_hardcoded:
+        model_path = "Salesforce/instructblip-vicuna-13b"
+        image_files = "https://eatwellabi.com/wp-content/uploads/2019/01/IMG_5172-500x375.jpg"
+        query = "What is this dish name?"
+        options = ['nasi goreng', 'nasi uduk', 'laksa', 'nasi kuning']
+        fp16 = True
+    else:
+        parser = argparse.ArgumentParser(description='InstructBLIP Evaluation')
+        parser.add_argument('--model_path', type=str, default="Salesforce/instructblip-vicuna-13b",
+                            help='Path to the pretrained model')
+        parser.add_argument('--image_files', type=str, required=True,
+                            help='Comma-separated list of image URLs or file paths')
+        parser.add_argument('--query', type=str, required=True,
+                            help='Query to be evaluated with the images')
+        parser.add_argument('--options', type=str, required=True,
+                            help='Comma-separated list of options for evaluation')
+        parser.add_argument('--fp16', action='store_true', default=True, help='Use float16 precision if supported')
+        args = parser.parse_args()
 
-    #------ HARD CODED VERSION------#
-    # model_path = "Salesforce/instructblip-vicuna-13b"
-    # model,processor, device = load_model_processor(model_path, fp_16=True)
+        model_path = args.model_path
+        image_files = args.image_files
+        query = args.query
+        options = args.options
+        fp16 = args.fp16
 
-    # prompt = "What is this dish name?"
-    # image_file = "https://eatwellabi.com/wp-content/uploads/2019/01/IMG_5172-500x375.jpg"
+    model, processor, device = load_model_processor(model_path, fp_16=fp16)
 
-    # shared_prompt = 'This is an image of a '
-    # options = [shared_prompt+x for x in ['nasi goreng', 'nasi uduk', 'laksa', 'nasi kuning']]
-    # args.image_files = image_file
-    # args.query = prompt
-    # args.options = ','.join(options)
-    # args.fp16 = True
-
-    # Load model and processor
-    model, processor, device = load_model_processor(args.model_path, fp_16=args.fp16)
-
-    # Prepare options
     shared_prompt = 'This is an image of a '
-    options = [shared_prompt + option for option in args.options.split(',')]
+    options = [shared_prompt + option for option in options]
 
-    # Evaluate the model
     eval_model(
         model=model,
         processor=processor,
-        image_files=args.image_files,
-        query=args.query,
+        image_files=image_files,
+        query=query,
         options=options,
         device=device,
     )
