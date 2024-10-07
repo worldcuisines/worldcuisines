@@ -5,6 +5,7 @@ from typing import List, Any
 import numpy as np
 import torch
 import argparse
+from tqdm import tqdm
 
 from utils import *
 
@@ -165,9 +166,13 @@ class DistFuse():
             else:
                 embs = model.encode(references)
         
-            distances = self.dist_measure(embs[:, np.newaxis, :], embs[np.newaxis, :, :])
-            scores_per_model = self.opt(distances, axis=-1)  # Scores shape will be (n_samples, n_samples)
-            scores.append(scores_per_model.tolist())
+            scores_per_model = []
+            for i in tqdm(range(len(embs))):
+                for j in range(len(embs)):
+                    reference_scores = self.dist_measure([embs[i]], [embs[j]])
+                    reference_scores = self.opt(np.array(reference_scores), axis=-1).tolist()[0]
+                    scores_per_model.append(reference_scores)
+            scores.append(scores_per_model)
 
         final_scores = scores[0]
         for model_id in range(1, len(scores)):

@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,6 +16,57 @@ MAX_ANS_FROM_COARSEGRAINED = 3
 MAX_ANS_ALL = 4 
 
 random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+
+LANGUAGE_CODE_MAPPING = {
+    'en': 'English',
+    'id_formal': 'Indonesian_Formal',
+    'id_casual': 'Indonesian_Casual',
+    'zh-CN': 'Chinese_Mandarin',
+    'ko_formal': 'Korean_Formal',
+    'ko_casual': 'Korean_Casual',
+    'ja_formal': 'Japanese_Formal',
+    'ja_casual': 'Japanese_Casual',
+    'su_casual': 'Sundanese_Casual',
+    'su_loma': 'Sundanese_Loma',
+    'jv_krama': 'Javanese_Krama',
+    'jv_ngoko': 'Javanese_Ngoko',
+    'cs': 'Czech',
+    'es': 'Spanish',
+    'fr': 'French',
+    'ar': 'Arabic_MSA',
+    'hi': 'Hindi',
+    'bn': 'Bengali',
+    'mr': 'Marathi',
+    'si_formal_spoken': 'Sinhala_formal_spoken',
+    'yo': 'Yoruba',
+    'yue': 'Cantonese',
+    'nan': 'Hokkien',
+    'nan_medan_spoken': 'Hokkien_Medan_spoken',
+    'tl': 'Tagalog',
+    'th': 'Thai',
+    'az': 'Azerbaijani',
+    'ru_formal': 'Russian_Formal',
+    'ru_casual': 'Russian_Casual',
+    'it': 'Italian'
+}
+
+ALL_LANGUAGES = list(LANGUAGE_CODE_MAPPING.keys())
+
+LANGUAGE_MAPPING = {
+    'English': 'English_<LOCATION>',
+    'Indonesian_Formal': 'Indonesian_<LOCATION>',
+    'Indonesian_Casual': 'Indonesian_<LOCATION>',
+    'Chinese_Mandarin': 'Chinese_<LOCATION>',
+    'Korean_Formal': 'Korean_<LOCATION>',
+    'Korean_Casual': 'Korean_<LOCATION>',
+    'Japanese_Formal': 'Japanese_<LOCATION>',
+    'Japanese_Casual': 'Japanese_<LOCATION>',
+    'Sundanese_Loma': 'Sundanese_<LOCATION>',
+    'Javanese_Krama': 'Javanese_<LOCATION>',
+    'Javanese_Ngoko': 'Javanese_<LOCATION>',
+
+}
 
 LOCATION_MAPPING = {
     'English': 'English_<LOCATION>',

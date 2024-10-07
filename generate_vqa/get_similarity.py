@@ -80,24 +80,24 @@ def get_top_k_similar_foods(food_df_path, similarity_pq_path):
 
     # Define the schema (meta) for the result of find_top_k_similar_foods
     meta = pd.DataFrame({
-        'Top_k_Similar_Foods': pd.Series(dtype='object'),
-        'Top_k_Same_Fine_Category': pd.Series(dtype='object'),
-        'Top_k_Same_Coarse_Category': pd.Series(dtype='object')
+        f'Top_{TOP_K}_Similar_Foods': pd.Series(dtype='object'),
+        f'Top_{TOP_K}_Same_Fine_Category': pd.Series(dtype='object'),
+        f'Top_{TOP_K}_Same_Coarse_Category': pd.Series(dtype='object')
     })
     
     # Parallel function for finding top k similar foods
     def parallel_find_top_k_similar_foods(row):
         top_k_similar, top_k_fine, top_k_coarse = find_top_k_similar_foods(row['food_id'], similarity_df_with_ids, food_df)
         return pd.Series({
-            'Top_k_Similar_Foods': top_k_similar,
-            'Top_k_Same_Fine_Category': top_k_fine,
-            'Top_k_Same_Coarse_Category': top_k_coarse
+            f'Top_{TOP_K}_Similar_Foods': top_k_similar,
+            f'Top_{TOP_K}_Same_Fine_Category': top_k_fine,
+            f'Top_{TOP_K}_Same_Coarse_Category': top_k_coarse
         })
 
     # Apply the function in parallel across partitions
     results = dask_df.apply(parallel_find_top_k_similar_foods, axis=1, meta=meta)
     results = results.compute()
-    food_df[['Top_k_Similar_Foods', 'Top_k_Same_Fine_Category', 'Top_k_Same_Coarse_Category']] = results
+    food_df[[f'Top_{TOP_K}_Similar_Foods', f'Top_{TOP_K}_Same_Fine_Category', f'Top_{TOP_K}_Same_Coarse_Category']] = results
 
     food_df.to_csv(food_df_path, index=False)
 
