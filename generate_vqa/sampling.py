@@ -299,7 +299,7 @@ def generate_location_base_answers(row, food_raw_df, all_indices_sets):
     
     # Edge case, all adversarial answers cannot be found for some reason
     if len(adversarial_answers) != MAX_ANS_ALL:
-        logging.warning(f"For some reason number of adversarial answers for location is not {MAX_ANS_ALL}")
+        logging.warning(f"For some reason number of adversarial answers for location is not {MAX_ANS_ALL}; Will resample!")
         return [row['answer']], 0
 
     # Return only the required number of answers
@@ -494,7 +494,7 @@ def generate_prompt(prompt, language, food_row, location_cuisine_df):
         # Get random location that is not in country_list
         all_countries = set(location_cuisine_df['base_key'].to_list())
         random_country_list = list(all_countries - set(country_list))
-        base_key = np.random.choice(random_country_list) 
+        base_key = random_country_list[0] # Keep it deteministic
 
     if len(matches) == 0:
         return prompt  # No placeholders to replace
