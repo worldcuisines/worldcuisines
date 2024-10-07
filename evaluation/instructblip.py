@@ -130,7 +130,7 @@ def main():
         model_path = args.model_path
         image_files = args.image_files
         query = args.query
-        options = args.options
+        options = args.options.split(',')
         fp16 = args.fp16
 
     model, processor, device = load_model_processor(model_path, fp_16=fp16)
