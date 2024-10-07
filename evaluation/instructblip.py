@@ -4,8 +4,9 @@ from io import BytesIO
 import torch
 import numpy as np
 from sklearn.preprocessing import normalize
-from transformers import InstructBlipProcessor, InstructBlipForConditionalGeneration
+from transformers import InstructBlipProcessor, InstructBlipForConditionalGeneration, InstructBlipConfig, AutoModelForVision2Seq
 import argparse
+from accelerate import infer_auto_device_map, init_empty_weights
 
 def image_parser(image_file):
     return image_file.split(',')
@@ -55,14 +56,39 @@ def calculate_log_prob(model, tokenizer, prefix, targets):
     pred = targets[np.argmax(normalized_scores)]
     return pred, normalized_scores
 
-def load_model_processor(model_path, fp_16=True):
-    model = InstructBlipForConditionalGeneration.from_pretrained(model_path)
-    processor = InstructBlipProcessor.from_pretrained(model_path)
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    if fp_16:
-        model.half()
-    model.to(device)
+def load_model_processor(model_path, fp_16=True, multi_gpu=False):
+    if not multi_gpu:
+        model = InstructBlipForConditionalGeneration.from_pretrained(model_path)
+        processor = InstructBlipProcessor.from_pretrained(model_path)
+    
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        if fp_16:
+            model.half()
+        model.to(device)
+    else:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        # Initialize the model with the given configuration.
+        config = InstructBlipConfig.from_pretrained(model_path)
+        with init_empty_weights():
+            model = AutoModelForVision2Seq.from_config(config)
+            model.tie_weights()
+        
+        # Infer device map based on the available resources.
+        device_map = infer_auto_device_map(model, max_memory={0: "20GiB", 1: "20GiB"},
+                                   no_split_module_classes=['InstructBlipEncoderLayer', 'InstructBlipQFormerLayer',
+                                                            'LlamaDecoderLayer'])
+        device_map['language_model.lm_head'] = device_map['language_projection'] = device_map[('language_model.model'
+                                                                                               '.embed_tokens')]
+        
+        # Load the processor and model for image processing.
+        offload = "offload"
+        processor = InstructBlipProcessor.from_pretrained(model_path, device_map="auto")
+        model = InstructBlipForConditionalGeneration.from_pretrained(model_path,
+                                                                     torch_dtype=torch.float16,
+                                                                     device_map=device_map,
+                                                                     offload_folder=offload, 
+                                                                     offload_state_dict=True)
 
     return model, processor, device
 
@@ -133,6 +159,7 @@ def main():
         options = args.options.split(',')
         fp16 = args.fp16
 
+    # model, processor, device = load_model_processor(model_path, fp_16=fp16, multi_gpu=True)
     model, processor, device = load_model_processor(model_path, fp_16=fp16)
 
     shared_prompt = 'This is an image of a '
