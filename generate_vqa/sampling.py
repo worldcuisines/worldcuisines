@@ -310,7 +310,11 @@ def generate_location_base_answers(row, food_raw_df, all_indices_sets):
 def translate_location_languages(all_answers, location_cuisine_df, languages_used):
     translation_dict = {}
     for ans in all_answers:
-        index = location_cuisine_df[location_cuisine_df['base_key'].str.strip() == ans.strip()].index[0]
+        try:
+            index = location_cuisine_df[location_cuisine_df['base_key'].str.strip() == ans.strip()].index[0]
+        except Exception:
+            logging.info(f"Error at {ans}")
+            raise RuntimeError
 
         # Create a dictionary for the translations
         translations = {
@@ -388,23 +392,32 @@ def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df
     sampled_food_df = cleaned_food_df.sample(n=n_dish_max, random_state=RANDOM_SEED).reset_index(drop=True)
     
     # Sampled prompt max per type
-    sampled_qc_type1_df = query_context_df[query_context_df['prompt_type'] == 1]
-    n_prompt_max_type1 = len(sampled_qc_type1_df) if n_prompt_max_type1 <= 0 else min(n_prompt_max_type1, len(sampled_qc_type1_df))
-    sampled_qc_type1_df = sampled_qc_type1_df.sample(n=n_prompt_max_type1, random_state=RANDOM_SEED).reset_index(drop=True)
+    concat_type_dfs = []
+    if n_prompt_max_type1 != 0:
+        sampled_qc_type1_df = query_context_df[query_context_df['prompt_type'] == 1]
+        n_prompt_max_type1 = len(sampled_qc_type1_df) if n_prompt_max_type1 <= 0 else min(n_prompt_max_type1, len(sampled_qc_type1_df))
+        sampled_qc_type1_df = sampled_qc_type1_df.sample(n=n_prompt_max_type1, random_state=RANDOM_SEED).reset_index(drop=True)
+        concat_type_dfs.append(sampled_qc_type1_df)
 
-    sampled_qc_type2_df = query_context_df[query_context_df['prompt_type'] == 2]
-    n_prompt_max_type2 = len(sampled_qc_type2_df) if n_prompt_max_type2 <= 0 else min(n_prompt_max_type2, len(sampled_qc_type2_df))
-    sampled_qc_type2_df = sampled_qc_type2_df.sample(n=n_prompt_max_type2, random_state=RANDOM_SEED).reset_index(drop=True)
+    if n_prompt_max_type2 != 0:
+        sampled_qc_type2_df = query_context_df[query_context_df['prompt_type'] == 2]
+        n_prompt_max_type2 = len(sampled_qc_type2_df) if n_prompt_max_type2 <= 0 else min(n_prompt_max_type2, len(sampled_qc_type2_df))
+        sampled_qc_type2_df = sampled_qc_type2_df.sample(n=n_prompt_max_type2, random_state=RANDOM_SEED).reset_index(drop=True)
+        concat_type_dfs.append(sampled_qc_type2_df)
 
-    sampled_qc_type3_df = query_context_df[query_context_df['prompt_type'] == 3]
-    n_prompt_max_type3 = len(sampled_qc_type3_df) if n_prompt_max_type3 <= 0 else min(n_prompt_max_type3, len(sampled_qc_type3_df))
-    sampled_qc_type3_df = sampled_qc_type3_df.sample(n=n_prompt_max_type3, random_state=RANDOM_SEED).reset_index(drop=True)
+    if n_prompt_max_type3 != 0:
+        sampled_qc_type3_df = query_context_df[query_context_df['prompt_type'] == 3]
+        n_prompt_max_type3 = len(sampled_qc_type3_df) if n_prompt_max_type3 <= 0 else min(n_prompt_max_type3, len(sampled_qc_type3_df))
+        sampled_qc_type3_df = sampled_qc_type3_df.sample(n=n_prompt_max_type3, random_state=RANDOM_SEED).reset_index(drop=True)
+        concat_type_dfs.append(sampled_qc_type3_df)
 
-    sampled_qc_type4_df = query_context_df[query_context_df['prompt_type'] == 4]
-    n_prompt_max_type4 = len(sampled_qc_type4_df) if n_prompt_max_type4 <= 0 else min(n_prompt_max_type4, len(sampled_qc_type4_df))
-    sampled_qc_type4_df = sampled_qc_type4_df.sample(n=n_prompt_max_type4, random_state=RANDOM_SEED).reset_index(drop=True)
+    if n_prompt_max_type4 != 0:
+        sampled_qc_type4_df = query_context_df[query_context_df['prompt_type'] == 4]
+        n_prompt_max_type4 = len(sampled_qc_type4_df) if n_prompt_max_type4 <= 0 else min(n_prompt_max_type4, len(sampled_qc_type4_df))
+        sampled_qc_type4_df = sampled_qc_type4_df.sample(n=n_prompt_max_type4, random_state=RANDOM_SEED).reset_index(drop=True)
+        concat_type_dfs.append(sampled_qc_type4_df)
  
-    sampled_qc_df = pd.concat([sampled_qc_type1_df, sampled_qc_type2_df, sampled_qc_type3_df, sampled_qc_type4_df])
+    sampled_qc_df = pd.concat(concat_type_dfs)
 
     # Merge sampled_food_df and query_context_df using cross join
     food_query_combinations = pd.merge(
@@ -496,10 +509,7 @@ def generate_prompt(prompt, language, food_row, location_cuisine_df):
                 to_change = f"<{key_match}>"
                 
                 filtered_df = location_cuisine_df[location_cuisine_df['base_key'] == base_key]
-                if language in ['nan', 'nan_medan_spoken']:
-                    change_to = filtered_df[f"Hokkien_Medan{to_change}"].values[0] if not filtered_df.empty else None
-                else:
-                    change_to = filtered_df[f"{actual_language_name.split('_')[0]}_{to_change}"].values[0] if not filtered_df.empty else None
+                change_to = filtered_df[f"{actual_language_name.split('_')[0]}_{to_change}"].values[0] if not filtered_df.empty else None
                 
                 if change_to is not None:
                     prompts = prompt.replace(to_change, change_to)
@@ -626,6 +636,9 @@ if __name__ == '__main__':
     parser.add_argument('-np3', '--n_prompt_max_type3', type=int, required=False, default=-1, help="Maximum different number of prompt type 3 to be sampled (-1 means can sample as many as possible).")
     parser.add_argument('-np4', '--n_prompt_max_type4', type=int, required=False, default=-1, help="Maximum different number of prompt type 4 to be sampled (-1 means can sample as many as possible).")
     args = parser.parse_args()
+    
+    # Cannot have all max_type to be 0
+    assert(not (args.n_prompt_max_type1 == 0 and args.n_prompt_max_type2 == 0 and args.n_prompt_max_type3 == 0 and args.n_prompt_max_type4 == 0))
     
     os.makedirs(RESOURCE_DIR, exist_ok=True)
     

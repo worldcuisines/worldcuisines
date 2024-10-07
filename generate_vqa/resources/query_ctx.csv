@@ -1,4 +1,4 @@
-prompt_id,setup,template,prompt_type,base_text,English,Indonesian_Formal,Indonesian_Casual,Chinese_Mandarin,Korean_Formal,Korean_Casual,Japanese_Formal,Japanese_Casual,Sundanese_Loma,Javanese_Krama,Javanese_Ngoko,Czech,Spanish,French,Arabic_MSA,Hindi,Marathi,Bengali,Sinhala_formal_spoken,Yoruba,Cantonese,Hokkien_Medan,Hokkien_Medan_Spoken,Tagalog,Thai,Azerbaijani,Russian_Casual,Russian_Formal,Italian,Sardinian_Logudorese
+prompt_id,setup,template,prompt_type,base_text,English,Indonesian_Formal,Indonesian_Casual,Chinese_Mandarin,Korean_Formal,Korean_Casual,Japanese_Formal,Japanese_Casual,Sundanese_Loma,Javanese_Krama,Javanese_Ngoko,Czech,Spanish,French,Arabic_MSA,Hindi,Marathi,Bengali,Sinhala_formal_spoken,Yoruba,Cantonese,HokkienMedan,HokkienMedan_Spoken,Tagalog,Thai,Azerbaijani,Russian_Casual,Russian_Formal,Italian,Sardinian_Logudorese
 0,"Without
 context","context:
 N/A

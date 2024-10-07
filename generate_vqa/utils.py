@@ -27,7 +27,6 @@ LANGUAGE_CODE_MAPPING = {
     'ko_casual': 'Korean_Casual',
     'ja_formal': 'Japanese_Formal',
     'ja_casual': 'Japanese_Casual',
-    'su_casual': 'Sundanese_Casual',
     'su_loma': 'Sundanese_Loma',
     'jv_krama': 'Javanese_Krama',
     'jv_ngoko': 'Javanese_Ngoko',
@@ -41,32 +40,18 @@ LANGUAGE_CODE_MAPPING = {
     'si_formal_spoken': 'Sinhala_formal_spoken',
     'yo': 'Yoruba',
     'yue': 'Cantonese',
-    'nan': 'Hokkien',
-    'nan_medan_spoken': 'Hokkien_Medan_spoken',
+    'nan': 'HokkienMedan',
+    'nan_spoken': 'HokkienMedan_Spoken',
     'tl': 'Tagalog',
     'th': 'Thai',
     'az': 'Azerbaijani',
     'ru_formal': 'Russian_Formal',
     'ru_casual': 'Russian_Casual',
-    'it': 'Italian'
+    'it': 'Italian',
+    'sc': 'Sardinian_Logudorese'
 }
 
 ALL_LANGUAGES = list(LANGUAGE_CODE_MAPPING.keys())
-
-LANGUAGE_MAPPING = {
-    'English': 'English_<LOCATION>',
-    'Indonesian_Formal': 'Indonesian_<LOCATION>',
-    'Indonesian_Casual': 'Indonesian_<LOCATION>',
-    'Chinese_Mandarin': 'Chinese_<LOCATION>',
-    'Korean_Formal': 'Korean_<LOCATION>',
-    'Korean_Casual': 'Korean_<LOCATION>',
-    'Japanese_Formal': 'Japanese_<LOCATION>',
-    'Japanese_Casual': 'Japanese_<LOCATION>',
-    'Sundanese_Loma': 'Sundanese_<LOCATION>',
-    'Javanese_Krama': 'Javanese_<LOCATION>',
-    'Javanese_Ngoko': 'Javanese_<LOCATION>',
-
-}
 
 LOCATION_MAPPING = {
     'English': 'English_<LOCATION>',
@@ -90,14 +75,15 @@ LOCATION_MAPPING = {
     'Sinhala_formal_spoken': 'Sinhala_<LOCATION>',
     'Yoruba': 'Yoruba_<LOCATION>',
     'Cantonese': 'Cantonese_<LOCATION>',
-    'Hokkien': 'Hokkien_<LOCATION>',
-    'Hokkien_Medan_spoken': 'Hokkien (Medan)_<LOCATION>',
+    'HokkienMedan': 'HokkienMedan_<LOCATION>',
+    'HokkienMedan_Spoken': 'HokkienMedan_<LOCATION>', # Note since Hokkien Medan (Spoken) is missing, we replace with Hokkien_<LOCATION>
     'Tagalog': 'Tagalog_<LOCATION>',
     'Thai': 'Thai_<LOCATION>',
     'Azerbaijani': 'Azerbaijani_<LOCATION>',
-    'Russian_Casual': 'Russian_<LOCATION>',
-    'Russian_Formal': 'Russian_<LOCATION>',
-    'Italian': 'Italian_<LOCATION>'
+    'Russian_Casual': 'Russian_<LOCATION.nom>',
+    'Russian_Formal': 'Russian_<LOCATION.nom>',
+    'Italian': 'Italian_<LOCATION>',
+    'Sardinian_Logudorese': 'Sardinian_<LOCATION>'
 }
 
 ALIAS_MAPPING = {
@@ -122,8 +108,8 @@ ALIAS_MAPPING = {
     'Sinhala_formal_spoken': ['Sinhala'],
     'Yoruba': ['Yoruba'],
     'Cantonese': ['Cantonese'],
-    'Hokkien': ['Minnan'],
-    'Hokkien_Medan_spoken': ['Minnan'],
+    'HokkienMedan': ['Minnan'],
+    'HokkienMedan_Spoken': ['Minnan'],
     'Tagalog': ['Tiếng Tagalog', 'Tagalog'],
     'Thai': ['Thai'],
     'Azerbaijani': ['Azerbaijani', 'South Azerbaijani'],
