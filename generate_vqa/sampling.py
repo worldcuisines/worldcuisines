@@ -5,6 +5,7 @@ import numpy as np
 import argparse
 import re
 import time
+from math import ceil
 
 from utils import *
 
@@ -38,11 +39,19 @@ def sample_an_answer(row, food_df):
 
 def get_food_indices_given_row(row):
     # Get indices for the nearest answers
-    index_map = {
-        f'Top_{TOP_K}_Same_Fine_Category': row[f'Top_{TOP_K}_Same_Fine_Category'].values[0],
-        f'Top_{TOP_K}_Same_Coarse_Category': row[f'Top_{TOP_K}_Same_Coarse_Category'].values[0],
-        f'Top_{TOP_K}_Similar_Foods': row[f'Top_{TOP_K}_Similar_Foods'].values[0]
-    }
+    if type(row[f'Top_{TOP_K}_Same_Fine_Category']) == str:
+        index_map = {
+            f'Top_{TOP_K}_Same_Fine_Category': row[f'Top_{TOP_K}_Same_Fine_Category'],
+            f'Top_{TOP_K}_Same_Coarse_Category': row[f'Top_{TOP_K}_Same_Coarse_Category'],
+            f'Top_{TOP_K}_Similar_Foods': row[f'Top_{TOP_K}_Similar_Foods']
+        }
+    else:
+        index_map = {
+            f'Top_{TOP_K}_Same_Fine_Category': row[f'Top_{TOP_K}_Same_Fine_Category'].values[0],
+            f'Top_{TOP_K}_Same_Coarse_Category': row[f'Top_{TOP_K}_Same_Coarse_Category'].values[0],
+            f'Top_{TOP_K}_Similar_Foods': row[f'Top_{TOP_K}_Similar_Foods'].values[0]
+        }
+        
     try:
         index_map[f'Top_{TOP_K}_Same_Fine_Category'] = ast.literal_eval(index_map[f'Top_{TOP_K}_Same_Fine_Category'])
     except Exception:
@@ -225,7 +234,7 @@ def generate_location_base_answers(row, food_raw_df, all_indices_sets):
         pass
     
     try:
-        cur_answers = row['Location']
+        cur_answers = row['Countries']
         cur_answers = ast.literal_eval(cur_answers)
         possible_base_answers.extend(cur_answers)
     except Exception:
@@ -384,8 +393,81 @@ def get_nearest_answers(filtered_sampled_df, food_raw_df, food_cleaned_df, locat
     further_filt_sampled_df = filtered_sampled_df[filtered_sampled_df['lang_status'] != 'failed']
     
     return further_filt_sampled_df
+
+def generate_duplicated_prompt_indices(query_context_df):
+    # Function to find indices of duplicates in each column
+    duplicated_dict = {}
+    for column in query_context_df.columns:
+        # Get the indices of duplicate values
+        duplicate_indices = query_context_df[query_context_df[column].duplicated(keep=False)].index.tolist()
+        if duplicate_indices:
+            duplicated_dict[column] = duplicate_indices  # Store indices of duplicates
+
+    duplicated_dict.pop('setup')
+    duplicated_dict.pop('template')
+    duplicated_dict.pop('prompt_type')
     
-def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df,
+    # Union the indices from all columns
+    all_duplicated_indices = set()
+    for indices in duplicated_dict.values():
+        all_duplicated_indices.update(indices)
+        
+    reserved_train_qc_df = query_context_df.loc[list(all_duplicated_indices)]
+
+    return reserved_train_qc_df
+
+def eval_test_possible_combinations(cleaned_food_df, query_context_df, is_eval):
+    """
+    1) Small eval set (WCVQA 12k):
+    task1 (name): 100 dish x 3 prompt (1 w/o 1 w/ context 1 adversarial) x 30 languages = 9k 
+    task2 (location): 100 dish x 1 prompt x 30 languages = 3k
+
+    2) Large eval set (WCVQA 60k)
+    task1: 500 dish x 3 prompt x 30 languages = 45k
+    task2: 500 dish x 1 prompt x 30 languages = 15k
+
+    Training: (WCVQA 1M)
+    task1: 1800 dish x 10 prompt (5 w/o 5 w/ context 5 adversarial) x 30 languages = 810k
+    task2: 1800 dish x 5 prompt x 30 languages = 270k
+    """
+    # Sampled dish max
+    sampled_food_df = cleaned_food_df.sample(frac=1, random_state=RANDOM_SEED).reset_index(drop=True)
+    if is_eval:
+        sampled_food_df = sampled_food_df[:NUM_MAX_DISHES_EVAL]
+    else:
+        sampled_food_df = sampled_food_df[NUM_MAX_DISHES_EVAL:]
+    
+    # Sampled prompt max per type
+    concat_type_dfs = []
+    
+    reserved_train_qc_df = generate_duplicated_prompt_indices(query_context_df)
+    
+    for type in range(1, 5):
+        qc_type_df = query_context_df[query_context_df['prompt_type'] == type]
+        reserved_type_df = reserved_train_qc_df[reserved_train_qc_df['prompt_type'] == type]
+        available_type_df = qc_type_df[~qc_type_df.index.isin(reserved_type_df.index)].sample(frac=1, random_state=RANDOM_SEED).reset_index(drop=True)
+        need_train_left = int((1 - PROMPT_EVAL_PORTION) * len(qc_type_df)) - len(reserved_type_df)
+        
+        if is_eval:
+            if need_train_left > 0:
+                sampled_qc_df = available_type_df[need_train_left:]
+            else:
+                sampled_qc_df = available_type_df
+                assert(len(sampled_qc_df) != 0) # In case all are taken by training
+                
+            concat_type_dfs.append(sampled_qc_df)
+        else:
+            concat_type_dfs.append(reserved_type_df)
+            if need_train_left > 0:
+                sampled_qc_df = available_type_df[:need_train_left]
+            
+            concat_type_dfs.append(sampled_qc_df)
+ 
+    sampled_qc_df = pd.concat(concat_type_dfs)
+    
+    return sampled_food_df, sampled_qc_df
+
+def traditionally_sampled(cleaned_food_df, query_context_df,
                           n_dish_max, n_prompt_max_type1, n_prompt_max_type2, n_prompt_max_type3, n_prompt_max_type4):
     # Sampled dish max
     n_dish_max = len(cleaned_food_df) if n_dish_max <= 0 else min(n_dish_max, len(cleaned_food_df))
@@ -418,11 +500,15 @@ def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df
         concat_type_dfs.append(sampled_qc_type4_df)
  
     sampled_qc_df = pd.concat(concat_type_dfs)
-
+    
+    return sampled_food_df, sampled_qc_df
+    
+def filtered_combinations(sampled_food_df, sampled_qc_df, cleaned_food_df,
+                          location_cuisine_df, n_dish_max):
     # Merge sampled_food_df and query_context_df using cross join
     food_query_combinations = pd.merge(
         sampled_food_df[['food_id', 'ImageUrls']],  # Now includes imageindex
-        sampled_qc_df[['prompt_id']],
+        sampled_qc_df[['prompt_id', 'prompt_type']],
         how='cross'
     )
     
@@ -449,7 +535,7 @@ def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df
     def filter_and_reduce_countries(row):
         countries = row['Countries']
         # Filter countries to only keep those that are in standardized_locations
-        reduced_countries = [country for country in countries if country in standardized_locations]
+        reduced_countries = [country.strip() for country in countries if country.strip() in standardized_locations]
         # Check if reduced countries is not empty
         return reduced_countries if reduced_countries else None  # Or return an empty list if you prefer
 
@@ -470,6 +556,9 @@ def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df
     
     # Explode sampled_food_df by creating an index for the ImageUrls column
     filtered_init_df['ImageUrls'] = filtered_init_df['ImageUrls'].apply(lambda x: ast.literal_eval(x))
+    filtered_init_df = filtered_init_df[filtered_init_df['ImageUrls'].apply(len) > 0]
+    unique_food_ids = filtered_init_df['food_id'].unique()[:n_dish_max]
+    filtered_init_df = filtered_init_df[filtered_init_df['food_id'].isin(unique_food_ids)]
     filtered_init_df['image_index'] = filtered_init_df['ImageUrls'].apply(lambda x: list(range(len(x))))
     final_df = filtered_init_df.explode(['ImageUrls', 'image_index'])
     final_df = final_df.rename(columns={"ImageUrls": "image_url"})
@@ -479,7 +568,111 @@ def filtered_combinations(cleaned_food_df, query_context_df, location_cuisine_df
 
     return final_df
 
-def generate_prompt(prompt, language, food_row, location_cuisine_df, rnd_int):
+def generate_adversarial_loc_cuis_for_prompt(row, rnd_int, adver_or_not, location_cuisine_df):
+    index_map = get_food_indices_given_row(row)
+
+    all_indices_sets = []
+
+    # Create the first set from the first list
+    first_indices = set(index_map.get(f'Top_{TOP_K}_Same_Fine_Category', []))
+    all_indices_sets.append(first_indices)
+
+    # Create the second set from the second list while removing duplicates from the first
+    second_indices = set(index_map.get(f'Top_{TOP_K}_Same_Coarse_Category', [])) - first_indices
+    all_indices_sets.append(second_indices)
+
+    # Create the third set from the third list while removing duplicates from the first and second
+    third_indices = set(index_map.get(f'Top_{TOP_K}_Same_Similar_Foods', [])) - first_indices - second_indices
+    all_indices_sets.append(third_indices)
+    
+    first_indices = all_indices_sets[0]
+    
+    # Get the Location/Area, ensure that later no answer should be either of these
+    possible_base_answers = []
+    try:
+        cur_answers = row['Area']
+        cur_answers = ast.literal_eval(cur_answers)
+        possible_base_answers.extend(cur_answers)
+    except Exception:
+        pass
+    
+    try:
+        cur_answers = row['Countries']
+        cur_answers = ast.literal_eval(cur_answers)
+        possible_base_answers.extend(cur_answers)
+    except Exception:
+        pass
+    
+    # Get all answers from (random) countries in fine-grained
+    fine_grained_answers = set()
+    fine_foods = food_raw_df[food_raw_df['food_id'].isin(first_indices)].reset_index(drop=True)
+    for _, fine_row in fine_foods.iterrows():
+        fine_countries = fine_row['Countries']
+        try:
+            fine_countries = ast.literal_eval(fine_countries)
+            fine_grained_answers.update(fine_countries)
+        except Exception:
+            continue
+        
+    # Remove elements in fine_grained_answers that are also in possible_base_answers
+    fine_grained_answers = fine_grained_answers - set(possible_base_answers)
+    
+    # Get max 3 answers in adversarial answers (random) countries in coarse-grained
+    coarse_grained_answers = set()
+    coarse_foods = food_raw_df[food_raw_df['food_id'].isin(second_indices)].reset_index(drop=True)
+    for _, coarse_row in coarse_foods.iterrows():
+        coarse_countries = coarse_row['Countries']
+        try:
+            coarse_countries = ast.literal_eval(coarse_countries)
+            coarse_grained_answers.update(coarse_countries)
+        except Exception:
+            continue
+        
+    # Remove elements in fine_grained_answers that are also in possible_base_answers and current adversarial answers
+    coarse_grained_answers = coarse_grained_answers - set(possible_base_answers)
+    
+    adversarial_countries = fine_grained_answers.union(coarse_grained_answers)
+    if len(adversarial_countries) == 0:
+        # Get remaining answers in adversarial answers (random) countries
+        remain_answers = set()
+        remain_foods = food_raw_df[food_raw_df['food_id'].isin(third_indices)].reset_index(drop=True)
+        for _, remain_row in remain_foods.iterrows():
+            remain_countries = remain_row['Countries']
+            try:
+                remain_countries = ast.literal_eval(remain_countries)
+                remain_answers.update(remain_countries)
+            except Exception:
+                continue
+        remain_answers = remain_answers - set(possible_base_answers)
+        adversarial_countries = adversarial_countries.union(remain_answers)
+        
+    adversarial_countries = list(adversarial_countries)
+    indexing = rnd_int
+    if len(adversarial_countries) != 0 and adver_or_not < ODDS_ADVERSARIAL:
+        # Ensure it's in base key, otherwise pick other
+        potential_base_key = adversarial_countries[indexing % len(adversarial_countries)]
+        while indexing < rnd_int + len(adversarial_countries):
+            filtered_loc = location_cuisine_df[location_cuisine_df['base_key'] == potential_base_key]
+            if len(filtered_loc) > 0:
+                return potential_base_key
+            else:
+                indexing += 1
+        
+    # Reaches here means either base key is not there for adversarial countries or simply winning the odds
+    indexing = rnd_int
+    potential_base_key = possible_base_answers[indexing % len(possible_base_answers)]
+    while indexing < rnd_int + len(possible_base_answers):
+        filtered_loc = location_cuisine_df[location_cuisine_df['base_key'] == potential_base_key]
+        if len(filtered_loc) > 0:
+            return potential_base_key
+        else:
+            indexing += 1
+            
+    # Shouldn't reach here, should we generate random countries instead?
+    raise RuntimeError("For some reason can't find countries from prompt")
+        
+
+def generate_prompt(prompt, language, food_row, location_cuisine_df, rnd_int, adver_or_not):
     prompts = ""
     matches = re.findall(r'<(.*?)>', prompt)
     country_list = ast.literal_eval(food_row['Countries'])
@@ -492,9 +685,7 @@ def generate_prompt(prompt, language, food_row, location_cuisine_df, rnd_int):
             base_key = country_list[0]
     else:
         # Get random location that is not in country_list
-        all_countries = set(location_cuisine_df['base_key'].to_list())
-        random_country_list = list(all_countries - set(country_list))
-        base_key = random_country_list[rnd_int % len(random_country_list)] # Keep it psuedo-random
+        base_key = generate_adversarial_loc_cuis_for_prompt(food_row, rnd_int, adver_or_not, location_cuisine_df)
 
     if len(matches) == 0:
         return prompt  # No placeholders to replace
@@ -522,34 +713,79 @@ def generate_prompt(prompt, language, food_row, location_cuisine_df, rnd_int):
         
     return prompts
 
-def apply_generate_prompt(row, lang, location_cuisine_df, rnd_int):
+def apply_generate_prompt(row, lang, location_cuisine_df, rnd_int, adver_or_not):
     prompt = row[LANGUAGE_CODE_MAPPING[lang]]
     food_row = row  # Treat the whole row as food_row
-    return generate_prompt(prompt, lang, food_row, location_cuisine_df, rnd_int)
+    return generate_prompt(prompt, lang, food_row, location_cuisine_df, rnd_int, adver_or_not)
 
-def generate_prompt_dataset(sampled_df, qc_df, location_cuisine_df, languages_used):
+def generate_prompt_dataset(sampled_df, food_cleaned_df, qc_df, location_cuisine_df, languages_used):
     random_int_for_adversarial_indexing = np.random.randint(0, 1000, size=1)[0]
-    temp_df = pd.merge(sampled_df[["prompt_id", "answer", "Countries"]], qc_df, how='left', on=['prompt_id'])
+    random_float = np.random.uniform(0, 1, size=1)[0]
+    temp_df = pd.merge(sampled_df, food_cleaned_df[['food_id', f"Top_{TOP_K}_Same_Fine_Category",
+                                                    f'Top_{TOP_K}_Same_Coarse_Category',
+                                                    f'Top_{TOP_K}_Similar_Foods']], how='left', on='food_id')
+    temp_df = pd.merge(temp_df[["prompt_id", "answer", 'Countries',
+                                   f"Top_{TOP_K}_Same_Fine_Category", f'Top_{TOP_K}_Same_Coarse_Category',
+                                   f'Top_{TOP_K}_Similar_Foods']], qc_df, how='left', on=['prompt_id'])
     for language in languages_used:
-        sampled_df[f"prompt_{language}"] = temp_df.apply(apply_generate_prompt, axis=1, lang=language, location_cuisine_df=location_cuisine_df, rnd_int=random_int_for_adversarial_indexing)
+        sampled_df[f"prompt_{language}"] = temp_df.apply(apply_generate_prompt, axis=1, lang=language, location_cuisine_df=location_cuisine_df,
+                                                         rnd_int=random_int_for_adversarial_indexing, adver_or_not=random_float)
         
     return sampled_df
         
-
-def generate_initial_combinations(current_dataset, all_combinations_df, cleaned_food_df, need_sample, seed):
+# need_sample is legacy, now we sample w.r.t to prompt for each dish
+def generate_initial_combinations(current_dataset, all_combinations_df, cleaned_food_df,
+                                  n_prompt_max_type1, n_prompt_max_type2,
+                                  n_prompt_max_type3, n_prompt_max_type4,
+                                  need_sample, seed):
+    start_time = time.time()
     # Create all possible combinations of 'food_id' and 'prompt_id' using a cross join (Cartesian product)
-    sampled_dataset_keys = pd.DataFrame(columns=['food_id', 'prompt_id', 'image_index'])
+    sampled_dataset_keys = pd.DataFrame(columns=['food_id', 'prompt_id'])
     if len(current_dataset) != 0:
-        sampled_dataset_keys = current_dataset[['food_id', 'prompt_id', 'image_index']].drop_duplicates()
-        
+        sampled_dataset_keys = current_dataset[['food_id', 'prompt_id']].drop_duplicates()
+    
+    # Legacy code for sampling overall
     # If the number of samples requested is larger than available combinations, limit it
-    if need_sample <= 0 or need_sample > len(all_combinations_df):
-        need_sample = len(all_combinations_df)
+    # if need_sample <= 0 or need_sample > len(all_combinations_df):
+    #     need_sample = len(all_combinations_df)
+    # filtered_sampled_df = all_combinations_df.sample(n=need_sample, random_state=seed).reset_index(drop=True)
+    
+    # Initialize an empty list to store the results
+    result_list = []
+    
+    for food_id, group_df in all_combinations_df.groupby('food_id'):
+        # Sample for prompt_id type 1, 2, 3, 4
+        if n_prompt_max_type1 >= 0:
+            type1_sample = group_df[group_df['prompt_type'] == 1].sample(n=n_prompt_max_type1, random_state=seed, replace=False)
+        else:
+            type1_sample = group_df[group_df['prompt_type'] == 1]
         
-    filtered_sampled_df = all_combinations_df.sample(n=need_sample, random_state=seed).reset_index(drop=True)
+        if n_prompt_max_type2 >= 0:
+            type2_sample = group_df[group_df['prompt_type'] == 2].sample(n=n_prompt_max_type2, random_state=seed, replace=False)
+        else:
+            type2_sample = group_df[group_df['prompt_type'] == 2]
+            
+        if n_prompt_max_type3 >= 0:
+            type3_sample = group_df[group_df['prompt_type'] == 3].sample(n=n_prompt_max_type3, random_state=seed, replace=False)
+        else:
+            type3_sample = group_df[group_df['prompt_type'] == 3]
+            
+        if n_prompt_max_type4 >= 0:
+            type4_sample = group_df[group_df['prompt_type'] == 4].sample(n=n_prompt_max_type4, random_state=seed, replace=False)
+        else:
+            type4_sample = group_df[group_df['prompt_type'] == 4]
+        
+        # Append all the samples for this food_id to the result list
+        result_list.append(type1_sample)
+        result_list.append(type2_sample)
+        result_list.append(type3_sample)
+        result_list.append(type4_sample)
+
+    # Combine the results into a single DataFrame
+    filtered_sampled_df = pd.concat(result_list).reset_index(drop=True)
     
     # Merge on the three columns and keep only rows combinations that are not in current_dataset
-    filtered_sampled_df = pd.merge(filtered_sampled_df, sampled_dataset_keys, on=['food_id', 'prompt_id', 'image_index'], 
+    filtered_sampled_df = pd.merge(filtered_sampled_df, sampled_dataset_keys, on=['food_id', 'prompt_id'], 
                                         how='left', indicator=True)
 
     # Keep only the rows that are not present in current_dataset
@@ -563,44 +799,59 @@ def generate_initial_combinations(current_dataset, all_combinations_df, cleaned_
         sampled_answers.append(sampled_answer)
     filtered_sampled_df['answer'] = sampled_answers
     
+    end_time = time.time()
+    logging.debug(f"Time takes to generate initial combinations is {end_time - start_time:.3f} seconds, resulting in {len(filtered_sampled_df)} rows")
+    
     return filtered_sampled_df
 
 def sample_dataset(food_raw_df, food_cleaned_df, query_context_df, location_cuisine_df, languages_used,
                    n=20000, alias_aware=False,
-                   n_dish_max=-1, n_prompt_max_type1=-1, n_prompt_max_type2=-1, n_prompt_max_type3=-1, n_prompt_max_type4=-1):
+                   n_dish_max=-1, n_prompt_max_type1=-1, n_prompt_max_type2=-1, n_prompt_max_type3=-1, n_prompt_max_type4=-1,
+                   is_eval=True, max_retry=3):
     """
-    0. (a) Pre-compute the Alias(es)
-    1. Sample possible food_id, prompt_id, then proceed to sample the image indices
-    2. S
-    2.
-    
+    1. Get all possible combinations based on n_dish_max, n_prompt_max_type1,2,3,4
+    2. Sample possible food_id, prompt_id, then proceed to sample the image indices
+    3. Get the (parallel) prompts based on the language input used
+    4. Sample challenging/adversarial answers
     """
     sampled_dataset = pd.DataFrame()
     curr_seed = RANDOM_SEED
     num_sampled_rows = 0
     
     # Calculate total combinations
-    image_url_counts = [len(image_urls) for image_urls in food_cleaned_df['ImageUrls']]
+    global_sampled_food_df, global_sampled_qc_df = eval_test_possible_combinations(food_cleaned_df, query_context_df, is_eval)
+    image_url_counts = [len(image_urls) for image_urls in global_sampled_food_df['ImageUrls']]
     total_image_urls = sum(image_url_counts)
-    total_prompts = len(query_context_df['prompt_id'])
+    total_prompts = len(global_sampled_qc_df['prompt_id'])
     num_total_combinations = total_image_urls * total_prompts
-    all_combinations_df = filtered_combinations(food_cleaned_df, query_context_df, location_cuisine_df,
-                                                n_dish_max, n_prompt_max_type1, n_prompt_max_type2,
-                                                n_prompt_max_type3, n_prompt_max_type4)
+    all_combinations_df = filtered_combinations(global_sampled_food_df, global_sampled_qc_df, food_cleaned_df,
+                                                location_cuisine_df, n_dish_max)
+    total_to_be_sampled = ceil(n / len(languages_used)) # n here represents total with all languages
 
-    while num_sampled_rows < n:
+    retry = 0
+    while num_sampled_rows < total_to_be_sampled:
         logging.debug(f"Current sampled rows: {num_sampled_rows}")
         curr_seed += 1
-        need_sample = min(n - num_sampled_rows, num_total_combinations)
+        need_sample = min(total_to_be_sampled - num_sampled_rows, num_total_combinations)
         
-        filtered_sampled_df = generate_initial_combinations(sampled_dataset, all_combinations_df, food_cleaned_df, need_sample, curr_seed)
-        
-        if len(filtered_sampled_df) == 0:
-            logging.info("All combinations have been exhausted, stop sampling!")
+        filtered_sampled_df = generate_initial_combinations(sampled_dataset, all_combinations_df, food_cleaned_df,
+                                                            n_prompt_max_type1, n_prompt_max_type2,
+                                                            n_prompt_max_type3, n_prompt_max_type4,
+                                                            need_sample, curr_seed)
+
+        if len(filtered_sampled_df) == 0 and retry < max_retry:
+            retry += 1
+            logging.info("All combinations have been exhausted, attempting to resample!")
+            continue
+        elif len(filtered_sampled_df) == 0 and retry == max_retry:
+            logging.info("All combinations have been exhausted, and max retry has been reached, stop sampling!")
             break
         
+        start_time = time.time()
+        
         # Generate prompts for each languages
-        prompted_sampled_df = generate_prompt_dataset(filtered_sampled_df, query_context_df, location_cuisine_df, languages_used)
+        prompted_sampled_df = generate_prompt_dataset(filtered_sampled_df, food_cleaned_df,
+                                                      query_context_df, location_cuisine_df, languages_used)
         
         # Get challenging answers to the results
         further_filt_sampled_df = get_nearest_answers(prompted_sampled_df,
@@ -611,10 +862,20 @@ def sample_dataset(food_raw_df, food_cleaned_df, query_context_df, location_cuis
         further_filt_sampled_df = further_filt_sampled_df.dropna()
         
         # Concat
-        sampled_dataset = pd.concat([sampled_dataset, further_filt_sampled_df], ignore_index=True)
-        num_sampled_rows += len(further_filt_sampled_df)
+        further_filt_sampled_df = further_filt_sampled_df.sample(frac=1, random_state=RANDOM_SEED)
+        if (len(further_filt_sampled_df) + num_sampled_rows < total_to_be_sampled):
+            sampled_dataset = pd.concat([sampled_dataset, further_filt_sampled_df], ignore_index=True)
+            num_sampled_rows += len(further_filt_sampled_df)
+        else:
+            take_few_rows = total_to_be_sampled - num_sampled_rows
+            sampled_dataset = pd.concat([sampled_dataset, further_filt_sampled_df[:take_few_rows]], ignore_index=True)
+            num_sampled_rows += take_few_rows
+
+        end_time = time.time()
+        logging.debug(f"Time takes to filter combinations is {end_time - start_time:.3f} seconds, resulting in {len(further_filt_sampled_df)} rows")
 
     # Drop action as it was originally used for getting answer type
+    sampled_dataset = sampled_dataset.sample(frac=1, random_state=RANDOM_SEED) # Final shuffle
     sampled_dataset = sampled_dataset.drop(columns=['action'])
     
     return sampled_dataset
@@ -628,7 +889,7 @@ if __name__ == '__main__':
     parser.add_argument('-fc', '--food_cleaned_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_cleaned.csv"), help="Path used to load cleaned food dataframe")
     parser.add_argument('-q', '--query_context_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "query_ctx.csv"), help="Path used to load the query context CSV")
     parser.add_argument('-l', '--loc_cuis_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "location_and_cuisine.csv"), help="Path used to load the use location/cuisine CSV")
-    parser.add_argument('-n', '--num_samples', type=int, required=False, default=20000, help="Number of samples")
+    parser.add_argument('-n', '--num_samples', type=int, required=False, default=20000, help="Number of samples (multiply by the languages)")
     parser.add_argument('-ll', '--list_of_languages', type=str, required=False, default="", help="List of languages used (e.g. '[\"en\", \"id_formal\"]')")
     parser.add_argument('-aw', '--alias_aware', default=False, action=argparse.BooleanOptionalAction, help="Enabling this will have the sampler tries harder to get the adversarial answers with parallel Aliases")
     parser.add_argument('-nd', '--n_dish_max', type=int, required=False, default=-1, help="Maximum different number of dishes to be sampled (-1 means can sample as many as possible).")
@@ -636,7 +897,11 @@ if __name__ == '__main__':
     parser.add_argument('-np2', '--n_prompt_max_type2', type=int, required=False, default=-1, help="Maximum different number of prompt type 2 to be sampled (-1 means can sample as many as possible).")
     parser.add_argument('-np3', '--n_prompt_max_type3', type=int, required=False, default=-1, help="Maximum different number of prompt type 3 to be sampled (-1 means can sample as many as possible).")
     parser.add_argument('-np4', '--n_prompt_max_type4', type=int, required=False, default=-1, help="Maximum different number of prompt type 4 to be sampled (-1 means can sample as many as possible).")
+    parser.add_argument('-ie', '--is_eval', default=True, action=argparse.BooleanOptionalAction, help="Whether train or evaluation.")
     args = parser.parse_args()
+    
+    random.seed(RANDOM_SEED)
+    np.random.seed(RANDOM_SEED)
     
     # Cannot have all max_type to be 0
     assert(not (args.n_prompt_max_type1 == 0 and args.n_prompt_max_type2 == 0 and args.n_prompt_max_type3 == 0 and args.n_prompt_max_type4 == 0))
@@ -657,10 +922,11 @@ if __name__ == '__main__':
     samples = sample_dataset(food_raw_df, food_cleaned_df, query_context_df, location_cuisine_df, list_of_languages,
                              n=args.num_samples, alias_aware=args.alias_aware, n_dish_max=args.n_dish_max,
                              n_prompt_max_type1=args.n_prompt_max_type1, n_prompt_max_type2=args.n_prompt_max_type2,
-                             n_prompt_max_type3=args.n_prompt_max_type3, n_prompt_max_type4=args.n_prompt_max_type4)
+                             n_prompt_max_type3=args.n_prompt_max_type3, n_prompt_max_type4=args.n_prompt_max_type4,
+                             is_eval=args.is_eval)
 
     end_time = time.time()
     
-    logging.info(f"Time takes to sample {args.num_samples} rows is {end_time - start_time} seconds")
+    logging.info(f"Time takes to sample {args.num_samples} rows is {end_time - start_time:.3f} seconds")
     
     samples.to_csv(args.output_csv, index=False)

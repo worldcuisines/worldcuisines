@@ -3,7 +3,7 @@ import os
 import random
 import numpy as np
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 RESOURCE_DIR = os.path.join(CUR_DIR, "resources")
@@ -13,10 +13,7 @@ RANDOM_SEED = 42
 
 MAX_ANS_FROM_FINEGRAINED = 2
 MAX_ANS_FROM_COARSEGRAINED = 3
-MAX_ANS_ALL = 4 
-
-random.seed(RANDOM_SEED)
-np.random.seed(RANDOM_SEED)
+MAX_ANS_ALL = 4
 
 LANGUAGE_CODE_MAPPING = {
     'en': 'English',
@@ -124,3 +121,10 @@ CONTEXT_TYPE_ACTION = {
     'context:\n<LOCATION>\n<CUISINE>\n\nans:\n<NAME>': 'Name',
     'context:\n<CATEGORY>\n<FINE_CATEGORY>\nans:\n<NAME>\n<CUISINE>': '<DROP>'
 }
+
+# These are agreed numbers
+NUM_MAX_DISHES_EVAL = 550 # The first 500 randomly shuffled dishes will always be used for eval; 
+                          # Set 550 as for a buffer/reserved space of extra 50 dishes for eval
+                          # for problematic dishes (since ~1800 needs to be in train)
+PROMPT_EVAL_PORTION = 0.3 # 0.3 here is the eval portion
+ODDS_ADVERSARIAL = 0.8
