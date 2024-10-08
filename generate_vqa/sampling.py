@@ -460,8 +460,7 @@ def eval_test_possible_combinations(cleaned_food_df, query_context_df, is_eval):
             concat_type_dfs.append(reserved_type_df)
             if need_train_left > 0:
                 sampled_qc_df = available_type_df[:need_train_left]
-            
-            concat_type_dfs.append(sampled_qc_df)
+                concat_type_dfs.append(sampled_qc_df)
  
     sampled_qc_df = pd.concat(concat_type_dfs)
     
