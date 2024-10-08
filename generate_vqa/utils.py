@@ -4,7 +4,8 @@ import os
 logging.basicConfig(level=logging.DEBUG)
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
-RESOURCE_DIR = os.path.join(CUR_DIR, "resources")
+RESOURCE_DIR = os.getenv("RESOURCE_DIR", os.path.join(CUR_DIR, "resources"))
+GENERATED_DATA_DIR = os.getenv("GENERATED_DATA_DIR", os.path.join(CUR_DIR, "generated_data"))
 TOP_K = 15
 N_THREADS = 32
 RANDOM_SEED = 42
