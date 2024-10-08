@@ -1,3 +1,4 @@
+import os
 import random
 import ast
 import pandas as pd
@@ -7,7 +8,16 @@ import re
 import time
 from math import ceil
 
-from utils import *
+from utils import (
+    RANDOM_SEED,
+    RESOURCE_DIR,
+    TOP_K, MAX_ANS_ALL, MAX_ANS_FROM_FINEGRAINED, MAX_ANS_FROM_COARSEGRAINED,
+    PROMPT_EVAL_PORTION, NUM_MAX_DISHES_EVAL, CONTEXT_TYPE_ACTION, ODDS_ADVERSARIAL,
+    ALL_LANGUAGES, LOCATION_MAPPING, LANGUAGE_CODE_MAPPING,
+)
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 def sample_an_image(food_id, food_df):
     # Get the image list for the food_id from food_df

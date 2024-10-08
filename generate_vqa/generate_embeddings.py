@@ -1,13 +1,14 @@
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances, manhattan_distances
-from typing import List, Any
+from typing import List
 import numpy as np
 import torch
 import argparse
 from tqdm import tqdm
 
-from utils import *
+import os
+from utils import RESOURCE_DIR
 
 class EmbeddingModel():
     """

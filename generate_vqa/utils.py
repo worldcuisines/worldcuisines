@@ -1,7 +1,5 @@
 import logging
 import os
-import random
-import numpy as np
 
 logging.basicConfig(level=logging.DEBUG)
 

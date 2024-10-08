@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np 
 import json
-import logging
 import argparse
 
 import dask.dataframe as dd
 
-from utils import *
+import os
+from utils import RESOURCE_DIR, TOP_K, N_THREADS
+
 
 def map_similarity_to_ids(similarity_df, food_df):
     # Create a mapping of food names to food IDs
@@ -23,6 +24,7 @@ def map_similarity_to_ids(similarity_df, food_df):
     new_similarity_df.columns = new_similarity_df.columns.map(name_to_id_map)
 
     return new_similarity_df
+
 
 def helper_find_category(food_df, food_id, top_similar, category_name):
     food_category = food_df.loc[food_df['food_id'] == food_id, category_name].values[0]
@@ -52,6 +54,7 @@ def helper_find_category(food_df, food_id, top_similar, category_name):
     
     return similar_foods_with_same_fine_category
 
+
 def find_top_k_similar_foods(food_id, similarity_df, food_df):
     # Sort the similarity row for the current food_id
     food_similarity = similarity_df.loc[food_id].copy()
@@ -66,6 +69,7 @@ def find_top_k_similar_foods(food_id, similarity_df, food_df):
     similar_foods_with_same_coarse_category = helper_find_category(food_df, food_id, top_similar, 'Coarse-grained categories')
 
     return top_k_similar, similar_foods_with_same_fine_category, similar_foods_with_same_coarse_category
+
 
 def get_top_k_similar_foods(food_df_path, similarity_pq_path):
     similarity_df = pd.read_parquet(similarity_pq_path)
@@ -100,6 +104,7 @@ def get_top_k_similar_foods(food_df_path, similarity_pq_path):
     food_df[[f'Top_{TOP_K}_Similar_Foods', f'Top_{TOP_K}_Same_Fine_Category', f'Top_{TOP_K}_Same_Coarse_Category']] = results
 
     food_df.to_csv(food_df_path, index=False)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import argparse
 
-from utils import *
+import os
+from utils import RESOURCE_DIR
 
 @dataclass
 class CuisineAlias:
