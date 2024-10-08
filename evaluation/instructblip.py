@@ -3,17 +3,21 @@ from PIL import Image
 from io import BytesIO
 import torch
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import normalize
 from transformers import InstructBlipProcessor, InstructBlipForConditionalGeneration, InstructBlipConfig, AutoModelForVision2Seq
 import argparse
 from accelerate import infer_auto_device_map, init_empty_weights
+import ast
 
 def image_parser(image_file):
     return image_file.split(',')
 
 def load_image(image_file):
     if image_file.startswith("http") or image_file.startswith("https"):
-        response = requests.get(image_file)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+                }
+        response = requests.get(image_file, headers=headers)
         image = Image.open(BytesIO(response.content)).convert("RGB")
     else:
         image = Image.open(image_file).convert("RGB")
@@ -132,7 +136,7 @@ def eval_model(model, processor, image_files, query, options, device='cuda'):
     return all_preds
 
 def main():
-    use_hardcoded = True
+    use_hardcoded = False
 
     if use_hardcoded:
         model_path = "Salesforce/instructblip-vicuna-13b"
@@ -140,39 +144,66 @@ def main():
         query = "What is this dish name?"
         options = ['nasi goreng', 'nasi uduk', 'laksa', 'nasi kuning']
         fp16 = True
+        multi_gpu = False
+        model, processor, device = load_model_processor(model_path, fp_16=fp16, multi_gpu=multi_gpu)
+    
+        shared_prompt = 'This is an image of a '
+        options = [shared_prompt + option for option in options]
+    
+        eval_model(
+            model=model,
+            processor=processor,
+            image_files=image_files,
+            query=query,
+            options=options,
+            device=device,
+        )
     else:
         parser = argparse.ArgumentParser(description='InstructBLIP Evaluation')
         parser.add_argument('--model_path', type=str, default="Salesforce/instructblip-vicuna-13b",
                             help='Path to the pretrained model')
-        parser.add_argument('--image_files', type=str, required=True,
-                            help='Comma-separated list of image URLs or file paths')
-        parser.add_argument('--query', type=str, required=True,
-                            help='Query to be evaluated with the images')
-        parser.add_argument('--options', type=str, required=True,
-                            help='Comma-separated list of options for evaluation')
+        parser.add_argument('--file_path', type=str, default='small_eval_task1.csv', help='Path to the vqa dataset')
+        parser.add_argument('--start_index', type=int, default=0, help='Start index of vqa dataset prediction')
         parser.add_argument('--fp16', action='store_true', default=True, help='Use float16 precision if supported')
+        parser.add_argument('--multi_gpu', action='store_true', default=False, help='Use multiple gpu if needed')
         args = parser.parse_args()
 
         model_path = args.model_path
-        image_files = args.image_files
-        query = args.query
-        options = args.options.split(',')
+        file_path = args.file_path
+        start_index = args.start_index
         fp16 = args.fp16
+        multi_gpu = args.multi_gpu
 
-    # model, processor, device = load_model_processor(model_path, fp_16=fp16, multi_gpu=True)
-    model, processor, device = load_model_processor(model_path, fp_16=fp16)
+        vqa_df = pd.read_csv(file_path)
+        prompts = [col for col in vqa_df.columns if col.startswith('prompt_')]
+        prompts.remove('prompt_id')
+        for prompt in prompts:
+            if 'prediction_'+ prompt.split('prompt_')[1] not in vqa_df.columns:
+                vqa_df['prediction_'+ prompt.split('prompt_')[1]] = None
 
-    shared_prompt = 'This is an image of a '
-    options = [shared_prompt + option for option in options]
+        model, processor, device = load_model_processor(model_path, fp_16=fp16, multi_gpu=multi_gpu)
 
-    eval_model(
-        model=model,
-        processor=processor,
-        image_files=image_files,
-        query=query,
-        options=options,
-        device=device,
-    )
+        for i in range (start_index, vqa_df.shape[0]):
+            image_files = vqa_df['image_url'][i]
+            for prompt in prompts:
+                query = vqa_df[prompt][i]
+                answer = 'answer_' + prompt.split('prompt_')[1]
+                options = ast.literal_eval(vqa_df[answer][i])  
+                # shared_prompt = 'This is an image of a '
+                # options = [shared_prompt + option for option in options]
+            
+                predictions = eval_model(
+                            model=model,
+                            processor=processor,
+                            image_files=image_files,
+                            query=query,
+                            options=options,
+                            device=device,
+                        )
+                prediction = np.argmax(predictions)
+                vqa_df.loc[i, 'prediction_'+ prompt.split('prompt_')[1]] = prediction
+    
+            vqa_df.to_csv('prediction_' + file_path, index=False)
 
 if __name__ == '__main__':
     main()
