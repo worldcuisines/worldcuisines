@@ -120,7 +120,7 @@ def log_error(error_message, log_file="error.txt"):
         f.write(error_message + "\n")  # Write the error message with a newline
 
 
-def main(task, type, model_path, fp16, multi_gpu, limit=np.inf):
+def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf):
     kb_data = get_kb_from_hf()
     url_jpg_map = get_url_jpg_map(kb_data)
     vqa_data = get_vqa_from_hf(task)
@@ -136,7 +136,7 @@ def main(task, type, model_path, fp16, multi_gpu, limit=np.inf):
                 image_file = url_jpg_map[row["image_url"]]
                 query = (
                     row["multi_choice_prompt"]
-                    if type == "mc"
+                    if qa_type == "mc"
                     else row["open_ended_prompt"]
                 )
                 response = eval_instance(model, processor, image_file, query)
@@ -144,8 +144,8 @@ def main(task, type, model_path, fp16, multi_gpu, limit=np.inf):
                 res["qa_id"] = row["qa_id"]
                 res["prediction"] = response
                 res["lang"] = row["lang"]
-                res["answer" if type == "oe" else "multi_choice_answer"] = row[
-                    "answer" if type == "oe" else "multi_choice_answer"
+                res["answer" if qa_type == "oe" else "multi_choice_answer"] = row[
+                    "answer" if qa_type == "oe" else "multi_choice_answer"
                 ]
 
                 list_res.append(res)
@@ -153,11 +153,11 @@ def main(task, type, model_path, fp16, multi_gpu, limit=np.inf):
                 error_message = f"Error at row {row['qa_id']}: {str(e)}"
                 log_error(
                     error_message,
-                    f"./result/error/task{task}_{type}_{MODEL_HANDLE[model_path]}_error.txt",
+                    f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}_error.txt",
                 )
                 export_result(
                     list_res,
-                    f"./result/error/task{task}_{type}_{MODEL_HANDLE[model_path]}_pred_cp{error_counter}.jsonl",
+                    f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}_pred_cp{error_counter}.jsonl",
                 )
                 error_counter += 1
 
@@ -170,11 +170,11 @@ def main(task, type, model_path, fp16, multi_gpu, limit=np.inf):
         error_message = f"KeyboardInterrupt at row {row['qa_id']}"
         log_error(
             error_message,
-            f"./result/error/task{task}_{type}_{MODEL_HANDLE[model_path]}_error.txt",
+            f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}_error.txt",
         )
         export_result(
             list_res,
-            f"./result/error/task{task}_{type}_{MODEL_HANDLE[model_path]}_pred_interrupt.jsonl",
+            f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}_pred_interrupt.jsonl",
         )
 
     return list_res
