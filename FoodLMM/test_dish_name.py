@@ -25,11 +25,11 @@ from utils.utils import (DEFAULT_IM_END_TOKEN, DEFAULT_IM_START_TOKEN,
                          DEFAULT_IMAGE_TOKEN, IMAGE_TOKEN_INDEX)
 
 
-#把图片地址字符串用逗号分成图片地址列表
+
 def image_parser(image_file):
     return image_file.split(',')
 
-#把网络图片下载并打开，本地图片直接打开
+
 def load_image(image_file):
     if image_file.startswith("http") or image_file.startswith("https"):
         response = requests.get(image_file)
@@ -38,7 +38,7 @@ def load_image(image_file):
         image = Image.open(image_file).convert("RGB")
     return image
 
-#打开多张图片
+
 def load_images(image_files):
     out = []
     for image_file in image_files:
