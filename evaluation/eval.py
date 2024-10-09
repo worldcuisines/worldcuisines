@@ -6,6 +6,7 @@ import torch
 import numpy as np
 import json
 import argparse
+from io import BytesIO
 
 from tqdm import tqdm
 
@@ -20,7 +21,8 @@ def get_url_jpg_map(data):
 
     for _,row in data.iterrows():
         for i in range(1,9):
-            url_jpg_map[row[f"image{i}_url"]] = row[f"image{i}"]
+            if row[f"image{i}_url"] is not None:
+                url_jpg_map[row[f"image{i}_url"]] = Image.open(BytesIO(row[f"image{i}"]["bytes"]))
 
     return url_jpg_map
 
