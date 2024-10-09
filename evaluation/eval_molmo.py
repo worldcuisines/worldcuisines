@@ -76,6 +76,18 @@ if __name__ == "__main__":
         default=False,
         help="Use multiple gpu if needed",
     )
+    parser.add_argument(
+        "-s", "--st_idx",
+        default=None,
+        type=int,
+        help="Slicing index to evaluate, start index (inclusive).",
+    )
+    parser.add_argument(
+        "-e", "--ed_idx",
+        default=None,
+        type=int,
+        help="Slicing index to evaluate, end index (exclusive).",
+    )
     args = parser.parse_args()
 
     if not os.path.exists("./result"):
@@ -83,7 +95,8 @@ if __name__ == "__main__":
     if not os.path.exists("./result/error"):
         os.makedirs("./result/error")
 
-    result = eval.main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu,)
+    result = eval.main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu,
+                       st_idx=args.st_idx, ed_idx=args.ed_idx,)
     eval.export_result(
         result,
         f"./result/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_pred.{os.getenv('SLURM_JOB_ID', 'nan')}.jsonl",
