@@ -1,0 +1,60 @@
+training:
+  env:
+    local_rank: 0
+    precision: bf16
+    lora_r: 8
+    lora_alpha: 16
+    lora_dropout: 5e-2
+    lora_target_modules: 'q_proj,v_proj'
+    conv_type: conv_food_assistant
+  procedure:
+    epochs: 10
+    steps_per_epoch: 500
+    grad_accumulation_steps: 10
+    start_epoch: 0
+    batch_size: 1
+    val_batch_size: 1
+    workers: 4
+    auto_resume: True
+    resume: ''
+    resume_freq: 1
+    print_freq: 2
+    save_freq: 2
+    val_freq: 2
+  hypers:
+    lr: 3e-4
+    ce_loss_weight: 1.
+    dice_loss_weight: .5
+    bce_loss_weight: 2.
+    nutrition_loss_weight: .1
+    explanatory: .1
+    beta1: .9
+    beta2: .95
+path:
+#  init_ckpt_dir: /remote-home/share/yinyuehao/ckpt/FoodSeg/LISA-7B-v1-explanatory
+  init_ckpt_dir: /remote-home/yinyuehao/code/FoodLISA/runs/ckpt_model/FoodLISA_Stage1_10000_OOD/10000
+  sam_ckpt_dir: /remote-home/share/yinyuehao/ckpt/FoodSeg/SAM/sam_vit_h_4b8939.pth
+  dataset_dir: /remote-home/share/yinyuehao/data/Food
+  bert_dir: /home/qhy/bert-large-uncased
+  ckpt_dir: ./runs
+  vis_save_path: ./output_img
+  exp_name: FoodLMM_S2_db
+model:
+  structure:
+    vision_tower: openai/clip-vit-large-patch14
+    out_dim: 256
+  input:
+    image_size: 1024
+  output:
+    model_max_length: 1024
+    max_seg_num: 20
+    num_OOD_per_sample: 3
+data:
+#  dataset: sem_seg||vqa
+  dataset: reason_seg||mr_conversation
+#  sample_rates: [2, 3, 2, 1]
+  sample_rates: [1, 1]
+  sem_seg: foodseg103||uecfoodpix
+  vqa: recipe1m||nutrition5k||VieroFood172
+  reason_seg: 'S2_f103'
+  mr_conversation: 'S2_n5k'
