@@ -68,19 +68,18 @@ def load_model_processor(model_path, fp16=True, multi_gpu=False):
     processor = LlavaNextProcessor.from_pretrained(model_path)
     if not multi_gpu:
         model = LlavaNextForConditionalGeneration.from_pretrained(
-            model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True
+            model_path, 
+            torch_dtype=(torch.float16 if fp16 else torch.float32),
+            low_cpu_mem_usage=True
         )
         model.to("cuda:0")
     else:
         model = LlavaNextForConditionalGeneration.from_pretrained(
             model_path,
-            torch_dtype=torch.float16,
+            torch_dtype=(torch.float16 if fp16 else torch.float32),
             low_cpu_mem_usage=True,
             device_map="auto",
         )
-
-    if fp16:
-        model.half()
 
     return model, processor
 
@@ -103,7 +102,10 @@ def eval_instance(
     output = model.generate(
         **input,
         max_new_tokens=50,
-        top_k=1,
+        top_k=0.1,
+        temperature=0.1,
+        seed=42,
+        do_sample=True
     )
 
     out_with_template = processor.decode(output[0], skip_special_tokens=True)
@@ -223,10 +225,10 @@ if __name__ == "__main__":
         help="Path to the pretrained model",
     )
     parser.add_argument(
-        "--fp16",
+        "--fp32",
         action="store_true",
-        default=True,
-        help="Use float16 precision if supported",
+        default=False,
+        help="Use float32 precision rather than float16.",
     )
     parser.add_argument(
         "--multi_gpu",
@@ -241,7 +243,7 @@ if __name__ == "__main__":
     if not os.path.exists("./result/error"):
         os.makedirs("./result/error")
 
-    result = main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu)
+    result = main(args.task, args.type, args.model_path, not(args.fp32), args.multi_gpu)
     export_result(
         result,
         f"./result/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_pred.jsonl",
