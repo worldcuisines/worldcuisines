@@ -108,10 +108,7 @@ def eval_instance(
     output = model.generate(
         **input,
         max_new_tokens=50,
-        top_k=1,
-        top_p=0.1,
-        temperature=0.1,
-        do_sample=True
+        do_sample=False
     )
 
     out_with_template = processor.decode(output[0], skip_special_tokens=True)
