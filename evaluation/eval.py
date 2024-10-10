@@ -2,6 +2,7 @@ from transformers import (
     LlavaNextProcessor,
     LlavaNextForConditionalGeneration,
 )  # TODO: Other model requires different import
+from transformers import set_seed
 from PIL import Image
 from datasets import load_dataset
 import torch
@@ -17,6 +18,11 @@ MODEL_HANDLE = {
     "llava-hf/llava-v1.6-vicuna-13b-hf": "llava-1.6-13b",
 }
 
+def set_all_seed(seed=42):
+    set_seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 def get_kb_from_hf():
     ds = load_dataset("world-cuisines/kb")
@@ -102,9 +108,9 @@ def eval_instance(
     output = model.generate(
         **input,
         max_new_tokens=50,
-        top_k=0.1,
+        top_k=1,
+        top_p=0.1,
         temperature=0.1,
-        seed=42,
         do_sample=True
     )
 
@@ -123,6 +129,8 @@ def log_error(error_message, log_file="error.txt"):
 
 
 def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf):
+    set_all_seed()
+    
     kb_data = get_kb_from_hf()
     url_jpg_map = get_url_jpg_map(kb_data)
     vqa_data = get_vqa_from_hf(task)
