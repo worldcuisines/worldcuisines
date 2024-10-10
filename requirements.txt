@@ -5,3 +5,5 @@ datasets
 evaluate
 pillow
 seaborn
+transformers
+sentencepiece
