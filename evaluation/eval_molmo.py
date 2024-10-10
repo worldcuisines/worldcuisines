@@ -48,7 +48,7 @@ if __name__ == "__main__":
     eval.eval_instance = eval_instance
     eval.MODEL_HANDLE = MODEL_HANDLE
 
-    parser = argparse.ArgumentParser(description="LLaVA Evaluation")
+    parser = argparse.ArgumentParser(description="Molmo Evaluation (based on LLaVa Evaluation Script)")
     parser.add_argument(
         "--task", type=int, default=1, help="Task number to evaluate (1 or 2)"
     )
