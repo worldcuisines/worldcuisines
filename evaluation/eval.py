@@ -2,6 +2,7 @@ from transformers import (
     LlavaNextProcessor,
     LlavaNextForConditionalGeneration,
 )  # TODO: Other model requires different import
+from transformers import set_seed
 from PIL import Image
 from datasets import load_dataset
 import torch
@@ -17,6 +18,11 @@ MODEL_HANDLE = {
     "llava-hf/llava-v1.6-vicuna-13b-hf": "llava-1.6-13b",
 }
 
+def set_all_seed(seed=42):
+    set_seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 def get_kb_from_hf():
     ds = load_dataset("world-cuisines/kb")
@@ -68,19 +74,18 @@ def load_model_processor(model_path, fp16=True, multi_gpu=False):
     processor = LlavaNextProcessor.from_pretrained(model_path)
     if not multi_gpu:
         model = LlavaNextForConditionalGeneration.from_pretrained(
-            model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True
+            model_path, 
+            torch_dtype=(torch.float16 if fp16 else torch.float32),
+            low_cpu_mem_usage=True
         )
         model.to("cuda:0")
     else:
         model = LlavaNextForConditionalGeneration.from_pretrained(
             model_path,
-            torch_dtype=torch.float16,
+            torch_dtype=(torch.float16 if fp16 else torch.float32),
             low_cpu_mem_usage=True,
             device_map="auto",
         )
-
-    if fp16:
-        model.half()
 
     return model, processor
 
@@ -103,7 +108,7 @@ def eval_instance(
     output = model.generate(
         **input,
         max_new_tokens=50,
-        top_k=1,
+        do_sample=False
     )
 
     out_with_template = processor.decode(output[0], skip_special_tokens=True)
@@ -121,6 +126,8 @@ def log_error(error_message, log_file="error.txt"):
 
 
 def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf, st_idx=None, ed_idx=None):
+    set_all_seed()
+
     kb_data = get_kb_from_hf()
     url_jpg_map = get_url_jpg_map(kb_data)
     vqa_data = get_vqa_from_hf(task)
@@ -229,10 +236,10 @@ if __name__ == "__main__":
         help="Path to the pretrained model",
     )
     parser.add_argument(
-        "--fp16",
+        "--fp32",
         action="store_true",
-        default=True,
-        help="Use float16 precision if supported",
+        default=False,
+        help="Use float32 precision rather than float16.",
     )
     parser.add_argument(
         "--multi_gpu",
@@ -247,7 +254,7 @@ if __name__ == "__main__":
     if not os.path.exists("./result/error"):
         os.makedirs("./result/error")
 
-    result = main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu)
+    result = main(args.task, args.type, args.model_path, not(args.fp32), args.multi_gpu)
     export_result(
         result,
         f"./result/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_pred.jsonl",
