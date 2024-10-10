@@ -125,13 +125,19 @@ def log_error(error_message, log_file="error.txt"):
         f.write(error_message + "\n")  # Write the error message with a newline
 
 
-def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf):
+def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf, st_idx=None, ed_idx=None):
     set_all_seed()
-    
+
     kb_data = get_kb_from_hf()
     url_jpg_map = get_url_jpg_map(kb_data)
     vqa_data = get_vqa_from_hf(task)
     model, processor = load_model_processor(model_path, fp16, multi_gpu)
+
+    if st_idx is not None or ed_idx is not None:
+        _ = len(vqa_data)
+        vqa_data = vqa_data.iloc[st_idx:ed_idx]
+        print(f"  > Total Data to Process: {len(vqa_data):8,}.  (of {_:,})")
+        print(f"          Start-End Index:  {st_idx}  to  {ed_idx}")
 
     list_res = []
     count = 0
