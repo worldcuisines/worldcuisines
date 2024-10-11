@@ -80,7 +80,7 @@ def calculate_log_prob(model, tokenizer, prefix, targets):
 def parse_args(args):
     parser = argparse.ArgumentParser(description="FoodLISA chat")
     parser.add_argument("--cfg_file", required=False, help="path to configuration file.")
-    parser.add_argument("--version", default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
+    parser.add_argument("--model_path", default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
     parser.add_argument("--vis_save_path", default="./vis_output", type=str)
     parser.add_argument(
         "--precision",
@@ -211,7 +211,7 @@ def load_model(args):
 
     # Create model
     tokenizer = AutoTokenizer.from_pretrained(
-        args.version,
+        args.model_path,
         cache_dir=None,
         model_max_length=args.model_max_length,
         padding_side="right",
@@ -288,7 +288,7 @@ def load_model(args):
         )
 
     model = LISAForCausalLM.from_pretrained(
-        args.version, low_cpu_mem_usage=True, **kwargs
+        args.model_path, low_cpu_mem_usage=True, **kwargs
     )
 
     model.config.eos_token_id = tokenizer.eos_token_id
@@ -341,7 +341,7 @@ def eval_model(prompt, image_files, clip_image_processor, transform, tokenizer, 
 def main():
     parser = argparse.ArgumentParser(description="FoodLISA chat")
     parser.add_argument("--cfg_file", required=False, help="path to configuration file.")
-    parser.add_argument("--version", default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
+    parser.add_argument("--model_path", default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
     parser.add_argument("--vis_save_path", default="./vis_output", type=str)
     parser.add_argument(
         "--precision",
@@ -382,7 +382,7 @@ def main():
 # Print only the answer with a single answer id (1,2,3,4,5).
 #         """
     else:
-        parser.add_argument('--version', default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
+        parser.add_argument('--model_path', default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
         parser.add_argument('--image_files', type=str, required=True,
                             help='Comma-separated list of image URLs or file paths')
         parser.add_argument('--prompt', type=str, required=True,
