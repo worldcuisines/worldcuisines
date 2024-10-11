@@ -3,7 +3,7 @@ import torch
 import argparse
 from transformers import AutoProcessor, AutoModelForCausalLM, GenerationConfig
 
-import eval
+import llava
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 MODEL_HANDLE = {
@@ -44,9 +44,9 @@ def eval_instance(model, processor, image_file, query):
 
 if __name__ == "__main__":
     # operator overloading
-    eval.load_model_processor = load_model_processor
-    eval.eval_instance = eval_instance
-    eval.MODEL_HANDLE = MODEL_HANDLE
+    llava.load_model_processor = load_model_processor
+    llava.eval_instance = eval_instance
+    llava.MODEL_HANDLE = MODEL_HANDLE
 
     parser = argparse.ArgumentParser(description="Molmo Evaluation (based on LLaVa Evaluation Script)")
     parser.add_argument(
@@ -95,9 +95,9 @@ if __name__ == "__main__":
     if not os.path.exists("./result/error"):
         os.makedirs("./result/error")
 
-    result = eval.main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu,
+    result = llava.main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu,
                        st_idx=args.st_idx, ed_idx=args.ed_idx,)
-    eval.export_result(
+    llava.export_result(
         result,
         f"./result/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_pred.{os.getenv('SLURM_JOB_ID', 'nan')}.jsonl",
     )
