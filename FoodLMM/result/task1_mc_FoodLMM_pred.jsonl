@@ -1,0 +1,4 @@
+{"qa_id": "400", "prediction": "The ingredients are Fried meat, Cilantro, Blueberry, Chili, Olive oil", "lang": "ar", "multi_choice_answer": 5}
+{"qa_id": "401", "prediction": "The item is a Biscuit (about [MASS1] grams): \tCalories: [CAL1] kcal \tFat: [FAT1] g ", "lang": "ar", "multi_choice_answer": 1}
+{"qa_id": "402", "prediction": "Sure, the food item is a dish with: \tLime (about [MASS1] grams): \t\tCalories: [CAL1] kcal", "lang": "ar", "multi_choice_answer": 1}
+{"qa_id": "403", "prediction": "Sure, the respective food item is: Cake, followed by: Fried Rice, then: Cake, and lastly: Fried Rice again", "lang": "ar", "multi_choice_answer": 3}

@@ -28,7 +28,7 @@ from utils.utils import (DEFAULT_IM_END_TOKEN, DEFAULT_IM_START_TOKEN,
 MODEL_HANDLE = {
     "llava-hf/llava-v1.6-vicuna-7b-hf": "llava-1.6-7b",
     "llava-hf/llava-v1.6-vicuna-13b-hf": "llava-1.6-13b",
-    "/home/guiyinxuan/FoodLMM-ckpt": "FoodLMM",
+    "Yueha0/FoodLMM-Chat": "FoodLMM",
 }
 
 def get_kb_from_hf():
@@ -413,7 +413,7 @@ def export_result(result: list, path: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="FoodLISA chat")
     parser.add_argument("--cfg_file", required=False, help="path to configuration file.")
-    parser.add_argument("--model_path", default="/home/guiyinxuan/FoodLMM-ckpt", required=False)
+    parser.add_argument("--model_path", default="Yueha0/FoodLMM-Chat", required=False)
     parser.add_argument("--vis_save_path", default="./vis_output", type=str)
     parser.add_argument(
         "--precision",
@@ -423,7 +423,7 @@ if __name__ == "__main__":
         help="precision for inference",
     )
     parser.add_argument("--image_size", default=1024, type=int, help="image size")
-    parser.add_argument("--model_max_length", default=3000, type=int)
+    parser.add_argument("--model_max_length", default=500, type=int)
     parser.add_argument("--lora_r", default=8, type=int)
     parser.add_argument(
         "--vision-tower", default="openai/clip-vit-large-patch14", type=str
