@@ -1,7 +1,4 @@
-# Enter models' handle to be scored
-# TODO: list down model handles here.
-
-model_1:
-model_2:
-model_3:
-model_4:
+model_1: llava-1.6-7b
+model_2: llava-1.6-13b
+model_3: molmo-7b-d
+model_4: molmo-7b-o

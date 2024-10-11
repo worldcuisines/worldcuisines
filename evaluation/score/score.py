@@ -5,6 +5,7 @@ import re
 from tqdm import tqdm
 from collections import OrderedDict
 import argparse
+import yaml
 
 def load_jsonl(file_path):
   data = []
@@ -87,6 +88,7 @@ def score_mc(model):
                     print(f"Error in row {index}: {row['prediction']} - {e}\n")
 
     accuracies = {}
+    # calculate the accuracy for each task and each language
     try:
         for prompt_type in tqdm(df_res['prompt_type'].unique(), total = len(df_res['prompt_type'].unique())):
             accuracies[prompt_type] = {}  # Initialize a sub-dictionary for each prompt_type
@@ -110,6 +112,7 @@ def score_mc(model):
     }
 
     for category in accuracies:
+        # rename language key
         if isinstance(accuracies[category], dict):
             if 'su_loma' in accuracies[category]:
                 accuracies[category]['su'] = accuracies[category].pop('su_loma')
@@ -117,20 +120,20 @@ def score_mc(model):
                 accuracies[category]['si'] = accuracies[category].pop('si_formal_spoken')
             accuracies[category] = OrderedDict(sorted(accuracies[category].items()))
 
+        # map dictionary using new key
         accuracies_mapped = {mapkey.get(k, k): v for k, v in accuracies.items()}
         accuracies_mapped['model'] = model
 
+    #save into json file
     with open(f'./json/accuracy_mc_{model}.json', 'w') as f:
         json.dump(accuracies_mapped, f, indent=4)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert Result to Accuracy")
-    parser.add_argument(
-        "--model_name", type=str, help="Model name (same with name in result folder)"
-    )
-    args = parser.parse_args()
+    with open('score.yml', 'r') as file:
+     models = yaml.safe_load(file)
 
-    score_mc(args.model_name)
+    for _, model in models.items():
+        score_mc(model)
 
 
 
