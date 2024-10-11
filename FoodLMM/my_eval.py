@@ -423,7 +423,7 @@ if __name__ == "__main__":
         help="precision for inference",
     )
     parser.add_argument("--image_size", default=1024, type=int, help="image size")
-    parser.add_argument("--model_max_length", default=500, type=int)
+    parser.add_argument("--model_max_length", default=200, type=int)
     parser.add_argument("--lora_r", default=8, type=int)
     parser.add_argument(
         "--vision-tower", default="openai/clip-vit-large-patch14", type=str

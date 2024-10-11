@@ -45,7 +45,7 @@ model:
   input:
     image_size: 1024
   output:
-    model_max_length: 3256
+    model_max_length: 200
     max_seg_num: 20
     num_OOD_per_sample: 3
 data:
