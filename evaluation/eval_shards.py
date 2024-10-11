@@ -19,6 +19,7 @@ MODEL_HANDLE = {
     "llava-hf/llava-v1.6-vicuna-7b-hf": "llava-1.6-7b",
     "llava-hf/llava-v1.6-vicuna-13b-hf": "llava-1.6-13b",
     "meta-llama/Llama-3.2-11B-Vision-Instruct": "llama-3.2-11b",
+    "meta-llama/Llama-3.2-90B-Vision-Instruct": "llama-3.2-90b",
 }
 
 
