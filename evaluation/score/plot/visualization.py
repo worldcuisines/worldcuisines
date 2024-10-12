@@ -3,7 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import yaml
 from collections import OrderedDict, defaultdict
-from lang_dict import lang_family_dict, lang_resource_dict, categories
+
+with open('./plot_mapper.yml', 'r') as file:
+    plot_mapper = yaml.safe_load(file)
+
+LANG_FAMILY_DICT = plot_mapper['lang_family_dict']
+LANG_RESOURCE_DICT = plot_mapper['lang_resource_dict']
+CATEGORIES = plot_mapper['categories']
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
@@ -29,13 +35,13 @@ def generate_accuracy_dict(task, vis_type):
                 model_result = load_json(f'../json/accuracy_mc_{model}.json')
             else:
                 model_result = load_json(f'../json/accuracy_oe_{model}.json')
-            for category in categories:
+            for category in CATEGORIES:
                 category_totals = defaultdict(list)
                 for lang_code, score in model_result[category].items():
                     if vis_type == 'res':
-                        conversion_dict = lang_resource_dict
+                        conversion_dict = LANG_RESOURCE_DICT
                     else:
-                        conversion_dict = lang_family_dict
+                        conversion_dict = LANG_FAMILY_DICT
                     if lang_code in conversion_dict:
                         category_totals[conversion_dict[lang_code]].append(score)
                 category_averages = {category: sum(scores) / len(scores) for category, scores in category_totals.items()}
@@ -123,7 +129,7 @@ def save_radar(task, vis_type):
     labels_list = []
 
     # Plot radar charts for each category
-    for i, category in enumerate(categories):
+    for i, category in enumerate(CATEGORIES):
         row, col = divmod(i, 2)
         models = list(model_dict.keys())
         category_data = {model: model_dict[model][category] for model in models}

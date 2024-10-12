@@ -247,7 +247,6 @@ if __name__ == "__main__":
                 score_mc(model, df_res, vqa_task1, vqa_task2)
             except Exception as e:
                 print(f"> [{model}] - [MC]\n> An error occurred: {e}")
-                mcerr.append(model)
                 continue
         
         if mode == "all" or mode == "oe":
@@ -257,5 +256,4 @@ if __name__ == "__main__":
                 score_bert_oe(model, df_res)
             except Exception as e:
                 print(f"> [{model}] - [OE]\n> An error occurred: {e}")
-                oeerr.append(model)
                 continue
