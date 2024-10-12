@@ -65,3 +65,14 @@ lang_resource_dict:
   yo: 2 - Hopeful
   yue: 1 - Scraping by
   zh_cn: 5 - Winners
+model_name_dict:
+  llava-1.6-7b: Llava1.6 Vicuna 7B
+  llava-1.6-13b: Llava1.6 Vicuna 13B
+  molmo-7b-d: Molmo 7B D
+  molmo-7b-o: Molmo 7B D
+  llama-3.2-11b: Llama3.2 Instruct 11B
+  pixtral-12b: Pixtral
+  qwen-vl-2b: Qwen2 VL Instruct
+  gemini-1.5-flash: Gemini1.5 Flash
+  gpt-4o-2024-08-06: GPT4o
+  gpt-4o-mini-2024-07-18: GPT4o-mini
