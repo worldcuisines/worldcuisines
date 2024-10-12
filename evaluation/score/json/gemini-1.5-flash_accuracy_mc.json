@@ -67,11 +67,11 @@
     },
     "1c. Dish Name (Adversarial)": {
         "ar": 67.6,
-        "avg_score": 69.11,
+        "avg_score": 69.13,
         "az": 70.6,
         "bn": 70.6,
         "cs": 69.2,
-        "en": 68.2,
+        "en": 68.6,
         "es": 66.0,
         "fr": 69.2,
         "hi": 71.6,
@@ -83,7 +83,7 @@
         "jv_krama": 67.2,
         "jv_ngoko": 67.4,
         "ko_casual": 66.2,
-        "ko_formal": 66.4,
+        "ko_formal": 66.6,
         "mr": 71.2,
         "nan": 70.2,
         "nan_spoken": 70.4,
@@ -131,7 +131,7 @@
         "yue": 40.2,
         "zh_cn": 73.8
     },
-    "avg_score_all": 74.66,
+    "avg_score_all": 74.67,
     "num_samples": 60000,
     "model": "gemini-1.5-flash"
 }

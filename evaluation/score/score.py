@@ -89,7 +89,7 @@ def score_mc(model, df_res, vqa_task1, vqa_task2):
             prediction = row['prediction']
             df_res.loc[index, 'prediction'] = int(prediction)
         except ValueError:
-            # Regex pattern to match "<int>. " at the start of the string
+            # Regex pattern to match "<int>." at the beginning 
             pattern = r"^(\d+)\."
             try:
                 matched = re.match(pattern, str(prediction))
@@ -97,31 +97,42 @@ def score_mc(model, df_res, vqa_task1, vqa_task2):
                     extracted_int = int(matched.group(1))
                     df_res.loc[index, 'prediction'] = extracted_int
                 else:
-                    raise ValueError(f"No integer found in prediction: {prediction}")
+                    raise ValueError(f"No integer found in the beginning of prediction: {prediction}")
             except ValueError:
-                # check if answer is one of the multiple choices, even though there are no number
+                # Regex pattern to match any number
                 try:
-                    if row['prompt_type'] == '2':
-                        vqa_row = vqa_task2[(vqa_task2['qa_id'] == row['qa_id']) & (vqa_task2['lang'] == row['lang'])]
-                        prompt = vqa_row['multi_choice_prompt'].iloc[0]
-                        prediction = prediction.replace('.', '')
-                        matched = prompt.find(prediction)
-                        if matched != -1:
-                            df_res.loc[index, 'prediction'] = prompt[matched - 3]
-                        else:
-                            raise ValueError(f"No answer found in prediction: {prediction}")
+                    # Regex pattern to match any "<int>"
+                    pattern = r"(\d+)"
+                    matched = re.search(pattern, str(prediction))
+                    if matched:
+                        extracted_int = int(matched.group(0))
+                        df_res.loc[index, 'prediction'] = extracted_int
                     else:
-                        vqa_row = vqa_task1[(vqa_task1['qa_id'] == row['qa_id']) & (vqa_task1['lang'] == row['lang']) & (vqa_task1['prompt_type'] == row['prompt_type'])]
-                        prompt = vqa_row['multi_choice_prompt'].iloc[0]
-                        prediction = prediction.replace('.', '')
-                        matched = prompt.find(prediction)
-                        if matched != -1:
-                            df_res.loc[index, 'prediction'] = prompt[matched - 3]
+                        raise ValueError(f"No integer found in prediction: {prediction}")
+                except ValueError:
+                    # check if answer is one of the multiple choices, even though there are no number
+                    try:
+                        if row['prompt_type'] == '2':
+                            vqa_row = vqa_task2[(vqa_task2['qa_id'] == row['qa_id']) & (vqa_task2['lang'] == row['lang'])]
+                            prompt = vqa_row['multi_choice_prompt'].iloc[0]
+                            prediction = prediction.replace('.', '')
+                            matched = prompt.find(prediction)
+                            if matched != -1:
+                                df_res.loc[index, 'prediction'] = prompt[matched - 3]
+                            else:
+                                raise ValueError(f"No answer found in prediction: {prediction}")
                         else:
-                            raise ValueError(f"No answer found in prediction: {prediction}")
-                except Exception as e:
-                    error_msg = f"Row {index}: {row['prediction']} - {e}\n"
-                    errs.append(error_msg)
+                            vqa_row = vqa_task1[(vqa_task1['qa_id'] == row['qa_id']) & (vqa_task1['lang'] == row['lang']) & (vqa_task1['prompt_type'] == row['prompt_type'])]
+                            prompt = vqa_row['multi_choice_prompt'].iloc[0]
+                            prediction = prediction.replace('.', '')
+                            matched = prompt.find(prediction)
+                            if matched != -1:
+                                df_res.loc[index, 'prediction'] = prompt[matched - 3]
+                            else:
+                                raise ValueError(f"No answer found in prediction: {prediction}")
+                    except Exception as e:
+                        error_msg = f"Row {index}: {row['prediction']} - {e}\n"
+                        errs.append(error_msg)
 
     accuracies = {}
     n = 0

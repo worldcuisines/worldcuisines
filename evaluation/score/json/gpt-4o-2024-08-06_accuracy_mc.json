@@ -67,7 +67,7 @@
     },
     "1c. Dish Name (Adversarial)": {
         "ar": 80.8,
-        "avg_score": 82.28,
+        "avg_score": 82.29,
         "az": 82.0,
         "bn": 81.0,
         "cs": 83.4,
@@ -82,7 +82,7 @@
         "ja_formal": 80.6,
         "jv_krama": 79.8,
         "jv_ngoko": 79.6,
-        "ko_casual": 80.2,
+        "ko_casual": 80.4,
         "ko_formal": 81.6,
         "mr": 81.0,
         "nan": 84.6,
@@ -131,7 +131,7 @@
         "yue": 37.6,
         "zh_cn": 68.0
     },
-    "avg_score_all": 82.2,
+    "avg_score_all": 82.21,
     "num_samples": 60000,
     "model": "gpt-4o-2024-08-06"
 }
