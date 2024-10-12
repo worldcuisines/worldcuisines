@@ -14968,3 +14968,33 @@
 {"qa_id": "2397", "prediction": "中国", "lang": "zh_cn", "answer": "加纳"}
 {"qa_id": "2398", "prediction": "俄罗斯", "lang": "zh_cn", "answer": "俄罗斯"}
 {"qa_id": "2399", "prediction": "墨西哥", "lang": "zh_cn", "answer": "喀麦隆"}
+{"qa_id": "1913", "prediction": "إيطاليا", "lang": "ar", "answer": "إيطاليا"}
+{"qa_id": "1913", "prediction": "İtaliya.", "lang": "az", "answer": "İtaliya"}
+{"qa_id": "1913", "prediction": "ইতালি", "lang": "bn", "answer": "ইতালি"}
+{"qa_id": "1913", "prediction": "Itálie", "lang": "cs", "answer": "Itálie"}
+{"qa_id": "1913", "prediction": "Italy", "lang": "en", "answer": "Italy"}
+{"qa_id": "1913", "prediction": "Italia.", "lang": "es", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "Italie", "lang": "fr", "answer": "Italie"}
+{"qa_id": "1913", "prediction": "इटली", "lang": "hi", "answer": "इटली"}
+{"qa_id": "1913", "prediction": "Italia", "lang": "id_casual", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "Italia", "lang": "id_formal", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "Italia.", "lang": "it", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "イタリア", "lang": "ja_casual", "answer": "イタリア"}
+{"qa_id": "1913", "prediction": "イタリア", "lang": "ja_formal", "answer": "イタリア"}
+{"qa_id": "1913", "prediction": "Pundi asal kuliner menika saged dipuntemokaken ing Italia.", "lang": "jv_krama", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "Kuliner iki asal saka Italia.", "lang": "jv_ngoko", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "이탈리아.", "lang": "ko_casual", "answer": "이탈리아"}
+{"qa_id": "1913", "prediction": "이탈리아.", "lang": "ko_formal", "answer": "이탈리아"}
+{"qa_id": "1913", "prediction": "इटली.", "lang": "mr", "answer": "इटली"}
+{"qa_id": "1913", "prediction": "这类菜的原来是意大利面。", "lang": "nan", "answer": "意大利"}
+{"qa_id": "1913", "prediction": "Candeletti.", "lang": "nan_spoken", "answer": "意大利"}
+{"qa_id": "1913", "prediction": "Итальянская кухня.", "lang": "ru_casual", "answer": "Италия"}
+{"qa_id": "1913", "prediction": "Итальянское.", "lang": "ru_formal", "answer": "Италия"}
+{"qa_id": "1913", "prediction": "Custu piàttu tipicu est sa pasta \"cannelloni\".", "lang": "sc", "answer": "Itàlia"}
+{"qa_id": "1913", "prediction": "ඉතාලිය.", "lang": "si_formal_spoken", "answer": "ඉතාලියේ"}
+{"qa_id": "1913", "prediction": "Asal kulinér ieu pasakan nyaéta Italia.", "lang": "su_loma", "answer": "Italia"}
+{"qa_id": "1913", "prediction": "อิตาลี", "lang": "th", "answer": "อิตาลี"}
+{"qa_id": "1913", "prediction": "Italiang lutong", "lang": "tl", "answer": "Italya"}
+{"qa_id": "1913", "prediction": "Orísun irúfẹ́ oúnjẹ yìí ní Italy.", "lang": "yo", "answer": "Italy"}
+{"qa_id": "1913", "prediction": "意大利。", "lang": "yue", "answer": "牙買加"}
+{"qa_id": "1913", "prediction": "意大利", "lang": "zh_cn", "answer": "意大利"}

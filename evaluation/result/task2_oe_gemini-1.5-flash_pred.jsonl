@@ -14968,3 +14968,33 @@
 {"qa_id": "2397", "prediction": "尼日利亚", "lang": "zh_cn", "answer": "加纳"}
 {"qa_id": "2398", "prediction": "俄罗斯", "lang": "zh_cn", "answer": "俄罗斯"}
 {"qa_id": "2399", "prediction": "中国", "lang": "zh_cn", "answer": "喀麦隆"}
+{"qa_id": "1901", "prediction": "ميانمار", "lang": "ar", "answer": "ميانمار"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "az", "answer": "Myanma"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "bn", "answer": "মায়ানমার"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "cs", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "en", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "es", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Myanmar (Burma)", "lang": "fr", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "hi", "answer": "म्यांमार"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "id_casual", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "id_formal", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Myanmar (Burma)", "lang": "it", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "ミャンマー", "lang": "ja_casual", "answer": "ミャンマー"}
+{"qa_id": "1901", "prediction": "ミャンマー", "lang": "ja_formal", "answer": "ミャンマー"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "jv_krama", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Ngepopulerke panganan iki ing Indonesia.", "lang": "jv_ngoko", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "미얀마", "lang": "ko_casual", "answer": "미얀마"}
+{"qa_id": "1901", "prediction": "미얀마", "lang": "ko_formal", "answer": "미얀마"}
+{"qa_id": "1901", "prediction": "म्यानमार", "lang": "mr", "answer": "म्यानमार"}
+{"qa_id": "1901", "prediction": "缅甸", "lang": "nan", "answer": "缅甸"}
+{"qa_id": "1901", "prediction": "This is a photo of a Burmese dish called Ohn No Khao Swe.", "lang": "nan_spoken", "answer": "缅甸"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "ru_casual", "answer": "Мьянма"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "ru_formal", "answer": "Мьянма"}
+{"qa_id": "1901", "prediction": "Mohinga", "lang": "sc", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "මියන්මාරය", "lang": "si_formal_spoken", "answer": "මියන්මාරයේ"}
+{"qa_id": "1901", "prediction": "Aboh", "lang": "su_loma", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "พม่า", "lang": "th", "answer": "พม่า"}
+{"qa_id": "1901", "prediction": "Myanmar", "lang": "tl", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "Ohun elo yii jẹ́ ohun elo Burmese.", "lang": "yo", "answer": "Myanmar"}
+{"qa_id": "1901", "prediction": "緬甸", "lang": "yue", "answer": "邁索爾"}
+{"qa_id": "1901", "prediction": "缅甸", "lang": "zh_cn", "answer": "缅甸"}
