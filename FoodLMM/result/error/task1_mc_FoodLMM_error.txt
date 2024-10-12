@@ -1,1 +1,2 @@
-KeyboardInterrupt at row 404
+Error at row 1471: CUDA out of memory. Tried to allocate 512.00 MiB. GPU 0 has a total capacity of 29.61 GiB of which 476.38 MiB is free. Process 5367 has 2.88 GiB memory in use. Including non-PyTorch memory, this process has 16.06 GiB memory in use. Process 470594 has 10.18 GiB memory in use. Of the allocated memory 15.51 GiB is allocated by PyTorch, and 188.97 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+KeyboardInterrupt at row 1601
