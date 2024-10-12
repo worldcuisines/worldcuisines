@@ -26,7 +26,7 @@ def generate_accuracy_dict(task, vis_type):
     with open('../score.yml', 'r') as file:
         models = yaml.safe_load(file)
     models = models['models']
-    
+
     model_dict = {}
     if vis_type == 'lang':
         if task == 'mc':
@@ -62,12 +62,29 @@ def generate_accuracy_dict(task, vis_type):
                 category_averages = OrderedDict(sorted(category_averages.items()))
                 model_result[category] = category_averages
             model_dict[model] = model_result
-    
+
     return model_dict
 
 
 def plot_radar(models, data, title, ax, task, vis_type):
-    languages = [key for key in data[models[0]].keys() if key != 'avg_score']
+    if vis_type == 'lang':
+        _languages = [
+            # 'bn', 'cs', 'en', 'es', 'fr', 'hi', 'it', 'mr', 'ru_casual', 'ru_formal', 'sc', 'si',  # Indo-European
+            'en', 'es', 'fr',
+            'cs', 'it', 'ru_casual', 'ru_formal',
+            'bn', 'hi', 'mr', 'sc', 'si',  # Indo-European
+            'id_casual', 'id_formal', 'tl', 'jv_krama', 'jv_ngoko', 'su',  # Austronesian
+            'nan', 'nan_spoken', 'yue', 'zh_cn',  # Sino-Tibetan
+            'ja_casual', 'ja_formal',  # Japonic
+            'ko_casual', 'ko_formal',  # Koreanic
+            'th',  # Kra-Dai
+            'yo',  # Niger-Congo
+            'ar',  # Afro-Asiatic
+            'az',  # Turkic
+        ]
+        languages = [key for key in _languages if key in data[models[0]].keys()]
+    else:
+        languages = [key for key in data[models[0]].keys() if key != 'avg_score']
     N = len(languages)
 
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
@@ -97,8 +114,8 @@ def plot_radar(models, data, title, ax, task, vis_type):
         ax.set_yticklabels(['10', '20', '30', '40', '50', '60', '70', '80', '90'])
     elif task == 'oe':
         ax.set_ylim(0, 50)
-        ax.set_yticks([5, 10, 15, 20, 25, 30, 35, 40, 45]) 
-        ax.set_yticklabels(['5', '10', '15', '20', '25', '30', '35', '40', '45']) 
+        ax.set_yticks([5, 10, 15, 20, 25, 30, 35, 40, 45])
+        ax.set_yticklabels(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
     else:
         ax.set_ylim(0, 100)
         ax.set_yticks([10, 20, 30, 40, 50, 60, 70, 80, 90])
@@ -115,25 +132,25 @@ def plot_radar(models, data, title, ax, task, vis_type):
         # Manually set each xticklabel with incremented rotation
         for i, (tick, label) in enumerate(zip(ticks, languages)):
             rotation = base_rotation + i * rotation_increment
-            if rotation < -90:
+            if rotation <= -90:
                 rotation += 180
-            ax.text(tick, ax.get_rmax()*(1.06 + (len(label)-2)*0.02), label, rotation=rotation, size=10, ha='center', va='center')
+            ax.text(tick, ax.get_rmax() * (1.06 + (len(label) - 2) * 0.02), label, rotation=rotation, size=10, ha='center', va='center')
     elif vis_type == 'res':
         for i, (tick, label) in enumerate(zip(ticks, languages)):
-            if i == 0 or i==3:
-                ax.text(tick, ax.get_rmax()*1.05, label, size=10, ha='center', va='center')
-            if i == 1 or i==2:
-                ax.text(tick, ax.get_rmax()*1.05, label, size=10, ha='left', va='center')
-            if i == 4 or i==5:
-                ax.text(tick, ax.get_rmax()*1.05, label, size=10, ha='right', va='center')
+            if i == 0 or i == 3:
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='center', va='center')
+            if i == 1 or i == 2:
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='left', va='center')
+            if i == 4 or i == 5:
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='right', va='center')
     else:
         for i, (tick, label) in enumerate(zip(ticks, languages)):
             if i == 0:
-                ax.text(tick, ax.get_rmax()*1.05, label, size=10, ha='center', va='center')
-            if i in [1,2,3,4]:
-                ax.text(tick, ax.get_rmax()*1.05, label, size=10, ha='left', va='center')
-            if i in [5,6,7,8]:
-                ax.text(tick, ax.get_rmax()*1.05, label, size=10, ha='right', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='center', va='center')
+            if i in [1, 2, 3, 4]:
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='left', va='center')
+            if i in [5, 6, 7, 8]:
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='right', va='center')
 
     return handles, labels
 
@@ -169,7 +186,7 @@ def save_radar(task, vis_type):
     else:
         fig.suptitle('Open Ended BERT Score', fontsize=16)
 
-    fig.legend(handles_list, list(map(MODEL_NAME_DICT.get, labels_list)), loc='lower center', ncol=len(models)//2)
+    fig.legend(handles_list, list(map(MODEL_NAME_DICT.get, labels_list)), loc='lower center', ncol=len(models) // 2)
     plt.tight_layout(rect=[0, 0, 1, 0.98])
     plt.subplots_adjust(bottom=0.07)
     plt.savefig(f'radar_{task}_{vis_type}')
