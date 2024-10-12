@@ -16,8 +16,6 @@ import os
 import math
 
 MODEL_HANDLE = {
-    "llava-hf/llava-v1.6-vicuna-7b-hf": "llava-1.6-7b",
-    "llava-hf/llava-v1.6-vicuna-13b-hf": "llava-1.6-13b",
     "meta-llama/Llama-3.2-11B-Vision-Instruct": "llama-3.2-11b",
     "meta-llama/Llama-3.2-90B-Vision-Instruct": "llama-3.2-90b",
 }
@@ -65,21 +63,6 @@ def get_vqa_from_hf(task, n = 1, k = 0):
     vqa_index = vqa_data.index
     chunk_index = get_chunk(vqa_index, n, k)
     return vqa_data.iloc[chunk_index]
-
-
-def get_prompt(vqa_data, url_jpg_map, type, qa_id):
-    row = vqa_data[vqa_data["qa_id"] == qa_id]
-    image = url_jpg_map[row["image_url"][0]]
-    image_file = Image.open(image)
-
-    if type == "mc":
-        prompt = row["multi_choice_prompt"][0]
-    elif type == "oe":
-        prompt = row["open_ended_prompt"][0]
-    else:
-        raise ValueError("Invalid type of question. Please choose from 'mc' or 'oe'")
-
-    return image_file, prompt
 
 
 def load_model_processor(model_path, fp16=True, multi_gpu=False):
