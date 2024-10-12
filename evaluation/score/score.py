@@ -1,11 +1,25 @@
 import pandas as pd
 import json
-from datasets import load_dataset
 import re
+import yaml
+
+from datasets import load_dataset
 from tqdm import tqdm
 from collections import OrderedDict
-import argparse
-import yaml
+from evaluate import load
+
+# src files
+TASK1_MC_PATH = "../result/task1_mc_{model}_pred.jsonl"
+TASK1_OE_PATH = "../result/task1_oe_{model}_pred.jsonl"
+TASK2_MC_PATH = "../result/task2_mc_{model}_pred.jsonl"
+TASK2_OE_PATH = "../result/task2_oe_{model}_pred.jsonl"
+
+# target files
+ACCURACY_MC_PATH = "./json/{model}_accuracy_mc.json"
+ACCURACY_OE_PATH = "./json/{model}_accuracy_oe.json"
+BERTSCORE_OE_PATH = "./json/{model}_bertscore_oe.json"
+ERROR_MC_PATH = "./error/{model}_error_mc.txt"
+
 
 def load_jsonl(file_path):
   data = []
@@ -14,23 +28,20 @@ def load_jsonl(file_path):
       data.append(json.loads(line))
   return data
 
-def load_result(model):
-    task1_mc = pd.DataFrame(load_jsonl(f'../result/task1_mc_{model}_pred.jsonl'))
-    # task1_oe = pd.DataFrame(load_jsonl(f'task1_oe_{model}_pred.jsonl'))
-    task2_mc = pd.DataFrame(load_jsonl(f'../result/task2_mc_{model}_pred.jsonl'))
-    # task2_oe = pd.DataFrame(load_jsonl(f'task2_oe_{model}_pred.jsonl'))
+def load_result(model, mode = "all"):
+    res = []
+    if mode == "all" or mode == "mc":
+        task1_mc = pd.DataFrame(load_jsonl(TASK1_MC_PATH.format(model=model)))
+        task2_mc = pd.DataFrame(load_jsonl(TASK2_MC_PATH.format(model=model)))
+        res.extend([task1_mc, task2_mc])
+    
+    if mode == "all" or mode == "oe":
+        task1_oe = pd.DataFrame(load_jsonl(TASK1_OE_PATH.format(model=model)))
+        task2_oe = pd.DataFrame(load_jsonl(TASK2_OE_PATH.format(model=model)))
+        res.extend([task1_oe, task2_oe])
 
-    res = [
-        task1_mc,
-        # task1_oe,
-        task2_mc,
-        # task2_oe
-    ]
-
-    ds1 = load_dataset("world-cuisines/vqa", "task1", split = "test_large")
-    ds2 = load_dataset("world-cuisines/vqa", "task2", split = "test_large")
-    vqa_task1 = ds1.to_pandas()
-    vqa_task2 = ds2.to_pandas()
+    vqa_task1 = load_dataset("world-cuisines/vqa", "task1", split = "test_large").to_pandas()
+    vqa_task2 = load_dataset("world-cuisines/vqa", "task2", split = "test_large").to_pandas()
 
     qa_id_prompt_type_dict = vqa_task1.set_index('qa_id')['prompt_type'].to_dict()
     qa_id_prompt_type_dict.update(vqa_task2.set_index('qa_id')['prompt_type'].to_dict())
@@ -47,18 +58,39 @@ def load_result(model):
 
     return df_res, vqa_task1, vqa_task2
 
-def score_mc(model):
-    df_res, vqa_task1, vqa_task2 = load_result(model)
+def final_cat_mapping(scores):
+    for category in scores:
+        if isinstance(scores[category], dict):
+            if 'su_loma' in scores[category]:
+                scores[category]['su'] = scores[category].pop('su_loma')
+            if 'si_formal_spoken' in scores[category]:
+                scores[category]['si'] = scores[category].pop('si_formal_spoken')
 
-   # Regex pattern to match "<int>. " at the start of the string
-    pattern = r"^(\d+)\.\s"
+            scores[category] = OrderedDict(sorted(scores[category].items()))
+
+        mapping = {
+            "1": "1a. Dish Name (No-Context)",
+            "2": "2. Regional Cuisine",
+            "3": "1b. Dish Name (Contextualized)",
+            "4": "1c. Dish Name (Adversarial)"
+        }
+        
+        mapped_scores = {mapping.get(k, k): v for k, v in scores.items()}
+
+    return mapped_scores
+
+
+def score_mc(model, df_res, vqa_task1, vqa_task2):
+    errs = []
+
     for index, row in tqdm(df_res[df_res['type'] == 'mc'].iterrows(), total=len(df_res[df_res['type'] == 'mc'])):
         # Check if answer is number only
         try:
             prediction = row['prediction']
             df_res.loc[index, 'prediction'] = int(prediction)
         except ValueError:
-            # Check if answer starts with number
+            # Regex pattern to match "<int>. " at the start of the string
+            pattern = r"^(\d+)\."
             try:
                 matched = re.match(pattern, str(prediction))
                 if matched:
@@ -88,57 +120,137 @@ def score_mc(model):
                         else:
                             raise ValueError(f"No answer found in prediction: {prediction}")
                 except Exception as e:
-                    error_msg = f"Error in row {index}: {row['prediction']} - {e}\n"
-                    # print(error_msg)
+                    error_msg = f"Row {index}: {row['prediction']} - {e}\n"
+                    errs.append(error_msg)
 
     accuracies = {}
-    # calculate the accuracy for each task and each language
+    n = 0
+    for prompt_type in tqdm(df_res['prompt_type'].unique(), total = len(df_res['prompt_type'].unique())):
+        accuracies[prompt_type] = {} 
+        for lang in tqdm(df_res['lang'].unique(), total = len(df_res['lang'].unique())):
+            df_subset = df_res[(df_res['type'] == 'mc') & (df_res['prompt_type'] == prompt_type) & (df_res['lang'] == lang)]
+            n += len(df_subset)
+
+            if not df_subset.empty:
+                df_correct_mc = df_subset[df_subset['answer'] == df_subset['prediction']]
+                accuracy = (df_correct_mc.shape[0] / df_subset.shape[0])*100
+                accuracies[prompt_type][lang] = round(accuracy, 2)
+
+        # Calculate average accuracy for each prompt_type
+        accuracies[prompt_type]['avg_score'] = round(sum(accuracies[prompt_type].values()) / len(accuracies[prompt_type]), 2)
+    
+    # Calculate average accuracy for all prompt_types
+    accuracies['avg_score_all'] = round(sum([v['avg_score'] for v in accuracies.values()]) / len(accuracies), 2)
+    
+    accuracies['num_samples'] = n
+    accuracies['model'] = model
+    accuracies_mapped = final_cat_mapping(accuracies)
+
+    with open(ACCURACY_MC_PATH.format(model=model), 'w') as f:
+        json.dump(accuracies_mapped, f, indent=4)
+    
+    #save errors into txt file ./error/error_mc_{model}.txt to ease debugging
+    with open(ERROR_MC_PATH.format(model=model), 'w') as f:
+        for err in errs:
+            f.write(err)
+            f.write('\n')
+
+def score_oe(model, df_res):
+    oe_scores = {}
+    
+    prompt_types = df_res['prompt_type'].unique()
+    langs = df_res['lang'].unique()
+    n = 0
+
+    # Calculate str.contain accuracy
+    for prompt_type in tqdm(prompt_types, total=len(prompt_types), desc="Calculating String.find Accuracy"):
+        oe_scores[prompt_type] = {}
+        
+        for lang in tqdm(langs, total=len(langs), desc="Processing languages for String Accuracy"):
+            df_subset = df_res[(df_res['type'] == 'oe') & (df_res['prompt_type'] == prompt_type) & (df_res['lang'] == lang)].copy()  # Create a copy to avoid SettingWithCopyWarning
+            n += len(df_subset)
+
+            if not df_subset.empty:
+                df_subset.loc[:, 'correct'] = df_subset.apply(lambda x: x['answer'].lower() in x['prediction'].lower(), axis=1)
+                accuracy = df_subset['correct'].sum() / len(df_subset) * 100
+                oe_scores[prompt_type][lang] = round(accuracy, 2)
+        
+        # Calculate average accuracy for each prompt_type
+        oe_scores[prompt_type]['avg_score'] = round(sum(oe_scores[prompt_type].values()) / len(oe_scores[prompt_type]), 2)
+    
+    # Calculate average accuracy for all prompt_types
+    oe_scores['avg_score_all'] = round(sum([v['avg_score'] for v in oe_scores.values()]) / len(oe_scores), 2)
+    
+    oe_scores['num_samples'] = n
+    oe_scores['model'] = model
+    oe_scores_mapped = final_cat_mapping(oe_scores)
+    
+    with open(ACCURACY_OE_PATH.format(model=model), 'w') as f:
+        json.dump(oe_scores_mapped, f, indent=4)
+
+
+def score_bert_oe(model, df_res):
+    bertscore = load('bertscore')
+    BERTScoreModel = "xlm-roberta-large"
+    bert_scores = {}
+    n = 0
+
+    prompt_types = df_res['prompt_type'].unique()
+    langs = df_res['lang'].unique()
+
     try:
-        for prompt_type in tqdm(df_res['prompt_type'].unique(), total = len(df_res['prompt_type'].unique())):
-            accuracies[prompt_type] = {}  # Initialize a sub-dictionary for each prompt_type
-            for lang in tqdm(df_res['lang'].unique(), total = len(df_res['lang'].unique())):
-                df_subset = df_res[(df_res['type'] == 'mc') & (df_res['prompt_type'] == prompt_type) & (df_res['lang'] == lang)]
+        for prompt_type in tqdm(prompt_types, total=len(prompt_types), desc="Calculating BERT scores"):
+            bert_scores[prompt_type] = {}  # Initialize a sub-dictionary for each prompt_type
+            
+            for lang in tqdm(langs, total=len(langs), desc="Processing languages for BERT"):
+                df_subset = df_res[(df_res['type'] == 'oe') & (df_res['prompt_type'] == prompt_type) & (df_res['lang'] == lang)]
+                n += len(df_subset)
 
                 if not df_subset.empty:
-                    df_correct_mc = df_subset[df_subset['answer'] == df_subset['prediction']]
-                    accuracy = df_correct_mc.shape[0] / df_subset.shape[0]
-                    accuracies[prompt_type][lang] = round(accuracy, 3)
+                    references = df_subset['answer'].astype(str).tolist()
+                    predictions = df_subset['prediction'].astype(str).tolist()
 
-                accuracies[prompt_type]['avg_score'] = round(sum(accuracies[prompt_type].values()) / len(accuracies[prompt_type]), 3)
+                    bert_result = bertscore.compute(predictions=predictions, references=references, model_type=BERTScoreModel)
+                    bert_scores[prompt_type][lang] = round(sum(bert_result['f1']) / len(bert_result['f1']) * 100, 2)
+
+            # Calculate average BERT score for each prompt_type
+            bert_scores[prompt_type]['avg_score'] = round(sum(bert_scores[prompt_type].values()) / len(bert_scores[prompt_type]), 2)
+
+        # Calculate average BERT score for all prompt_types
+        bert_scores['avg_score_all'] = round(sum([v['avg_score'] for v in bert_scores.values()]) / len(bert_scores), 2)
+        
+        bert_scores['num_samples'] = n
+        bert_scores['model'] = model
+        bert_scores_mapped = final_cat_mapping(bert_scores)
+        
+        with open(BERTSCORE_OE_PATH.format(model=model), 'w') as f:
+            json.dump(bert_scores_mapped, f, indent=4)        
+
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred during BERT calculations: {e}")
 
-    mapkey = {
-        "1": "1a. Dish Name (No-Context)",
-        "2": "2. Regional Cuisine",
-        "3": "1b. Dish Name (Contextualized)",
-        "4": "1c. Dish Name (Adversarial)"
-    }
-
-    for category in accuracies:
-        # rename language key
-        if isinstance(accuracies[category], dict):
-            if 'su_loma' in accuracies[category]:
-                accuracies[category]['su'] = accuracies[category].pop('su_loma')
-            if 'si_formal_spoken' in accuracies[category]:
-                accuracies[category]['si'] = accuracies[category].pop('si_formal_spoken')
-            accuracies[category] = OrderedDict(sorted(accuracies[category].items()))
-
-        # map dictionary using new key
-        accuracies_mapped = {mapkey.get(k, k): v for k, v in accuracies.items()}
-        accuracies_mapped['model'] = model
-
-    #save into json file
-    with open(f'./json/accuracy_mc_{model}.json', 'w') as f:
-        json.dump(accuracies_mapped, f, indent=4)
 
 if __name__ == "__main__":
     with open('score.yml', 'r') as file:
-     models = yaml.safe_load(file)
+        cfg = yaml.safe_load(file)
+    
+    mode = cfg['mode']
+    for model in tqdm(cfg['models'], total = len(cfg["models"])):
+        df_res, vqa_task1, vqa_task2 = load_result(model)
 
-    for _, model in models.items():
-        score_mc(model)
-
-
-
-
+        if mode == "all" or mode == "mc":
+            print(f"> Running [{model}] - [MC]...")
+            try:
+                score_mc(model, df_res, vqa_task1, vqa_task2)
+            except Exception as e:
+                print(f"> [{model}] - [MC]\n> An error occurred: {e}")
+                continue
+        
+        if mode == "all" or mode == "oe":
+            print(f"> Running [{model}] - [OE]...")
+            try:
+                score_oe(model, df_res)
+                score_bert_oe(model, df_res)
+            except Exception as e:
+                print(f"> [{model}] - [OE]\n> An error occurred: {e}")
+                continue
