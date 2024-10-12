@@ -1,0 +1,18 @@
+Row 7768: No puedo determinar el nombre del plato basado en la imagen. - No answer found in prediction: No puedo determinar el nombre del plato basado en la imagen
+
+Row 8147: No puedo identificar el plato basándome en la imagen. - No answer found in prediction: No puedo identificar el plato basándome en la imagen
+
+Row 9461: Je ne sais pas. - No answer found in prediction: Je ne sais pas
+
+Row 9645: Je ne sais pas. - No answer found in prediction: Je ne sais pas
+
+Row 9826: Je ne sais pas. - No answer found in prediction: Je ne sais pas
+
+Row 16407: Non so. - No answer found in prediction: Non so
+
+Row 37819: I'm sorry, I can't identify the dish based on the image. - No answer found in prediction: I'm sorry, I can't identify the dish based on the image
+
+Row 47675: No puedo determinar el origen culinario de este plato basándome solo en la imagen. - No answer found in prediction: No puedo determinar el origen culinario de este plato basándome solo en la imagen
+
+Row 50156: Mi dispiace, non posso aiutarti con questo. - No answer found in prediction: Mi dispiace, non posso aiutarti con questo
+

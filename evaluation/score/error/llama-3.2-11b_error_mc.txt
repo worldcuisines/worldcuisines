@@ -1,0 +1,68 @@
+Row 173: The dish is called Bisi Bele Bath. - No answer found in prediction: The dish is called Bisi Bele Bath
+
+Row 439: To determine the name of the dish, we need to analyze the options provided. 
+
+Isidudu is a traditional dish from Uganda, but it is not typically served in a restaurant setting. 
+Boogatsa is a type of South African bread - No answer found in prediction: To determine the name of the dish, we need to analyze the options provided 
+
+Isidudu is a traditional dish from Uganda, but it is not typically served in a restaurant setting 
+Boogatsa is a type of South African bread
+
+Row 992: To determine the name of the dish, we need to analyze the options provided:
+
+*   Chhurpi: A type of dried cheese from the Himalayas.
+*   Queijo de Azeitão: A type of cheese from Portugal.
+*   - No answer found in prediction: To determine the name of the dish, we need to analyze the options provided:
+
+*   Chhurpi: A type of dried cheese from the Himalayas
+*   Queijo de Azeitão: A type of cheese from Portugal
+*  
+
+Row 5349: The official name of this food is Matzah brei. - No answer found in prediction: The official name of this food is Matzah brei
+
+Row 5715: The traditional Iranian dish we are referring to is called Hwajeon. - No answer found in prediction: The traditional Iranian dish we are referring to is called Hwajeon
+
+Row 5870: The traditional Polish dish we are looking for is Sajji. - No answer found in prediction: The traditional Polish dish we are looking for is Sajji
+
+Row 5912: The dish in the image is a traditional Middle Eastern dish called "Stuffed ham". - No answer found in prediction: The dish in the image is a traditional Middle Eastern dish called "Stuffed ham"
+
+Row 6180: The common name for this dish in India is Kuzhambu. - No answer found in prediction: The common name for this dish in India is Kuzhambu
+
+Row 6261: The common name for this dish in Mexico is Escamol. - No answer found in prediction: The common name for this dish in Mexico is Escamol
+
+Row 6368: The common name for this dish in France is Pain de campagne. - No answer found in prediction: The common name for this dish in France is Pain de campagne
+
+Row 6544: The common name for this dish in Indonesia is Serabi. - No answer found in prediction: The common name for this dish in Indonesia is Serabi
+
+Row 6655: The popular name for this Russian dish is Shchi. - No answer found in prediction: The popular name for this Russian dish is Shchi
+
+Row 6676: The common name for this dish in the United States is Sprouted bread. - No answer found in prediction: The common name for this dish in the United States is Sprouted bread
+
+Row 6836: The dish in the image is identified as a "Dhebra" in India. - No answer found in prediction: The dish in the image is identified as a "Dhebra" in India
+
+Row 7062: The common name for this dish in the United States is Tamale pie. - No answer found in prediction: The common name for this dish in the United States is Tamale pie
+
+Row 7102: The common name for this dish in Afghanistan is Saj bread. - No answer found in prediction: The common name for this dish in Afghanistan is Saj bread
+
+Row 7152: The popular name for this French dish is Canelé. - No answer found in prediction: The popular name for this French dish is Canelé
+
+Row 7263: The dish is identified as a Christmas ham. - No answer found in prediction: The dish is identified as a Christmas ham
+
+Row 7276: The common name for this dish in Afghanistan is Bolani. - No answer found in prediction: The common name for this dish in Afghanistan is Bolani
+
+Row 7293: The common name for this dish in India is Puran poli. - No answer found in prediction: The common name for this dish in India is Puran poli
+
+Row 7334: The popular name for this Brazilian dish is Mocotó. - No answer found in prediction: The popular name for this Brazilian dish is Mocotó
+
+Row 7496: The common name for this dish in India is Patrode. - No answer found in prediction: The common name for this dish in India is Patrode
+
+Row 7529: The image depicts a traditional Chinese dessert called "Kahk", which is a type of sweet pastry that is typically served during the Chinese New Year celebrations. The pastry is made from a mixture of flour, sugar, and oil, and is deep-f - No answer found in prediction: The image depicts a traditional Chinese dessert called "Kahk", which is a type of sweet pastry that is typically served during the Chinese New Year celebrations The pastry is made from a mixture of flour, sugar, and oil, and is deep-f
+
+Row 7682: The traditional Polish dish is called Szczecin pasztecik. - No answer found in prediction: The traditional Polish dish is called Szczecin pasztecik
+
+Row 8134: The dish in the image is called Yassa. - No answer found in prediction: The dish in the image is called Yassa
+
+Row 8336: The image shows a stack of flatbreads on a metal plate. The flatbreads are yellowish in color with green specks, and they appear to be made from a mixture of flour, water, and spices. They are likely to be - No answer found in prediction: The image shows a stack of flatbreads on a metal plate The flatbreads are yellowish in color with green specks, and they appear to be made from a mixture of flour, water, and spices They are likely to be
+
+Row 8763: The image shows a dish that is commonly known as "Stuffed ham" in the United States. - No answer found in prediction: The image shows a dish that is commonly known as "Stuffed ham" in the United States
+
