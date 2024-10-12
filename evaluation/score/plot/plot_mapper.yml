@@ -68,12 +68,16 @@ lang_resource_dict:
 model_name_dict:
   llava-1.6-7b: Llava1.6 Vicuna 7B
   llava-1.6-13b: Llava1.6 Vicuna 13B
-  molmo-7b-d: Molmo 7B D
-  molmo-7b-o: Molmo 7B O
-  llama-3.2-11b: Llama3.2 Instruct 11B
-  llama-3.2-90b: Llama3.2 Instruct 90B
-  pixtral-12b: Pixtral
-  qwen-vl-2b: Qwen2 VL Instruct
+  molmo-7b-d: Molmo-D 7B
+  molmo-7b-o: Molmo-O 7B
+  molmoE-1b: MolmoE 1B
+  llama-3.2-11b: Llama 3.2 Instruct 11B
+  llama-3.2-90b: Llama 3.2 Instruct 90B
+  pixtral-12b: Pixtral 12B
+  phi-3.5-vision-instruct: Phi-3.5 Vision 4B
+  qwen-vl-2b: Qwen2 VL Instruct 2B
+  qwen-vl-7b: Qwen2 VL Instruct 7B
+  qwen-vl-90b: Qwen2 VL Instruct 90B
   gemini-1.5-flash: Gemini1.5 Flash
   gpt-4o-2024-08-06: GPT4o
   gpt-4o-mini-2024-07-18: GPT4o-mini

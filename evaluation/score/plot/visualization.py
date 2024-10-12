@@ -16,9 +16,11 @@ ACCURACY_MC_PATH = "../json/{model}_accuracy_mc.json"
 ACCURACY_OE_PATH = "../json/{model}_accuracy_oe.json"
 BERTSCORE_OE_PATH = "../json/{model}_bertscore_oe.json"
 
+
 def load_json(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
+
 
 def generate_accuracy_dict(task, vis_type):
     with open('../score.yml', 'r') as file:
@@ -62,6 +64,7 @@ def generate_accuracy_dict(task, vis_type):
             model_dict[model] = model_result
     
     return model_dict
+
 
 def plot_radar(models, data, title, ax, task, vis_type):
     languages = [key for key in data[models[0]].keys() if key != 'avg_score']
@@ -134,6 +137,7 @@ def plot_radar(models, data, title, ax, task, vis_type):
 
     return handles, labels
 
+
 def save_radar(task, vis_type):
     with open('../score.yml', 'r') as file:
         models = yaml.safe_load(file)
@@ -169,6 +173,7 @@ def save_radar(task, vis_type):
     plt.tight_layout(rect=[0, 0, 1, 0.98])
     plt.subplots_adjust(bottom=0.07)
     plt.savefig(f'radar_{task}_{vis_type}')
+
 
 if __name__ == "__main__":
     save_radar('mc', 'lang')
