@@ -9,7 +9,7 @@ import yaml
 
 def load_jsonl(file_path):
   data = []
-  with open(file_path, 'r') as f:
+  with open(file_path, 'r', encoding='utf-8') as f:
     for line in f:
       data.append(json.loads(line))
   return data
@@ -36,6 +36,8 @@ def load_result(model):
     qa_id_prompt_type_dict.update(vqa_task2.set_index('qa_id')['prompt_type'].to_dict())
 
     df_res = pd.concat(res, ignore_index = True)
+    df_res['qa_id'] = df_res['qa_id'].astype(str)
+    df_res['lang'] = df_res['lang'].fillna("nan")
     df_res['prompt_type'] = df_res.qa_id.map(qa_id_prompt_type_dict)
 
     df_res['type'] = 'oe'
@@ -50,7 +52,6 @@ def score_mc(model):
 
    # Regex pattern to match "<int>. " at the start of the string
     pattern = r"^(\d+)\.\s"
-
     for index, row in tqdm(df_res[df_res['type'] == 'mc'].iterrows(), total=len(df_res[df_res['type'] == 'mc'])):
         # Check if answer is number only
         try:
@@ -71,6 +72,7 @@ def score_mc(model):
                     if row['prompt_type'] == '2':
                         vqa_row = vqa_task2[(vqa_task2['qa_id'] == row['qa_id']) & (vqa_task2['lang'] == row['lang'])]
                         prompt = vqa_row['multi_choice_prompt'].iloc[0]
+                        prediction = prediction.replace('.', '')
                         matched = prompt.find(prediction)
                         if matched != -1:
                             df_res.loc[index, 'prediction'] = prompt[matched - 3]
@@ -79,13 +81,15 @@ def score_mc(model):
                     else:
                         vqa_row = vqa_task1[(vqa_task1['qa_id'] == row['qa_id']) & (vqa_task1['lang'] == row['lang']) & (vqa_task1['prompt_type'] == row['prompt_type'])]
                         prompt = vqa_row['multi_choice_prompt'].iloc[0]
+                        prediction = prediction.replace('.', '')
                         matched = prompt.find(prediction)
                         if matched != -1:
                             df_res.loc[index, 'prediction'] = prompt[matched - 3]
                         else:
                             raise ValueError(f"No answer found in prediction: {prediction}")
-                except ValueError as e:
-                    print(f"Error in row {index}: {row['prediction']} - {e}\n")
+                except Exception as e:
+                    error_msg = f"Error in row {index}: {row['prediction']} - {e}\n"
+                    # print(error_msg)
 
     accuracies = {}
     # calculate the accuracy for each task and each language

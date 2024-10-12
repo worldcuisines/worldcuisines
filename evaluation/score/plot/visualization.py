@@ -65,14 +65,14 @@ def plot_radar(models, data, title, ax, vis_type):
         handles.append(handle)
         labels.append(model)
 
-    ax.set_ylim(0, 0.7)
+    ax.set_ylim(0, 1)
     if vis_type == 'lang':
         ax.set_title(title, size=12, pad=40)
     else:
         ax.set_title(title, size=12, pad=30)
 
-    ax.set_yticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])  # Custom radial ticks
-    ax.set_yticklabels(['0.1', '0.2', '0.3', '0.4', '0.5', '0.6'])  # Custom tick labels
+    ax.set_yticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])  # Custom radial ticks
+    ax.set_yticklabels(['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9'])  # Custom tick labels
 
     ticks = angles[:-1]
     ax.set_xticks(ticks)

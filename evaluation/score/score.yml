@@ -2,3 +2,7 @@ model_1: llava-1.6-7b
 model_2: llava-1.6-13b
 model_3: molmo-7b-d
 model_4: molmo-7b-o
+model_5: llama-3.2-11b
+model_6: pixtral-12b
+model_7: gpt-4o-2024-08-06
+model_8: gpt-4o-mini-2024-07-18
