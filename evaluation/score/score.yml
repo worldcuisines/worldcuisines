@@ -5,6 +5,7 @@ models:
 - molmo-7b-d
 - molmo-7b-o
 - llama-3.2-11b
+- llama-3.2-90b
 - pixtral-12b
 - qwen-vl-2b
 - gemini-1.5-flash
