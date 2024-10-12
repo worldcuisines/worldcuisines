@@ -119,7 +119,9 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf, st_idx=None, 
                 res["qa_id"] = row["qa_id"]
                 res["prediction"] = response
                 res["lang"] = row["lang"]
-                res["answer"] = row["answer" if qa_type == "oe" else "multi_choice_answer"]
+                res["answer" if qa_type == "oe" else "multi_choice_answer"] = row[
+                    "answer" if qa_type == "oe" else "multi_choice_answer"
+                ]
 
                 list_res.append(res)
             except Exception as e:
