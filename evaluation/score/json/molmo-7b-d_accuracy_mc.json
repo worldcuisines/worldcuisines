@@ -67,7 +67,7 @@
     },
     "1c. Dish Name (Adversarial)": {
         "ar": 37.0,
-        "avg_score": 41.62,
+        "avg_score": 41.61,
         "az": 44.8,
         "bn": 42.6,
         "cs": 40.2,
@@ -131,5 +131,7 @@
         "yue": 24.2,
         "zh_cn": 33.6
     },
+    "avg_score_all": 44.23,
+    "num_samples": 60000,
     "model": "molmo-7b-d"
 }

@@ -67,7 +67,7 @@
     },
     "1c. Dish Name (Adversarial)": {
         "ar": 29.0,
-        "avg_score": 34.83,
+        "avg_score": 34.84,
         "az": 38.8,
         "bn": 36.6,
         "cs": 36.2,
@@ -131,5 +131,7 @@
         "yue": 24.6,
         "zh_cn": 35.6
     },
+    "avg_score_all": 36.28,
+    "num_samples": 60000,
     "model": "llava-1.6-7b"
 }

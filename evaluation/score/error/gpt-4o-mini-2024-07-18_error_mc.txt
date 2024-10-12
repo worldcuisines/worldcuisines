@@ -1,0 +1,16 @@
+Row 62: لا أستطيع تحديد اسم الطعام بناءً على الصورة. - No answer found in prediction: لا أستطيع تحديد اسم الطعام بناءً على الصورة
+
+Row 1331: لا أستطيع تحديد اسم الطعام في الصورة. - No answer found in prediction: لا أستطيع تحديد اسم الطعام في الصورة
+
+Row 7999: No sé. - No answer found in prediction: No sé
+
+Row 8704: No sé. - No answer found in prediction: No sé
+
+Row 38361: ไม่รู้ - No answer found in prediction: ไม่รู้
+
+Row 38779: ไม่รู้ - No answer found in prediction: ไม่รู้
+
+Row 43324: 我唔知道。 - No answer found in prediction: 我唔知道。
+
+Row 44771: 我不知道。 - No answer found in prediction: 我不知道。
+

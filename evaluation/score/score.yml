@@ -6,7 +6,7 @@ models:
 - molmo-7b-o
 - llama-3.2-11b
 - pixtral-12b
-- gpt-4o-2024-08-06
-- gpt-4o-mini-2024-07-18
 - qwen-vl-2b
 - gemini-1.5-flash
+- gpt-4o-2024-08-06
+- gpt-4o-mini-2024-07-18

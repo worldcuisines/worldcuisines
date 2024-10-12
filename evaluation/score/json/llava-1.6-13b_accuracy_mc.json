@@ -34,7 +34,7 @@
     },
     "1a. Dish Name (No-Context)": {
         "ar": 37.2,
-        "avg_score": 40.16,
+        "avg_score": 40.17,
         "az": 40.8,
         "bn": 39.0,
         "cs": 42.4,
@@ -131,5 +131,7 @@
         "yue": 32.6,
         "zh_cn": 39.6
     },
+    "avg_score_all": 41.3,
+    "num_samples": 60000,
     "model": "llava-1.6-13b"
 }

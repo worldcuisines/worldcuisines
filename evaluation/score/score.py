@@ -171,6 +171,9 @@ def score_oe(model, df_res):
             n += len(df_subset)
 
             if not df_subset.empty:
+                df_subset['answer'] = df_subset['answer'].fillna('')  # Replace NaN with empty string in 'answer'
+                df_subset['prediction'] = df_subset['prediction'].fillna('')  # Replace NaN with empty string in 'prediction'
+
                 df_subset.loc[:, 'correct'] = df_subset.apply(lambda x: x['answer'].lower() in x['prediction'].lower(), axis=1)
                 accuracy = df_subset['correct'].sum() / len(df_subset) * 100
                 oe_scores[prompt_type][lang] = round(accuracy, 2)
@@ -244,6 +247,7 @@ if __name__ == "__main__":
                 score_mc(model, df_res, vqa_task1, vqa_task2)
             except Exception as e:
                 print(f"> [{model}] - [MC]\n> An error occurred: {e}")
+                mcerr.append(model)
                 continue
         
         if mode == "all" or mode == "oe":
@@ -253,4 +257,5 @@ if __name__ == "__main__":
                 score_bert_oe(model, df_res)
             except Exception as e:
                 print(f"> [{model}] - [OE]\n> An error occurred: {e}")
+                oeerr.append(model)
                 continue

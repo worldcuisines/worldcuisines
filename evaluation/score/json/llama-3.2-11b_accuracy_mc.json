@@ -1,7 +1,7 @@
 {
     "1b. Dish Name (Contextualized)": {
         "ar": 63.2,
-        "avg_score": 63.66,
+        "avg_score": 63.67,
         "az": 59.4,
         "bn": 62.6,
         "cs": 65.0,
@@ -34,7 +34,7 @@
     },
     "1a. Dish Name (No-Context)": {
         "ar": 53.2,
-        "avg_score": 59.73,
+        "avg_score": 59.74,
         "az": 57.6,
         "bn": 57.2,
         "cs": 63.0,
@@ -67,7 +67,7 @@
     },
     "1c. Dish Name (Adversarial)": {
         "ar": 50.6,
-        "avg_score": 52.73,
+        "avg_score": 52.74,
         "az": 49.4,
         "bn": 54.4,
         "cs": 53.2,
@@ -131,5 +131,7 @@
         "yue": 34.2,
         "zh_cn": 60.4
     },
+    "avg_score_all": 58.5,
+    "num_samples": 60000,
     "model": "llama-3.2-11b"
 }

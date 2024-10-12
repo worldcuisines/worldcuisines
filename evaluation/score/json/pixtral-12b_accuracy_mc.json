@@ -1,7 +1,7 @@
 {
     "1b. Dish Name (Contextualized)": {
         "ar": 64.6,
-        "avg_score": 70.64,
+        "avg_score": 70.65,
         "az": 71.2,
         "bn": 75.6,
         "cs": 76.4,
@@ -34,7 +34,7 @@
     },
     "1a. Dish Name (No-Context)": {
         "ar": 48.4,
-        "avg_score": 56.58,
+        "avg_score": 56.59,
         "az": 57.4,
         "bn": 57.8,
         "cs": 61.0,
@@ -131,5 +131,7 @@
         "yue": 33.4,
         "zh_cn": 50.8
     },
+    "avg_score_all": 56.48,
+    "num_samples": 60000,
     "model": "pixtral-12b"
 }
