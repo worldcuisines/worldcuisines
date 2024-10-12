@@ -1,6 +1,7 @@
 import os
 import requests
 import argparse
+import time
 import json
 import jsonlines
 from tqdm import tqdm
@@ -69,7 +70,54 @@ def get_image(url, image_parent='.images'):
     print(f"Image saved: {file_path}.")
     
     return file_path
+
+
+def get_gemini_response(gemini_model, img_file, prompt, max_retries=5, wait_time=5):
+    """Get gemini response with retries."""
+    retries = 0
+    last_exception = Exception("API call failed after all retries.")
+
+    while retries <= max_retries:
+        try:
+            response = gemini_model.generate_content(
+                [img_file, "\n", prompt],
+                generation_config=genai.types.GenerationConfig(
+                    candidate_count=1,
+                    max_output_tokens=50,
+                    top_k=1,
+                ),
+                safety_settings=[
+                    {
+                        "category": "HARM_CATEGORY_HARASSMENT",
+                        "threshold": "BLOCK_NONE"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_HATE_SPEECH",
+                        "threshold": "BLOCK_NONE"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        "threshold": "BLOCK_NONE"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                        "threshold": "BLOCK_NONE"
+                    },
+                ]
+            )
+            return response.text.strip()
+        
+        except Exception as e:
+            print(f"Retrying in {wait_time:.2f} seconds...")
+            time.sleep(wait_time)
+            retries += 1
+            last_exception = e
     
+    # re-raise exception if all retries fail
+    print('prompt:', prompt)
+    print(img_file)
+    print(response)
+    raise last_exception
 
 def main(task, q_type, data_split, model_name, save_every):
     model = genai.GenerativeModel(model_name)
@@ -112,35 +160,8 @@ def main(task, q_type, data_split, model_name, save_every):
             myfile = genai.get_file(uploaded_files[downloaded_img])
 
         prompt = item['multi_choice_prompt'] if q_type == "mc" else item['open_ended_prompt']
-        
-        response = model.generate_content(
-            [myfile, "\n", prompt],
-            generation_config=genai.types.GenerationConfig(
-                candidate_count=1,
-                max_output_tokens=50,
-                top_k=1,
-            ),
-            safety_settings=[
-                {
-                    "category": "HARM_CATEGORY_HARASSMENT",
-                    "threshold": "BLOCK_NONE"
-                },
-                {
-                    "category": "HARM_CATEGORY_HATE_SPEECH",
-                    "threshold": "BLOCK_NONE"
-                },
-                {
-                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                    "threshold": "BLOCK_NONE"
-                },
-                {
-                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                    "threshold": "BLOCK_NONE"
-                },
-            ]
-        )
 
-        cleaned_res = response.text.strip()
+        cleaned_res = get_gemini_response(model, myfile, prompt)
         if q_type == "mc" and len(cleaned_res) == 2 and cleaned_res[-1] == '.':
             cleaned_res = cleaned_res[:-1]
 
@@ -148,8 +169,8 @@ def main(task, q_type, data_split, model_name, save_every):
         res["qa_id"] = item["qa_id"]
         res["prediction"] = cleaned_res
         res["lang"] = item["lang"]
-        res["answer" if type == "oe" else "multi_choice_answer"] = item[
-            "answer" if type == "oe" else "multi_choice_answer"
+        res["answer" if q_type == "oe" else "multi_choice_answer"] = item[
+            "answer" if q_type == "oe" else "multi_choice_answer"
         ]
         results.append(res)
         history[item['qa_id']] = res
@@ -162,6 +183,11 @@ def main(task, q_type, data_split, model_name, save_every):
             results = []
             skipped_results = []
     
+    # Save last values
+    save_history(history_path, results)
+    save_history(error_history_path, skipped_results)
+    save_uploaded_files(uploaded_files_file, uploaded_files)
+
 
 if __name__ == "__main__":
     # Usage example: python gemini.py --task 1 --q_type mc --split test_large --model_name gemini-1.5-flash --save_every 10
