@@ -7,3 +7,4 @@ pillow
 seaborn
 transformers
 sentencepiece
+qwen_vl_utils
