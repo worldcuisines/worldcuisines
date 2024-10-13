@@ -12,3 +12,4 @@ models:
 - llama-3.2-90b
 - pixtral-12b
 - qwen-vl-2b
+- qwen2-vl-7b-instruct

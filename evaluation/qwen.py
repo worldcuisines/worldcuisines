@@ -10,7 +10,8 @@ import argparse
 import base_model
 
 MODEL_HANDLE = {
-    "Qwen/Qwen2-VL-2B-Instruct": "qwen-vl-2b"
+    "Qwen/Qwen2-VL-2B-Instruct": "qwen-vl-2b",
+    "Qwen/Qwen2-VL-7B-Instruct": "qwen2-vl-7b-instruct",
 }
 
 
