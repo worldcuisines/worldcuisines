@@ -70,7 +70,7 @@ model_name_dict:
   llava-1.6-13b: Llava1.6 Vicuna 13B
   molmo-7b-d: Molmo-D 7B
   molmo-7b-o: Molmo-O 7B
-  molmoE-1b: MolmoE 1B
+  molmoe-1b: Molmo-E 1B
   llama-3.2-11b: Llama 3.2 Instruct 11B
   llama-3.2-90b: Llama 3.2 Instruct 90B
   pixtral-12b: Pixtral 12B

@@ -1,0 +1,34 @@
+Row 7724: None of the above. - No answer found in prediction: None of the above
+
+Row 8481: None of the above. - No answer found in prediction: None of the above
+
+Row 9224: Wala sa listahan ang sagot. Ang sagot ay cevapi. - No answer found in prediction: Wala sa listahan ang sagot Ang sagot ay cevapi
+
+Row 9408: None of the above. Ang tradisyonal na pagkain sa Sweden ay tinatawag na Kanelbulle. - No answer found in prediction: None of the above Ang tradisyonal na pagkain sa Sweden ay tinatawag na Kanelbulle
+
+Row 9638: Wala sa mga ito ang tawag sa tradisyonal na pagkain ng Estados Unidos. Ang mga ito ay mga tradisyonal na pagkain ng ibang bansa. Ang mga ito ay mga tradisyonal - No answer found in prediction: Wala sa mga ito ang tawag sa tradisyonal na pagkain ng Estados Unidos Ang mga ito ay mga tradisyonal na pagkain ng ibang bansa Ang mga ito ay mga tradisyonal
+
+Row 21224: None of the above. - No answer found in prediction: None of the above
+
+Row 21408: None of the above. - No answer found in prediction: None of the above
+
+Row 21410: None of the options match the description. The correct answer is not provided in the options. - No answer found in prediction: None of the options match the description The correct answer is not provided in the options
+
+Row 21475: None of the above. - No answer found in prediction: None of the above
+
+Row 21611: None of the above. - No answer found in prediction: None of the above
+
+Row 21840: None of the above. - No answer found in prediction: None of the above
+
+Row 21981: None of the above. - No answer found in prediction: None of the above
+
+Row 22215: None of the above. - No answer found in prediction: None of the above
+
+Row 27410: Tidak ada jawaban yang tepat. - No answer found in prediction: Tidak ada jawaban yang tepat
+
+Row 47249: None of the above. - No answer found in prediction: None of the above
+
+Row 49749: Belgium. - No answer found in prediction: Belgium
+
+Row 57749: None of the above. - No answer found in prediction: None of the above
+
