@@ -13,3 +13,4 @@ models:
 - pixtral-12b
 - qwen-vl-2b
 - qwen2-vl-7b-instruct
+- aria-25B-moe-4B
