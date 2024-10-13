@@ -102,7 +102,7 @@ if __name__ == "__main__":
     if not os.path.exists("./result/error"):
         os.makedirs("./result/error")
 
-    result = base_model.main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu, chunk_size=args.chunk_num, chunk_num=args.chunk_id-1)
+    result = base_model.main(args.task, args.type, args.model_path, args.fp16, args.multi_gpu, chunk_num=args.chunk_num, chunk_id=args.chunk_id - 1)
     base_model.export_result(
         result,
         f"./result/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_chunk{args.chunk_id}_of_{args.chunk_num}_pred.jsonl",
