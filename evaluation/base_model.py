@@ -75,9 +75,9 @@ def get_unique_filename(path: str):
     return new_path
 
 
-def export_result(result: list, path: str):
+def export_result(result: list, path: str, replace=False):
     """Export results to a file, ensuring unique file names."""
-    path = get_unique_filename(path)
+    path = path if replace else get_unique_filename(path)
     with open(path, "w") as outfile:
         for entry in result:
             json.dump(entry, outfile)
@@ -103,7 +103,6 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
     kb_data = get_kb_from_hf()
     url_jpg_map = get_url_jpg_map(kb_data)
     vqa_data = get_vqa_from_hf(task)
-    model, processor = load_model_processor(model_path, fp16, multi_gpu)
 
     if st_idx is not None or ed_idx is not None:
         _ = len(vqa_data)
@@ -116,6 +115,8 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
         print(f"  > Total Data to Process: {len(chunk_index):8,}.  (of {len(vqa_data):,})")
         print(f"    {chunk_num:>5} chunks with ID#:  {chunk_id}  (start idx: {chunk_index[0]})")
         vqa_data = vqa_data.loc[chunk_index]
+
+    model, processor = load_model_processor(model_path, fp16, multi_gpu)
 
     list_res = []
     count = 0
@@ -141,7 +142,7 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
                 list_res.append(res)
 
             except Exception as e:
-                _log_error(f"Error at row {row['qa_id']}: {str(e)}", f"cp{error_counter}")
+                _log_error(f"Error at row {row['qa_id']} ({row['lang']}): {str(e)}", f"latest")
                 error_counter += 1
 
             count += 1
