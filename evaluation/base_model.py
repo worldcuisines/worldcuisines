@@ -97,7 +97,7 @@ def log_error(error_message, log_file="error.txt"):
 
 
 def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
-         st_idx=None, ed_idx=None, chunk_size=None, chunk_num=None):
+         st_idx=None, ed_idx=None, chunk_num=1, chunk_id=0):
     set_all_seed()
 
     kb_data = get_kb_from_hf()
@@ -111,9 +111,11 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
         print(f"  > Total Data to Process: {len(vqa_data):8,}.  (of {_:,})")
         print(f"          Start-End Index:  {st_idx}  to  {ed_idx}")
 
-    if chunk_size is not None and chunk_num is not None:
-        chunk_index = split_list(vqa_data.index, chunk_size)[chunk_num]
-        vqa_data = vqa_data.iloc[chunk_index]
+    if not((chunk_num == 1) and (chunk_id == 0)):
+        chunk_index = split_list(vqa_data.index, chunk_num)[chunk_id]
+        print(f"  > Total Data to Process: {len(chunk_index):8,}.  (of {len(vqa_data):,})")
+        print(f"    {chunk_num:>5} chunks with ID#:  {chunk_id}  (start idx: {chunk_index[0]})")
+        vqa_data = vqa_data.loc[chunk_index]
 
     list_res = []
     count = 0
