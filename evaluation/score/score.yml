@@ -7,7 +7,10 @@ models:
 - llava-1.6-13b
 - molmo-7b-d
 - molmo-7b-o
+- molmoe-1b
 - llama-3.2-11b
 - llama-3.2-90b
 - pixtral-12b
 - qwen-vl-2b
+- qwen2-vl-7b-instruct
+- aria-25B-moe-4B

@@ -1,0 +1,222 @@
+Row 148:  meat pie - No answer found in prediction:  meat pie
+
+Row 1055:  waterzooi - No answer found in prediction:  waterzooi
+
+Row 1407:  أشيروكو - No answer found in prediction:  أشيروكو
+
+Row 1497:  boat noodles - No answer found in prediction:  boat noodles
+
+Row 2947:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 3180:  কুজম্বু - No answer found in prediction:  কুজম্বু
+
+Row 3690:  Puri - No answer found in prediction:  Puri
+
+Row 3893:  টকদি ভাত - No answer found in prediction:  টকদি ভাত
+
+Row 4359:  Mie kring - No answer found in prediction:  Mie kring
+
+Row 4489:  বাক্লাভা - No answer found in prediction:  বাক্লাভা
+
+Row 5176:  whole wheat bread - No answer found in prediction:  whole wheat bread
+
+Row 5917:  waterblommetjiebredie - No answer found in prediction:  waterblommetjiebredie
+
+Row 6070:  Churpi - No answer found in prediction:  Churpi
+
+Row 6832:  Nasi Kapau - No answer found in prediction:  Nasi Kapau
+
+Row 6992:  Churpi - No answer found in prediction:  Churpi
+
+Row 7168:  funing big cake - No answer found in prediction:  funing big cake
+
+Row 7402:  Yun dou Juan - No answer found in prediction:  Yun dou Juan
+
+Row 8064:  wantán - No answer found in prediction:  wantán
+
+Row 9250:  ochazuke - No answer found in prediction:  ochazuke
+
+Row 9724:  flatbrød - No answer found in prediction:  flatbrød
+
+Row 10247:  tortilla de patatas - No answer found in prediction:  tortilla de patatas
+
+Row 10600:  funing big cake - No answer found in prediction:  funing big cake
+
+Row 10680:  cream stew - No answer found in prediction:  cream stew
+
+Row 11270:  Reshthe khoshkar - No answer found in prediction:  Reshthe khoshkar
+
+Row 11379:  पुरAN पोली - No answer found in prediction:  पुरAN पोली
+
+Row 12665:  gigantes plaki - No answer found in prediction:  gigantes plaki
+
+Row 14165:  gigantes plaki - No answer found in prediction:  gigantes plaki
+
+Row 16645:  jujeh kabab - No answer found in prediction:  jujeh kabab
+
+Row 16828:  サユル・アッサム - No answer found in prediction:  サユル・アッサム
+
+Row 17199:  パパ・レジーナ - No answer found in prediction:  パパ・レジーナ
+
+Row 17424:  ジューシーン - No answer found in prediction:  ジューシーン
+
+Row 17462:  鴘鴦炒飯 - No answer found in prediction:  鴘鴦炒飯
+
+Row 17927:  cocido montañés - No answer found in prediction:  cocido montañés
+
+Row 18328:  サユル・アッサム - No answer found in prediction:  サユル・アッサム
+
+Row 18410:   Fun guo - No answer found in prediction:   Fun guo
+
+Row 18631:  ナシュンプル - No answer found in prediction:  ナシュンプル
+
+Row 18924:  ジューシーールーシー - No answer found in prediction:  ジューシーールーシー
+
+Row 18962:  鴘鴦炒飯 - No answer found in prediction:  鴘鴦炒飯
+
+Row 19088:  コカーディナ - No answer found in prediction:  コカーディナ
+
+Row 20176:  whole wheat bread - No answer found in prediction:  whole wheat bread
+
+Row 20489:  Brésiaola - No answer found in prediction:  Brésiaola
+
+Row 21665:  gigandes plaki - No answer found in prediction:  gigandes plaki
+
+Row 22821:  tortillitas de camarones - No answer found in prediction:  tortillitas de camarones
+
+Row 22831:  크렘 카라면 - No answer found in prediction:  크렘 카라면
+
+Row 22985:  Kileni - No answer found in prediction:  Kileni
+
+Row 23126:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 23579:  walnut stuffed figs - No answer found in prediction:  walnut stuffed figs
+
+Row 23650:  아로스 차우판 - No answer found in prediction:  아로스 차우판
+
+Row 23825:  팽 예쁘게 - No answer found in prediction:  팽 예쁘게
+
+Row 23871:  팟 프라이버거 - No answer found in prediction:  팟 프라이버거
+
+Row 24321:  tortillitas de camarones - No answer found in prediction:  tortillitas de camarones
+
+Row 24331:  크렘 카라면 - No answer found in prediction:  크렘 카라면
+
+Row 24485:  Kileni - No answer found in prediction:  Kileni
+
+Row 25150:  아로스 차우판 - No answer found in prediction:  아로스 차우판
+
+Row 25169:  크루아�ang - No answer found in prediction:  크루아�ang
+
+Row 25325:  팽 예쁘게 - No answer found in prediction:  팽 예쁘게
+
+Row 25582:  cream horn - No answer found in prediction:  cream horn
+
+Row 26158:  funing big cake - No answer found in prediction:  funing big cake
+
+Row 26355:  hot and sour noodles - No answer found in prediction:  hot and sour noodles
+
+Row 27561:  bakpia pathok - No answer found in prediction:  bakpia pathok
+
+Row 27967:  hotteok - No answer found in prediction:  hotteok
+
+Row 28134:  ragout fin - No answer found in prediction:  ragout fin
+
+Row 28447:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 29268:  fugazza - No answer found in prediction:  fugazza
+
+Row 29315:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 29997:  boat noodles - No answer found in prediction:  boat noodles
+
+Row 30454:  ЧALУПА - No answer found in prediction:  ЧALУПА
+
+Row 30924:  Францезинья - No answer found in prediction:  Францезинья
+
+Row 31427:  cocido montañés - No answer found in prediction:  cocido montañés
+
+Row 31954:  ЧALУПА - No answer found in prediction:  ЧALУПА
+
+Row 32424:  Францезинья - No answer found in prediction:  Францезинья
+
+Row 32927:  cocido montañés - No answer found in prediction:  cocido montañés
+
+Row 33327:  puto bumbong - No answer found in prediction:  puto bumbong
+
+Row 33658:  funing big cake - No answer found in prediction:  funing big cake
+
+Row 35315:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 37407:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 37497:  boat noodles - No answer found in prediction:  boat noodles
+
+Row 37648:  meat pie - No answer found in prediction:  meat pie
+
+Row 37876:  funing big cake - No answer found in prediction:  funing big cake
+
+Row 37928:  เปียงเปียงเมี่ยน - No answer found in prediction:  เปียงเปียงเมี่ยน
+
+Row 37960:  บันเทพ - No answer found in prediction:  บันเทพ
+
+Row 38131:  นาซีจัมพูร์ - No answer found in prediction:  นาซีจัมพูร์
+
+Row 38947:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 40555:  Ìrẹsì Jọ̀lọ́fù - No answer found in prediction:  Ìrẹsì Jọ̀lọ́fù
+
+Row 41315:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 41907:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 41947:  put chai ko - No answer found in prediction:  put chai ko
+
+Row 41992:  Bố búi - No answer found in prediction:  Bố búi
+
+Row 42481:  flatkaka - No answer found in prediction:  flatkaka
+
+Row 42738:  cowboy cookies - No answer found in prediction:  cowboy cookies
+
+Row 42768:  fugazza - No answer found in prediction:  fugazza
+
+Row 42832:  Nasi Kapau - No answer found in prediction:  Nasi Kapau
+
+Row 43139:  baklava - No answer found in prediction:  baklava
+
+Row 43273:  cowboy beans - No answer found in prediction:  cowboy beans
+
+Row 43326:  韓式炒麪 - No answer found in prediction:  韓式炒麪
+
+Row 43755:   Rat na - No answer found in prediction:   Rat na
+
+Row 43854:  hot pot - No answer found in prediction:  hot pot
+
+Row 44082:  waterblommetjiebredie - No answer found in prediction:  waterblommetjiebredie
+
+Row 44597:  lunggoi katsa - No answer found in prediction:  lunggoi katsa
+
+Row 44878:  egg foo young - No answer found in prediction:  egg foo young
+
+Row 46163:  মঙ্গলিয়া - No answer found in prediction:  মঙ্গলিয়া
+
+Row 46194:  থািল্যান্ড - No answer found in prediction:  থািল্যান্ড
+
+Row 46214:  ফিলিস্টিন - No answer found in prediction:  ফিলিস্টিন
+
+Row 46255:  থাiল্যান্ড - No answer found in prediction:  থাiল্যান্ড
+
+Row 46371:  থাইল্যান্মার - No answer found in prediction:  থাইল্যান্মার
+
+Row 46379:  থাiল্যান্ড - No answer found in prediction:  থাiল্যান্ড
+
+Row 46399:  গ্রেনাদা - No answer found in prediction:  গ্রেনাদা
+
+Row 46438:  আয়ারল্যাণ্ড - No answer found in prediction:  আয়ারল্যাণ্ড
+
+Row 46447:  ফিলিস্টিন - No answer found in prediction:  ফিলিস্টিন
+
+Row 48559:  फिलीπींस - No answer found in prediction:  फिलीπींस
+
+Row 48803:  इरान - No answer found in prediction:  इरान
+
