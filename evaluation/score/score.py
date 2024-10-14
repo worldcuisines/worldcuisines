@@ -8,6 +8,9 @@ from tqdm import tqdm
 from collections import OrderedDict
 from evaluate import load
 
+with open('score.yml', 'r') as file:
+    CONFIG = yaml.safe_load(file)
+
 # src files
 TASK1_MC_PATH = "../result/task1_mc_{model}_pred.jsonl"
 TASK1_OE_PATH = "../result/task1_oe_{model}_pred.jsonl"
@@ -19,6 +22,19 @@ ACCURACY_MC_PATH = "./json/{model}_accuracy_mc.json"
 ACCURACY_OE_PATH = "./json/{model}_accuracy_oe.json"
 BERTSCORE_OE_PATH = "./json/{model}_bertscore_oe.json"
 ERROR_MC_PATH = "./error/{model}_error_mc.txt"
+
+if cfg["subset"] == "small":
+    # src files (small subset)
+    TASK1_MC_PATH = "../result/small/task1_mc_{model}_pred_small.jsonl"
+    TASK1_OE_PATH = "../result/small/task1_oe_{model}_pred_small.jsonl"
+    TASK2_MC_PATH = "../result/small/task2_mc_{model}_pred_small.jsonl"
+    TASK2_OE_PATH = "../result/small/task2_oe_{model}_pred_small.jsonl"
+
+    # target files (small subset)
+    ACCURACY_MC_PATH = "./json/small/{model}_accuracy_mc.json"
+    ACCURACY_OE_PATH = "./json/small/{model}_accuracy_oe.json"
+    BERTSCORE_OE_PATH = "./json/small/{model}_bertscore_oe.json"
+    ERROR_MC_PATH = "./error/small/{model}_error_mc.txt"
 
 
 def load_jsonl(file_path):
@@ -245,11 +261,10 @@ def score_bert_oe(model, df_res):
 
 
 if __name__ == "__main__":
-    with open('score.yml', 'r') as file:
-        cfg = yaml.safe_load(file)
+    mode = CONFIG['mode']
+    models = CONFIG['models']
     
-    mode = cfg['mode']
-    for model in tqdm(cfg['models'], total = len(cfg["models"])):
+    for model in tqdm(models, total = len(models)):
         df_res, vqa_task1, vqa_task2 = load_result(model)
 
         if mode == "all" or mode == "mc":

@@ -1,4 +1,5 @@
 mode: all # {all, mc, oe}  all = mc + oe
+subset: small # large or small (small subset score results goes into /small directory)
 models:
 - gemini-1.5-flash
 - gpt-4o-2024-08-06
