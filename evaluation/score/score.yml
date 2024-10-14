@@ -1,4 +1,5 @@
 mode: all # {all, mc, oe}  all = mc + oe
+oe_mode: multi # {single, dual, multi}
 subset: large # large or small (small subset score results goes into ./json/small directory, large goes into ./json/)
 models:
 - gemini-1.5-flash

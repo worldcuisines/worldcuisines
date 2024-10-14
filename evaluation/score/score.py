@@ -20,7 +20,7 @@ TASK2_OE_PATH = "../result/task2_oe_{model}_pred.jsonl"
 
 # target files
 ACCURACY_MC_PATH = "./json/{model}_accuracy_mc.json"
-ACCURACY_OE_PATH = "./json/{model}_accuracy_oe.json"
+ACCURACY_OE_PATH = "./json/{model}_accuracy_oe{oe_mode}.json"
 BERTSCORE_OE_PATH = "./json/{model}_bertscore_oe.json"
 ERROR_MC_PATH = "./error/{model}_error_mc.txt"
 
@@ -33,7 +33,7 @@ if CONFIG["subset"] == "small":
 
     # target files (small subset)
     ACCURACY_MC_PATH = "./json/small/{model}_accuracy_mc.json"
-    ACCURACY_OE_PATH = "./json/small/{model}_accuracy_oe.json"
+    ACCURACY_OE_PATH = "./json/small/{model}_accuracy_oe{oe_mode}.json"
     BERTSCORE_OE_PATH = "./json/small/{model}_bertscore_oe.json"
     ERROR_MC_PATH = "./error/small/{model}_error_mc.txt"
 
@@ -186,7 +186,7 @@ def score_mc(model, df_res, vqa_task1, vqa_task2):
             f.write(err)
             f.write('\n')
 
-def score_oe(model, df_res):
+def score_oe(model, df_res, oe_mode):
     oe_scores = {}
     
     prompt_types = df_res['prompt_type'].unique()
@@ -202,10 +202,20 @@ def score_oe(model, df_res):
             n += len(df_subset)
 
             if not df_subset.empty:
-                df_subset['answer'] = df_subset['answer'].fillna('')  # Replace NaN with empty string in 'answer'
-                df_subset['prediction'] = df_subset['prediction'].fillna('')  # Replace NaN with empty string in 'prediction'
-
-                df_subset.loc[:, 'correct'] = df_subset.apply(lambda x: x['answer'].lower() in x['prediction'].lower(), axis=1)
+                if oe_mode == 'single':
+                    oe_mode_str = ''
+                    df_subset['answer'] = df_subset['answer'].fillna('')  # Replace NaN with empty string in 'answer'
+                    df_subset['prediction'] = df_subset['prediction'].fillna('')  # Replace NaN with empty string in 'prediction'
+                    df_subset.loc[:, 'correct'] = df_subset.apply(lambda x: x['answer'].lower() in x['prediction'].lower(), axis=1)
+                if oe_mode == 'multi':
+                    oe_mode_str = '_multi'
+                    answers_df = df_res[df_res['type'] == 'oe'].groupby('qa_id')['answer'].unique().reset_index()
+                    answers_df['answer'] = answers_df['answer'].apply(lambda x: [ans.lower() for ans in x])
+                    answers_df =  answers_df.rename(columns={'answer': 'answers'})
+                    df_subset['prediction'] = df_subset['prediction'].fillna('')
+                    df_subset = df_subset.merge(answers_df, on='qa_id', how='left')
+                    df_subset['correct'] = df_subset.apply(lambda row: any(answer in row['prediction'].lower() for answer in row['answers']), axis=1)
+                
                 accuracy = df_subset['correct'].sum() / len(df_subset) * 100
                 oe_scores[prompt_type][lang] = round(accuracy, 2)
         
@@ -219,9 +229,9 @@ def score_oe(model, df_res):
     oe_scores['model'] = model
     oe_scores_mapped = final_cat_mapping(oe_scores)
     
-    os.makedirs(os.path.dirname(ACCURACY_OE_PATH.format(model=model)), exist_ok=True)
+    os.makedirs(os.path.dirname(ACCURACY_OE_PATH.format(model=model, oe_mode=oe_mode_str)), exist_ok=True)
     
-    with open(ACCURACY_OE_PATH.format(model=model), 'w') as f:
+    with open(ACCURACY_OE_PATH.format(model=model, oe_mode=oe_mode_str), 'w') as f:
         json.dump(oe_scores_mapped, f, indent=4)
 
 
@@ -270,6 +280,7 @@ def score_bert_oe(model, df_res):
 
 if __name__ == "__main__":
     mode = CONFIG['mode']
+    oe_mode = CONFIG['oe_mode']
     models = CONFIG['models']
     
     for model in tqdm(models, total = len(models)):
@@ -286,7 +297,7 @@ if __name__ == "__main__":
         if mode == "all" or mode == "oe":
             print(f"> Running [{model}] - [OE]...")
             try:
-                score_oe(model, df_res)
+                score_oe(model, df_res, oe_mode)
                 score_bert_oe(model, df_res)
             except Exception as e:
                 print(f"> [{model}] - [OE]\n> An error occurred: {e}")
