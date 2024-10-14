@@ -29,7 +29,7 @@ def set_all_seed(seed=42):
 
 
 def get_kb_from_hf():
-    ds = load_dataset("world-cuisines/kb")
+    ds = load_dataset("world-cuisines/food-kb")
     data = ds["main"].to_pandas()
     return data
 
