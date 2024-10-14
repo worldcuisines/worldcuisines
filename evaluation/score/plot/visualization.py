@@ -11,6 +11,7 @@ LANG_FAMILY_DICT = plot_mapper['lang_family_dict']
 LANG_RESOURCE_DICT = plot_mapper['lang_resource_dict']
 CATEGORIES = plot_mapper['categories']
 MODEL_NAME_DICT = plot_mapper['model_name_dict']
+TASK_DICT = plot_mapper['task_dict']
 
 ACCURACY_MC_PATH = "../json/{model}_accuracy_mc.json"
 ACCURACY_OE_PATH = "../json/{model}_accuracy_oe.json"
@@ -95,31 +96,33 @@ def plot_radar(models, data, title, ax, task, vis_type):
 
     handles = []
     labels = []
+
+    hex_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080']
+
+    color_id = 0
     for model in models:
         values = [data[model][lang] for lang in languages]
         values += values[:1]
-        handle, = ax.plot(angles, values, linewidth=2, linestyle='solid', label=model)
+        handle, = ax.plot(angles, values, linewidth=2, linestyle='solid', label=model, color=hex_colors[color_id])
         ax.fill(angles, values, alpha=0.05)
         handles.append(handle)
         labels.append(model)
+        color_id += 1
 
     if vis_type == 'lang':
-        ax.set_title(title, size=12, pad=40)
+        ax.set_title(TASK_DICT[title], size=12, pad=40)
     else:
-        ax.set_title(title, size=12, pad=30)
+        ax.set_title(TASK_DICT[title], size=12, pad=30)
 
-    if task == 'mc':
-        ax.set_ylim(0, 100)
-        ax.set_yticks([10, 20, 30, 40, 50, 60, 70, 80, 90])
-        ax.set_yticklabels(['10', '20', '30', '40', '50', '60', '70', '80', '90'])
-    elif task == 'oe':
-        ax.set_ylim(0, 50)
-        ax.set_yticks([5, 10, 15, 20, 25, 30, 35, 40, 45])
-        ax.set_yticklabels(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
+    if task == "mc":
+        ax.set_ylim(max(int(np.min(values) / 20), 0) * 10, 100)
+        ax.set_yticks(range(max(int(np.min(values) / 20), 0) * 20, 100, 20))
+    elif task == "oe":
+        ax.set_ylim(max(int(np.min(values) / 20), 0) * 10, 50)
+        ax.set_yticks(range(max(int(np.min(values) / 20), 0) * 20, 50, 20))
     else:
-        ax.set_ylim(0, 100)
-        ax.set_yticks([10, 20, 30, 40, 50, 60, 70, 80, 90])
-        ax.set_yticklabels(['10', '20', '30', '40', '50', '60', '70', '80', '90'])
+        ax.set_ylim(max(int(np.min(values) / 20), 0) * 10, 100)
+        ax.set_yticks(range(max(int(np.min(values) / 20), 0) * 20, 100, 20))
 
     ticks = angles[:-1]
     ax.set_xticks(ticks)
@@ -134,23 +137,23 @@ def plot_radar(models, data, title, ax, task, vis_type):
             rotation = base_rotation + i * rotation_increment
             if rotation <= -90:
                 rotation += 180
-            ax.text(tick, ax.get_rmax() * (1.06 + (len(label) - 2) * 0.02), label, rotation=rotation, size=10, ha='center', va='center')
+            ax.text(tick, ax.get_rmax() * (1.06 + (len(label) - 2) * 0.035), label, rotation=rotation, size=10, ha='center', va='center')
     elif vis_type == 'res':
         for i, (tick, label) in enumerate(zip(ticks, languages)):
             if i == 0 or i == 3:
-                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='center', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=9, ha='center', va='center')
             if i == 1 or i == 2:
-                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='left', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=9, ha='left', va='center')
             if i == 4 or i == 5:
-                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='right', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=9, ha='right', va='center')
     else:
         for i, (tick, label) in enumerate(zip(ticks, languages)):
             if i == 0:
-                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='center', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=9, ha='center', va='center')
             if i in [1, 2, 3, 4]:
-                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='left', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=9, ha='left', va='center')
             if i in [5, 6, 7, 8]:
-                ax.text(tick, ax.get_rmax() * 1.05, label, size=10, ha='right', va='center')
+                ax.text(tick, ax.get_rmax() * 1.05, label, size=9, ha='right', va='center')
 
     return handles, labels
 
@@ -163,9 +166,9 @@ def save_radar(task, vis_type):
 
     # Create subplots for the 4 radar charts
     if vis_type == 'lang':
-        fig, axs = plt.subplots(2, 2, figsize=(12, 14), subplot_kw=dict(polar=True))
+        fig, axs = plt.subplots(2, 2, figsize=(10, 10), subplot_kw=dict(polar=True))
     else:
-        fig, axs = plt.subplots(2, 2, figsize=(14, 12), subplot_kw=dict(polar=True))
+        fig, axs = plt.subplots(2, 2, figsize=(10, 10), subplot_kw=dict(polar=True))
 
     # Initialize lists to collect handles and labels for the suplegend
     handles_list = []
@@ -179,16 +182,22 @@ def save_radar(task, vis_type):
         handles_list = handles
         labels_list = labels
 
-    if task == 'mc':
-        fig.suptitle('Multiple Choice Accuracy', fontsize=16)
-    elif task == 'oe':
-        fig.suptitle('Open Ended Accuracy', fontsize=16)
-    else:
-        fig.suptitle('Open Ended BERT Score', fontsize=16)
+    # if task == 'mc':
+    #     fig.suptitle('Multiple Choice Accuracy', fontsize=16)
+    # elif task == 'oe'
+    #     fig.suptitle('Open Ended Accuracy', fontsize=16)
+    # else:
+    #     fig.suptitle('Open Ended BERT Score', fontsize=16)
 
-    fig.legend(handles_list, list(map(MODEL_NAME_DICT.get, labels_list)), loc='lower center', ncol=len(models) // 2)
-    plt.tight_layout(rect=[0, 0, 1, 0.98])
-    plt.subplots_adjust(bottom=0.07)
+    fig.legend(handles_list, list(map(MODEL_NAME_DICT.get, labels_list)), loc='lower center', ncol=len(models) // 4)
+    if vis_type == 'lang':
+        plt.subplots_adjust(bottom=0.2, wspace = 0.7, hspace=1.5)
+        plt.tight_layout(rect=[0, 0.1, 1, 0.98])
+    else:
+        plt.subplots_adjust(bottom=0.8, wspace = 20)
+        plt.tight_layout(rect=[0, 0.1, 1, 0.98])
+    # plt.tight_layout()
+    # plt.subplots_adjust(bottom=0.07)
     plt.savefig(f'radar_{task}_{vis_type}')
 
 
