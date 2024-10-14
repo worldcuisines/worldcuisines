@@ -2,6 +2,7 @@ import pandas as pd
 import json
 import re
 import yaml
+import os
 
 from datasets import load_dataset
 from tqdm import tqdm
@@ -172,6 +173,9 @@ def score_mc(model, df_res, vqa_task1, vqa_task2):
     accuracies['num_samples'] = n
     accuracies['model'] = model
     accuracies_mapped = final_cat_mapping(accuracies)
+    
+    os.makedirs(os.path.dirname(ACCURACY_MC_PATH.format(model=model)), exist_ok=True)
+    os.makedirs(os.path.dirname(ERROR_MC_PATH.format(model=model)), exist_ok=True)
 
     with open(ACCURACY_MC_PATH.format(model=model), 'w') as f:
         json.dump(accuracies_mapped, f, indent=4)
@@ -215,6 +219,8 @@ def score_oe(model, df_res):
     oe_scores['model'] = model
     oe_scores_mapped = final_cat_mapping(oe_scores)
     
+    os.makedirs(os.path.dirname(ACCURACY_OE_PATH.format(model=model)), exist_ok=True)
+    
     with open(ACCURACY_OE_PATH.format(model=model), 'w') as f:
         json.dump(oe_scores_mapped, f, indent=4)
 
@@ -252,6 +258,8 @@ def score_bert_oe(model, df_res):
         bert_scores['num_samples'] = n
         bert_scores['model'] = model
         bert_scores_mapped = final_cat_mapping(bert_scores)
+
+        os.makedirs(os.path.dirname(BERTSCORE_OE_PATH.format(model=model)), exist_ok=True)
         
         with open(BERTSCORE_OE_PATH.format(model=model), 'w') as f:
             json.dump(bert_scores_mapped, f, indent=4)        
