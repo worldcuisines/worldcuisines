@@ -1,0 +1,58 @@
+Row 32: The dish is called Bisi Bele Bath. - No answer found in prediction: The dish is called Bisi Bele Bath
+
+Row 90: To determine the name of the dish, we need to analyze the options provided. 
+
+Isidudu is a traditional dish from Uganda, but it is not typically served in a restaurant setting. 
+Boogatsa is a type of South African bread - No answer found in prediction: To determine the name of the dish, we need to analyze the options provided 
+
+Isidudu is a traditional dish from Uganda, but it is not typically served in a restaurant setting 
+Boogatsa is a type of South African bread
+
+Row 1248: The common name for this dish in Mexico is Escamol. - No answer found in prediction: The common name for this dish in Mexico is Escamol
+
+Row 1272: The common name for this dish in France is Pain de campagne. - No answer found in prediction: The common name for this dish in France is Pain de campagne
+
+Row 1631: The dish in the image is called Yassa. - No answer found in prediction: The dish in the image is called Yassa
+
+Row 1965: The popular name for this dish in Serbia is Čvarci. - No answer found in prediction: The popular name for this dish in Serbia is Čvarci
+
+Row 2177: The official name of this food is Egusi. - No answer found in prediction: The official name of this food is Egusi
+
+Row 3128: The dish is called Muhallebi. - No answer found in prediction: The dish is called Muhallebi
+
+Row 3169: The dessert in the image is called Zabaione. - No answer found in prediction: The dessert in the image is called Zabaione
+
+Row 3219: The dish is called Luosifen. - No answer found in prediction: The dish is called Luosifen
+
+Row 4839: The dish in the image is Chermoula. - No answer found in prediction: The dish in the image is Chermoula
+
+Row 5156: The food you are referring to is called "Bhel Puri". - No answer found in prediction: The food you are referring to is called "Bhel Puri"
+
+Row 6094: The dish from Algerian cuisine is called Aguachile. - No answer found in prediction: The dish from Algerian cuisine is called Aguachile
+
+Row 6096: The traditional cuisine of Botswana is known as Malewa. - No answer found in prediction: The traditional cuisine of Botswana is known as Malewa
+
+Row 6131: The dish is called Chitranna. - No answer found in prediction: The dish is called Chitranna
+
+Row 6394: The dish from Algerian cuisine is called Aguachile. - No answer found in prediction: The dish from Algerian cuisine is called Aguachile
+
+Row 6396: The traditional cuisine of Botswana is known as Malewa. - No answer found in prediction: The traditional cuisine of Botswana is known as Malewa
+
+Row 6431: The dish is called Chitranna. - No answer found in prediction: The dish is called Chitranna
+
+Row 7959: The popular dish in Saudi Arabia is Tharid. - No answer found in prediction: The popular dish in Saudi Arabia is Tharid
+
+Row 8094: The popular dish in Nepal is called Sapu Mhicha. - No answer found in prediction: The popular dish in Nepal is called Sapu Mhicha
+
+Row 9499: The dish is associated with Indonesia. - No answer found in prediction: The dish is associated with Indonesia
+
+Row 9574: The origin of this dish is Portugal. - No answer found in prediction: The origin of this dish is Portugal
+
+Row 9675: The dish is Harissa, a popular condiment originating from Tunisia. - No answer found in prediction: The dish is Harissa, a popular condiment originating from Tunisia
+
+Row 11065: The country that popularized this dish is the United States. - No answer found in prediction: The country that popularized this dish is the United States
+
+Row 11165: The country that popularized this dish is the United States. - No answer found in prediction: The country that popularized this dish is the United States
+
+Row 11665: The country that popularized this dish is the United States. - No answer found in prediction: The country that popularized this dish is the United States
+

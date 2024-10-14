@@ -1,0 +1,8 @@
+Row 1554: No puedo determinar el nombre del plato basado en la imagen. - No answer found in prediction: No puedo determinar el nombre del plato basado en la imagen
+
+Row 1896: Je ne sais pas. - No answer found in prediction: Je ne sais pas
+
+Row 10028: Mi dispiace, non posso aiutarti con questo. - No answer found in prediction: Mi dispiace, non posso aiutarti con questo
+
+Row 11928: 对不起，我无法确定这道菜的起源地。 - No answer found in prediction: 对不起，我无法确定这道菜的起源地。
+
