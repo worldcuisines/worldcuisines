@@ -23,7 +23,7 @@ ACCURACY_OE_PATH = "./json/{model}_accuracy_oe.json"
 BERTSCORE_OE_PATH = "./json/{model}_bertscore_oe.json"
 ERROR_MC_PATH = "./error/{model}_error_mc.txt"
 
-if cfg["subset"] == "small":
+if CONFIG["subset"] == "small":
     # src files (small subset)
     TASK1_MC_PATH = "../result/small/task1_mc_{model}_pred_small.jsonl"
     TASK1_OE_PATH = "../result/small/task1_oe_{model}_pred_small.jsonl"
