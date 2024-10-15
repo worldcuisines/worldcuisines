@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import yaml
 from collections import OrderedDict, defaultdict
+import numpy as np
 
 with open('./plot_mapper.yml', 'r') as file:
     plot_mapper = yaml.safe_load(file)
@@ -66,6 +67,24 @@ def generate_accuracy_dict(task, vis_type):
 
     return model_dict
 
+def average_score_dict(task, vis_type):
+    data = generate_accuracy_dict(task, vis_type)
+    avg_data = {}
+    model_keys = list(data.keys())
+
+    metrics = list(data[model_keys[0]].keys())
+
+    for metric in metrics:
+        if isinstance(data[model_keys[0]][metric], dict):
+            avg_data[metric] = {}
+            for dish in data[model_keys[0]][metric]:
+                avg_data[metric][dish] = round(np.mean([data[model][metric][dish] for model in model_keys]),2)
+        elif isinstance(data[model_keys[0]][metric], float) or isinstance(data[model_keys[0]][metric], int):
+            avg_data[metric] = round(np.mean([data[model][metric] for model in model_keys]),2)
+
+    avg_data["model"] = "avg_all_model_score"
+
+    return avg_data
 
 def plot_radar(models, data, title, ax, task, vis_type):
     if vis_type == 'lang':
@@ -201,15 +220,72 @@ def save_radar(task, vis_type):
     plt.savefig(f'radar_{task}_{vis_type}')
 
 
+
+def plot_single_model_radar(data, ax, mc_oe):
+    with open ('./plot_mapper.yml', 'r') as file:
+        tasks = yaml.safe_load(file)['categories']
+    languages = list(data[tasks[0]].keys())
+    if "avg_score" in languages:
+        languages.remove("avg_score")
+    N = len(languages)
+
+    angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+    angles += angles[:1]
+
+    ax.set_theta_offset(np.pi / 2)
+    ax.set_theta_direction(-1)
+
+    hex_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe']
+
+    handles = []
+    labels = []
+
+    for i, task in enumerate(tasks):
+        values = [data[task].get(lang, 0) for lang in languages]  # Default to 0 if language is missing
+        values += values[:1]  # Close the radar loop
+
+        handle, = ax.plot(angles, values, linewidth=2, linestyle='solid', label=task, color=hex_colors[i % len(hex_colors)])
+        ax.fill(angles, values, alpha=0.1, color=hex_colors[i % len(hex_colors)])
+        handles.append(handle)
+        labels.append(task)
+
+    ax.set_ylim(0, 80 if mc_oe == 'mc' else 30)
+    ax.set_yticks(range(0, 81 if mc_oe =="mc" else 21, 20 if mc_oe == "mc" else 10))  # Stops y-ticks at 80
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(languages, size=10)
+
+    return handles, labels
+
+# Usage
+def save_single_model_radar(task ,vis_type):
+    fig, ax = plt.subplots(figsize=(6, 7), subplot_kw=dict(polar=True))
+    data = average_score_dict(task, vis_type)
+    
+    handles, labels = plot_single_model_radar(data, ax, task)
+    
+    fig.legend(handles, labels, loc='lower center', ncol=2,)
+    plt.tight_layout()
+    plt.savefig(f'radar_avg_{task}_{vis_type}.png', dpi=300)
+
+
 if __name__ == "__main__":
-    save_radar('mc', 'lang')
-    save_radar('mc', 'res')
-    save_radar('mc', 'fam')
+    # save_radar('mc', 'lang')
+    # save_radar('mc', 'res')
+    # save_radar('mc', 'fam')
 
-    save_radar('oe', 'lang')
-    save_radar('oe', 'res')
-    save_radar('oe', 'fam')
+    # save_radar('oe', 'lang')
+    # save_radar('oe', 'res')
+    # save_radar('oe', 'fam')
 
-    save_radar('bs', 'lang')
-    save_radar('bs', 'res')
-    save_radar('bs', 'fam')
+    # save_radar('bs', 'lang')
+    # save_radar('bs', 'res')
+    # save_radar('bs', 'fam')
+
+    save_single_model_radar('mc', 'lang')
+    save_single_model_radar('mc', 'res')
+    save_single_model_radar('mc', 'fam')
+
+    save_single_model_radar('oe', 'lang')
+    save_single_model_radar('oe', 'res')
+    save_single_model_radar('oe', 'fam')
