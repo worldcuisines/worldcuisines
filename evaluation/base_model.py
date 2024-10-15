@@ -104,17 +104,20 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
     url_jpg_map = get_url_jpg_map(kb_data)
     vqa_data = get_vqa_from_hf(task)
 
+    suffix_slice = ""
     if st_idx is not None or ed_idx is not None:
         _ = len(vqa_data)
         vqa_data = vqa_data.iloc[st_idx:ed_idx]
         print(f"  > Total Data to Process: {len(vqa_data):8,}.  (of {_:,})")
         print(f"          Start-End Index:  {st_idx}  to  {ed_idx}")
+        suffix_slice += ("" if st_idx is None else f"_s{st_idx}") + ("" if ed_idx is None else f"_e{ed_idx}")
 
-    if not((chunk_num == 1) and (chunk_id == 0)):
+    if not ((chunk_num == 1) and (chunk_id == 0)):
         chunk_index = split_list(vqa_data.index, chunk_num)[chunk_id]
         print(f"  > Total Data to Process: {len(chunk_index):8,}.  (of {len(vqa_data):,})")
         print(f"    {chunk_num:>5} chunks with ID#:  {chunk_id}  (start idx: {chunk_index[0]})")
         vqa_data = vqa_data.loc[chunk_index]
+        suffix_slice += f".chunk{chunk_id}_of_{chunk_num}"
 
     model, processor = load_model_processor(model_path, fp16, multi_gpu)
 
@@ -122,9 +125,11 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
     count = 0
     error_counter = 0
 
-    def _log_error(msg, suf):
-        log_error(msg, f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}_error.txt")
-        export_result(list_res,f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}_pred_{suf}.jsonl")
+    def _log_error(msg, suf=""):
+        pref = f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}"
+        cur_suf = suffix_slice + (f".{os.getenv('SLURM_JOB_ID')}" if 'SLURM_JOB_ID' in os.environ else "")
+        log_error(msg, f"{pref}_error{cur_suf}.txt")
+        export_result(list_res, f"{pref}_pred_{suf}{cur_suf}.jsonl", replace=True)
 
     try:
         for _, row in tqdm(vqa_data.iterrows(), total=len(vqa_data)):
@@ -151,7 +156,7 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt. Exporting latest results...")
-        _log_error(f"KeyboardInterrupt at row {row['qa_id']}", "interrupt")
+        _log_error(f"KeyboardInterrupt at row {row['qa_id']} ({row['lang']})", "interrupt")
 
     return list_res
 
