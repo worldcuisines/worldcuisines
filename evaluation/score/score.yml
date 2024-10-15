@@ -18,3 +18,4 @@ models:
 - aria-25B-moe-4B
 - Phi-3.5-vision-instruct
 - nvlm
+- qwen2-vl-72b

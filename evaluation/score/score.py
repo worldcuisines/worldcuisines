@@ -3,6 +3,7 @@ import json
 import re
 import yaml
 import os
+import ast
 
 from datasets import load_dataset
 from tqdm import tqdm
@@ -42,7 +43,10 @@ def load_jsonl(file_path):
     data = []
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            data.append(json.loads(line))
+            try:
+                data.append(json.loads(line))
+            except:
+                data.append(ast.literal_eval(line))
     return data
 
 
@@ -327,7 +331,7 @@ if __name__ == "__main__":
             print(f"> Running [{model}] - [OE]...")
             try:
                 score_oe(model, df_res, oe_mode)
-                # score_bert_oe(model, df_res)
+                score_bert_oe(model, df_res)
             except Exception as e:
                 print(f"> [{model}] - [OE]\n> An error occurred: {e}")
                 continue
