@@ -17,3 +17,4 @@ models:
 - qwen2-vl-7b-instruct
 - aria-25B-moe-4B
 - Phi-3.5-vision-instruct
+- nvlm

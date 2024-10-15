@@ -81,6 +81,7 @@ model_name_dict:
   gpt-4o-2024-08-06: GPT4o
   gpt-4o-mini-2024-07-18: GPT4o-mini
   Phi-3.5-vision-instruct: Phi-3.5 Vision 4B
+  nvlm: NVLM 1.0
 task_dict:
   1a. Dish Name (No-Context): 1a. Dish Name (no-context)
   1b. Dish Name (Contextualized): 1b. Dish Name (contextualized)
