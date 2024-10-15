@@ -215,7 +215,19 @@ def score_oe(model, df_res, oe_mode):
                     df_subset['prediction'] = df_subset['prediction'].fillna('')
                     df_subset = df_subset.merge(answers_df, on='qa_id', how='left')
                     df_subset['correct'] = df_subset.apply(lambda row: any(answer in row['prediction'].lower() for answer in row['answers']), axis=1)
-                
+                if oe_mode == 'dual':
+                    oe_mode_str = '_dual'
+                    answers_df = df_res[(df_res['type'] == 'oe') & (df_res['lang'] == 'en')].groupby('qa_id')['answer'].unique().reset_index()
+                    answers_df = answers_df.explode('answer')
+                    answers_df =  answers_df.rename(columns={'answer': 'answer_en'})
+                    df_subset['prediction'] = df_subset['prediction'].fillna('')
+                    df_subset = df_subset.merge(answers_df, on='qa_id', how='left')
+                    df_subset['correct'] = df_subset.apply(lambda row: any(answer in row['prediction'].lower() 
+                                                                            for answer in [row['answer'].lower(), row['answer_en'].lower()]
+                                                                            if pd.notnull(answer)
+                                                                        ), 
+                                                                        axis=1
+                                                            )
                 accuracy = df_subset['correct'].sum() / len(df_subset) * 100
                 oe_scores[prompt_type][lang] = round(accuracy, 2)
         
@@ -298,7 +310,7 @@ if __name__ == "__main__":
             print(f"> Running [{model}] - [OE]...")
             try:
                 score_oe(model, df_res, oe_mode)
-                score_bert_oe(model, df_res)
+                # score_bert_oe(model, df_res)
             except Exception as e:
                 print(f"> [{model}] - [OE]\n> An error occurred: {e}")
                 continue
