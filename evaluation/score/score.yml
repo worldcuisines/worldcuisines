@@ -2,20 +2,20 @@ mode: all # {all, mc, oe}  all = mc + oe
 oe_mode: multi # {single, dual, multi}
 subset: large # large or small (small subset score results goes into ./json/small directory, large goes into ./json/)
 models:
-- gemini-1.5-flash
-- gpt-4o-2024-08-06
-- gpt-4o-mini-2024-07-18
 - llava-1.6-7b
 - llava-1.6-13b
-- molmo-7b-d
-- molmo-7b-o
-- molmoe-1b
-- llama-3.2-11b
-- llama-3.2-90b
-- pixtral-12b
 - qwen-vl-2b
 - qwen2-vl-7b-instruct
 - qwen2-vl-72b
+- llama-3.2-11b
+- llama-3.2-90b
+- molmoe-1b
+- molmo-7b-d
+- molmo-7b-o
 - aria-25B-moe-4B
 - Phi-3.5-vision-instruct
+- pixtral-12b
 - nvlm
+- gpt-4o-2024-08-06
+- gpt-4o-mini-2024-07-18
+- gemini-1.5-flash
