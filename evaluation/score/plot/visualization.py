@@ -15,7 +15,7 @@ MODEL_NAME_DICT = plot_mapper['model_name_dict']
 TASK_DICT = plot_mapper['task_dict']
 
 ACCURACY_MC_PATH = "../json/{model}_accuracy_mc.json"
-ACCURACY_OE_PATH = "../json/{model}_accuracy_oe.json"
+ACCURACY_OE_PATH = "../json/{model}_accuracy_oe_multi.json"
 BERTSCORE_OE_PATH = "../json/{model}_bertscore_oe.json"
 
 
@@ -221,8 +221,8 @@ def save_radar(task, vis_type):
 
 
 
-def plot_single_model_radar(data, ax, mc_oe):
-    with open ('./plot_mapper.yml', 'r') as file:
+def plot_single_model_radar(data, ax, mc_oe, vis_type):
+    with open('./plot_mapper.yml', 'r') as file:
         tasks = yaml.safe_load(file)['categories']
     languages = list(data[tasks[0]].keys())
     if "avg_score" in languages:
@@ -249,11 +249,57 @@ def plot_single_model_radar(data, ax, mc_oe):
         handles.append(handle)
         labels.append(task)
 
-    ax.set_ylim(0, 80 if mc_oe == 'mc' else 30)
-    ax.set_yticks(range(0, 81 if mc_oe =="mc" else 21, 20 if mc_oe == "mc" else 10))  # Stops y-ticks at 80
+    min_limit = 0 
+    max_limit = 80
+    min_label = 0
+    max_label = 61
+    jump = 20
 
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(languages, size=10)
+    if mc_oe == 'oe':
+        max_limit = 30
+        max_label = 21
+        jump = 10
+    elif mc_oe == 'bs':
+        min_limit = 40
+        max_limit = 100
+        min_label = 41
+        max_label = 101
+    print(min_limit, max_limit, min_label, max_label, jump)
+
+    ax.set_ylim(min_limit, max_limit)
+    ax.set_yticks(range(min_label, max_label, jump))
+
+    # Radar chart tick and label arrangement
+    ticks = angles[:-1]
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([''] * len(languages))  # Hide the default xtick labels
+
+    base_rotation = 90  # First label starts at 90 degrees
+    rotation_increment = -12  # Each subsequent label is rotated 12 degrees more
+
+    if vis_type == 'lang':
+        # Manually set each xticklabel with incremented rotation
+        for i, (tick, label) in enumerate(zip(ticks, languages)):
+            rotation = base_rotation + i * rotation_increment
+            if rotation <= -90:
+                rotation += 180
+            ax.text(tick, ax.get_rmax() * (1.1 + (len(label) if len(label) <= 3 else len(label) - 1) * 0.03), label, rotation=rotation, size=14, ha='center', va='center')
+    elif vis_type == 'res':
+        for i, (tick, label) in enumerate(zip(ticks, languages)):
+            if i == 0 or i == 3:
+                ax.text(tick, ax.get_rmax() * 1.1 +0.3, label, size=14, ha='center', va='center')
+            elif i == 1 or i == 2:
+                ax.text(tick, ax.get_rmax() * 1.1, label, size=14, ha='left', va='center')
+            elif i == 4 or i == 5:
+                ax.text(tick, ax.get_rmax() * 1.1, label, size=14, ha='right', va='center')
+    else:
+        for i, (tick, label) in enumerate(zip(ticks, languages)):
+            if i == 0:
+                ax.text(tick, ax.get_rmax() * 1.1 + 0.3, label, size=14, ha='center', va='center')
+            elif i in [1, 2, 3, 4]:
+                ax.text(tick, ax.get_rmax() * 1.1, label, size=14, ha='left', va='center')
+            elif i in [5, 6, 7, 8]:
+                ax.text(tick, ax.get_rmax() * 1.1, label, size=14, ha='right', va='center')
 
     return handles, labels
 
@@ -262,11 +308,30 @@ def save_single_model_radar(task ,vis_type):
     fig, ax = plt.subplots(figsize=(6, 7), subplot_kw=dict(polar=True))
     data = average_score_dict(task, vis_type)
     
-    handles, labels = plot_single_model_radar(data, ax, task)
+    handles, labels = plot_single_model_radar(data, ax, task, vis_type)
     
     fig.legend(handles, labels, loc='lower center', ncol=2,)
     plt.tight_layout()
-    plt.savefig(f'radar_avg_{task}_{vis_type}.png', dpi=300)
+    plt.savefig(f'radar_avg_combined_{task}_{vis_type}.png', dpi=300)
+
+
+def save_single_model_radar_combined(task, vis_types):
+    fig, axs = plt.subplots(1, 3, figsize=(18, 7), subplot_kw=dict(polar=True))
+
+    all_handles, all_labels = [], []
+
+    for ax, vis_type in zip(axs, vis_types):
+        data = average_score_dict(task, vis_type)
+        handles, labels = plot_single_model_radar(data, ax, task, vis_type)
+        all_handles = handles  # Since handles and labels are the same for all plots
+        all_labels = labels
+
+    # Combine legends for all plots
+    fig.legend(all_handles, all_labels, loc='lower center', ncol=4, fontsize=16, bbox_to_anchor=(0.5, 0.06))
+
+    # Adjust layout so legend doesn't overlap the plots
+    plt.tight_layout(rect=[0, 0.02, 1, 1])
+    plt.savefig(f'radar_avg_{task}_combined.png', dpi=300, bbox_inches='tight')
 
 
 if __name__ == "__main__":
@@ -282,10 +347,14 @@ if __name__ == "__main__":
     # save_radar('bs', 'res')
     # save_radar('bs', 'fam')
 
-    save_single_model_radar('mc', 'lang')
-    save_single_model_radar('mc', 'res')
-    save_single_model_radar('mc', 'fam')
+    # save_single_model_radar('mc', 'lang')
+    # save_single_model_radar('mc', 'res')
+    # save_single_model_radar('mc', 'fam')
 
-    save_single_model_radar('oe', 'lang')
-    save_single_model_radar('oe', 'res')
-    save_single_model_radar('oe', 'fam')
+    # save_single_model_radar('oe', 'lang')
+    # save_single_model_radar('oe', 'res')
+    # save_single_model_radar('oe', 'fam')
+
+    save_single_model_radar_combined('mc', ['lang', 'res', 'fam'])
+    save_single_model_radar_combined('oe', ['lang', 'res', 'fam'])
+    save_single_model_radar_combined('bs', ['lang', 'res', 'fam'])
