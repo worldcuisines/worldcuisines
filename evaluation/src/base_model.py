@@ -4,7 +4,6 @@ from datasets import load_dataset
 import torch
 import numpy as np
 import json
-import argparse
 import math
 from io import BytesIO
 from tqdm import tqdm
@@ -13,7 +12,7 @@ import os
 MODEL_HANDLE = {}
 
 
-def load_model_processor(model_path, fp16=True, multi_gpu=False):
+def load_model_processor(model_path, fp32=False, multi_gpu=False):
     raise NotImplementedError
 
 
@@ -86,17 +85,17 @@ def export_result(result: list, path: str, replace=False):
 
 def split_list(lst, n):
     """Split a list into n (roughly) equal-sized chunks"""
-    chunk_size = math.ceil(len(lst) / n)  # integer division
+    chunk_size = math.ceil(len(lst) / n)
     return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
 
 
 def log_error(error_message, log_file="error.txt"):
     """Log error message to a text file."""
-    with open(log_file, "a") as f:  # Append mode
-        f.write(error_message + "\n")  # Write the error message with a newline
+    with open(log_file, "a") as f:
+        f.write(error_message + "\n")
 
 
-def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
+def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
          st_idx=None, ed_idx=None, chunk_num=1, chunk_id=0):
     set_all_seed()
 
@@ -119,7 +118,7 @@ def main(task, qa_type, model_path, fp16, multi_gpu, limit=np.inf,
         vqa_data = vqa_data.loc[chunk_index]
         suffix_slice += f".chunk{chunk_id}_of_{chunk_num}"
 
-    model, processor = load_model_processor(model_path, fp16, multi_gpu)
+    model, processor = load_model_processor(model_path, fp32, multi_gpu)
 
     list_res = []
     count = 0

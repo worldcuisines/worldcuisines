@@ -1,7 +1,13 @@
+# TODO: Refactor to match other models way of running
+# TODO: add dependencies to req.txt (if any)
+
 from huggingface_hub import login
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 # Log in with your API key
-login("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")
+login(os.environ.get("HUGGINGFACE_API_KEY"))
 
 # Load Dataset
 from datasets import load_dataset
