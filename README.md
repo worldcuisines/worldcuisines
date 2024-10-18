@@ -65,7 +65,7 @@ pip install -r requirements.txt
 conda env create -f env.yml
 ```
 
-## ❓ WorldCuisines VQA Dataset Generation
+## ❓ VQA Dataset Generation
 To generate a VQA dataset from the knowledge base, you can refer to the `generate_vqa/sampling.py` script. This script generates the dataset for various tasks in both training and testing sets.
 
 Example Commands:
