@@ -26,7 +26,7 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
   - [Main Arguments](#main-arguments)
   - [Additional Arguments](#additional-arguments)
   - [💯 Experiment Result](#-experiment-result)
-  - [🧪 Running Experiments (TODO)](#-running-experiments-todo)
+  - [🧪 Running Experiments](#-running-experiments)
     - [Main Arguments](#main-arguments-1)
     - [Models Handle](#models-handle)
   - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
@@ -125,7 +125,7 @@ python3 sampling.py -o "generated_data/train_task2.csv" -n 270000 -nd 1800 -np1a
 ## 💯 Experiment Result
 If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
 
-## 🧪 Running Experiments (TODO)
+## 🧪 Running Experiments
 All experiment results will be stored in the `evaluation/result/` directory. You can execute each experiment using the following commands:
 
 ```
@@ -159,6 +159,7 @@ python run.py --model_path {model_path} --task {task} --type {type}
 - `Qwen/Qwen2-VL-7B-Instruct`
 - `Qwen/Qwen2-VL-72B-Instruct`
 - `mistralai/Pixtral-12B-2409`
+- ***TODO: Proprietary Models***
 
 
 ## 📈 Aggregating Experiment Result 
@@ -250,4 +251,4 @@ If you are interested to create an extension of this work, feel free to reach ou
 Support our open source effort ⭐
 
 ## ✏️ On Progress
-We are improving the code, especially on inference part to generate `evaluation/result` and scoring visualization, to make it more user-friendly and customizable.
+We are improving the code, especially on inference part to generate `evaluation/result` and scoring visualization code unification, to make it more user-friendly and customizable.
