@@ -1,3 +1,5 @@
+# TODO: Refactor to match other models way of running
+
 import os
 import requests
 import argparse
@@ -10,6 +12,7 @@ from datasets import load_dataset
 from dotenv import load_dotenv
 load_dotenv()
 
+# TODO: add dependencies to req.txt (if any)
 import google.generativeai as genai
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 

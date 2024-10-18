@@ -1,3 +1,6 @@
+# TODO: Refactor to match other models way of running
+# TODO: add dependencies to req.txt (if any)
+
 from datasets import load_dataset
 import json
 
