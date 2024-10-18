@@ -20,15 +20,13 @@ def load_model_processor(model_path, fp16=True, multi_gpu=False):
         device_map="auto",
     )
     model.tie_weights()
-    # if fp16:
-    #     model.half()
 
     return model, processor
 
 
 def eval_instance(
     model, processor, image_file, query
-):  # TODO: Make this versatile to other model
+):
     conversation = [
         {
             "role": "user",

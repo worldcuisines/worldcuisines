@@ -7,6 +7,7 @@ import base_model
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 MODEL_HANDLE = {
+    'allenai/MolmoE-1B-0924': "molmoe-1b",
     'allenai/Molmo-7B-D-0924': "molmo-7b-d",
     'allenai/Molmo-7B-O-0924': "molmo-7b-o",
 }

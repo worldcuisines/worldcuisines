@@ -1,4 +1,5 @@
-# 🥘 World Cuisine: Multilingual Multicultural VQA Benchmark
+# 🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark
+![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC_BY--SA_4.0-blue.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
 
 ![WorldCuisines Preview](assets/worldcuisines.png)
@@ -13,16 +14,26 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
 
 ## Table of Contents
 
-- [🥘 World Cuisine: Multilingual Multicultural VQA Benchmark](#-world-cuisine-multilingual-multicultural-vqa-benchmark)
+- [🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark](#-worldcuisines-multilingual-multicultural-vqa-benchmark)
     - [Key Stats:](#key-stats)
   - [Table of Contents](#table-of-contents)
   - [📜 Paper](#-paper)
   - [📊 Benchmark](#-benchmark)
-  - [⚡ Environment Setup (TODO)](#-environment-setup-todo)
+  - [⚡ Environment Setup](#-environment-setup)
     - [Via `pip`](#via-pip)
     - [Via `conda`](#via-conda)
   - [💯 Experiment Result](#-experiment-result)
   - [🧪 Running Experiments (TODO)](#-running-experiments-todo)
+  - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
+  - [🏞️ Visualizing the Scores](#️-visualizing-the-scores)
+    - [Examples of Radar Plot](#examples-of-radar-plot)
+    - [Examples of Other Plots](#examples-of-other-plots)
+  - [💻 Models Support](#-models-support)
+    - [Generative VLMs:](#generative-vlms)
+      - [Open-Source](#open-source)
+      - [Proprietary](#proprietary)
+  - [🚀 How to Contribute?](#-how-to-contribute)
+  - [✏️ On Progress](#️-on-progress)
 
 ## 📜 Paper 
 This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705):
@@ -38,11 +49,11 @@ WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**.
 
 ![WorldCuisines Dataset Statistic](assets/data_stat.png)
 
-Our benchmark evaluates LMMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input.
+Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input.
 
 ![WorldCuisines Tasks](assets/tasks.png)
 
-## ⚡ Environment Setup (TODO)
+## ⚡ Environment Setup
 
 ### Via `pip`
 ```
@@ -59,117 +70,106 @@ If you wish to get the final result for all LMMs that we evaluate, please refer 
 ## 🧪 Running Experiments (TODO)
 All experiment results will be stored in the `evaluation/result/` directory. You can execute each experiment using the following commands:
 
-**TODO**
+```
+cd evaluation/
+python {model_name}.py --model_path {model_path} --task {task} --type {type} 
+```
+**Main Arguments:**
+- `model_name`: choose from `aria`, `gemini`, `llama`, `llava`, `molmo`, `phi`, `qwen`, or `pixtral`
+- `model_path`: Hugging Face model handle (e.g., `rhymes-ai/Aria`)
+- `task`: `1` or `2`, refer to [this](#-benchmark) for details
+- `type`: `mc` (multiple-choice) or `oe` (open-ended)
 
-<!-- ### Bitext Retrieval
-#### Cross-lingual setting
-```
-❱❱❱ python bitext.py --src_lang {src_lang} --dataset {dataset} --seed {seed} --cuda --model_checkpoint {model_checkpoint}
-❱❱❱ python bitext.py --src_lang de --dataset bucc --seed 42 --cuda --model_checkpoint sentence-transformers/LaBSE
-```
+**Other Arguments:**
+- **TODO**
 
-#### Ensemble
-The arguments are similar as above, except we use `--model_checkpoints` and `--weights`
-```
-❱❱❱ python bitext.py --src_lang {src_lang} --dataset {dataset} --seed {seed} --cuda --model_checkpoint {model_checkpoint}
-❱❱❱ python bitext.py --src_lang de --dataset bucc --seed 42 --cuda --model_checkpoint sentence-transformers/LaBSE
-```
+## 📈 Aggregating Experiment Result 
+Edit `evaluation/score/score.yml` to determine scoring mode, evaluation set, and evaluated VLMs. Note that `mc` means multiple-choice and `oe` means open-ended.
 
-### Retrieval-based Classification
-#### Monolingual setting
-```
-❱❱❱ python classification.py --dataset {dataset} --seed {seed} --cuda --model_checkpoint {model_checkpoint}
-❱❱❱ python classification.py --dataset nusax --seed 42 --cuda --model_checkpoint sentence-transformers/LaBSE
-```
-
-#### Cross-lingual setting
-Add `--src_lang` and `--cross` to the command.
-```
-❱❱❱ python classification.py --src_lang {src_lang} --cross --dataset {dataset} --seed {seed} --cuda --model_checkpoint {model_checkpoint}
-❱❱❱ python classification.py --src_lang eng --cross --dataset nusax --seed 42 --cuda --model_checkpoint sentence-transformers/LaBSE
-```
-
-#### Ensemble
-The arguments are similar as above, except we use `--model_checkpoints` and `--weights`
-```
-❱❱❱ python classification.py --dataset {dataset} --seed {seed} --cuda --model_checkpoints {model_checkpoint1} {model_checkpoint2} {...} --weights {weight1} {weight2} {...}
-❱❱❱ python classification.py --dataset nusax --seed 42 --cuda --model_checkpoints sentence-transformers/LaBSE intfloat/multilingual-e5-large --weights 0.25 0.75
-```
-
-### ICL Classification
-#### Monolingual setting
-```
-❱❱❱ python icl.py --dataset {dataset} --seed 42 --instruction {instruction} --model_checkpoint {model} --gen_model_checkpoint {gen_model_checkpoint}  --cuda --load_in_8bit --k {k}
-❱❱❱ python icl.py --dataset nusax --seed 42 --instruction "Generate a sentiment label for a given input.\nPlease only output the label." --model_checkpoint sentence-transformers/LaBSE --gen_model_checkpoint meta-llama/Meta-Llama-3-8B-Instruct  --cuda --load_in_8bit --k 1
+```yml
+mode: all # {all, mc, oe}  all = mc + oe
+oe_mode: multi # {single, dual, multi}
+subset: large # {large, small}
+models:
+- llava-1.6-7b
+- llava-1.6-13b
+- qwen-vl-2b
+- qwen2-vl-7b-instruct
+- qwen2-vl-72b
+- llama-3.2-11b
+- llama-3.2-90b
+- molmoe-1b
+- molmo-7b-d
+- molmo-7b-o
+- aria-25B-moe-4B
+- Phi-3.5-vision-instruct
+- pixtral-12b
+- nvlm
+- gpt-4o-2024-08-06
+- gpt-4o-mini-2024-07-18
+- gemini-1.5-flash
 ```
 
-#### Cross-lingual setting
-Add `--src_lang` and `--cross` to the command.
-```
-❱❱❱ python icl.py --src_lang {src_lang} --cross --dataset {dataset} --seed 42 --instruction {instruction} --model_checkpoint {model} --gen_model_checkpoint {gen_model_checkpoint}  --cuda --load_in_8bit --k {k}
-❱❱❱ python icl.py --src_lang eng --cross --dataset nusax --seed 42 --instruction "Generate a sentiment label for a given input.\nPlease only output the label." --model_checkpoint sentence-transformers/LaBSE --gen_model_checkpoint meta-llama/Meta-Llama-3-8B-Instruct  --cuda --load_in_8bit --k 1
+In addition to the `multi` mode for generating the `oe` score, which compares the answer to the golden labels across all languages, we also support other golden label referencing settings:
+
+- **`single` reference**: compares the answer only to the golden label in the original language.
+- **`dual` reference**: compares the answer to the golden label in the original language and English.
+
+Once set, run this command:
+```bash
+cd evaluation/score/
+python score.py
 ```
 
-## 📈 Aggregating Experiment Results
-Add `--k` to modify the number of retrieved samples.
+
+## 🏞️ Visualizing the Scores
+
+We provide radar, scatter, and connected scatter-line plots to visualize scoring results for all VLMs in `evaluation/score/plot/`.
+
+To generate all **radar plot**, use:
 ```
-❱❱❱ python script/aggregate/aggregate_bitext_mining.py --k {k}
-❱❱❱ python script/aggregate/aggregate_classification.py --k {k}
-❱❱❱ python script/aggregate/aggregate_classification_cross.py --k {k}
-❱❱❱ python script/aggregate/aggregate_icl.py --k {k}
-❱❱❱ python script/aggregate/aggregate_icl_cross.py --k {k}
-❱❱❱ python script/aggregate/aggregate_icl_percentile.py --k {k}
+python evaluation/score/plot/visualization.py
 ```
 
-## 🏞️ Visualizing the Embeddings
-```
-❱❱❱ python visualize.py --model_checkpoint {model_checkpoint} --dataset {dataset} --seed {seed} --cuda
-❱❱❱ python visualize.py --model_checkpoint sentence-transformers/LaBSE --dataset nusax --seed 42 --cuda
-```
+### Examples of Radar Plot
+![Radar Plot Example](evaluation/score/plot/radar_avg_mc_combined.png)
 
-### Examples of the visualization by class labels: LaBSE (left) and XLM-R BASE (right)
-<img src="assets/scatter_plots/tsne_nusax_LaBSE_class.png" width="35%"> <img src="assets/scatter_plots/tsne_nusax_xlm-roberta-base_class.png" width="35%">
+You can also modify `evaluation/score/score.yml` to select which VLMs to visualize and adjust plot labels in `plot_mapper.yml`.
 
-### Examples of the visualization by sample ID: LaBSE (left) and XLM-R BASE (right)
-<img src="assets/scatter_plots/tsne_nusax_LaBSE.png" width="35%"> <img src="assets/scatter_plots/tsne_nusax_xlm-roberta-base.png" width="35%">
+### Examples of Other Plots
+
+<img src="assets/model_params.png" width="30%"> <img src="assets/model_scatter.png" width="33%"> <img src="assets/scatterplot.png" width="25%">
+
+
+Other plot generation scripts are available in the `*.ipynb` files within the same directory.
 
 ## 💻 Models Support
-Our codebase supports the usage of multiple models for the experiments, providing flexibility for customization beyond the list shown below:
-### Encoder LMs and APIs
-#### Open-source LMs:
-- [sentence-transformers/LaBSE](https://huggingface.co/sentence-transformers/LaBSE)
-- [sentence-transformers/use-cmlm-multilingual](https://huggingface.co/sentence-transformers/use-cmlm-multilingual)
-- [intfloat/multilingual-e5-base](https://huggingface.co/intfloat/multilingual-e5-base)
-- [intfloat/multilingual-e5-large](https://huggingface.co/intfloat/multilingual-e5-large)
-- [sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2)
-- [microsoft/Multilingual-MiniLM-L12-H384](https://huggingface.co/microsoft/Multilingual-MiniLM-L12-H384)
-- [cis-lmu/glot500-base](https://huggingface.co/cis-lmu/glot500-base)
-- [FacebookAI/xlm-roberta-base](https://huggingface.co/FacebookAI/xlm-roberta-base)
-- [FacebookAI/xlm-roberta-large](https://huggingface.co/FacebookAI/xlm-roberta-large)
+Our codebase supports the usage of multiple models for the experiments, providing flexibility for customization of the list shown below:
 
-#### Commercial embedding APIs (last tested as of June 2024)
-- Cohere-Embedv3
-- OpenAI-Embedv3
+### Generative VLMs:
+#### Open-Source
+- Llava1.6 Vicuna [llava-hf/llava-v1.6-vicuna-7b-hf](https://huggingface.co/llava-hf/llava-v1.6-vicuna-7b-hf) [llava-hf/llava-v1.6-vicuna-13b-hf](https://huggingface.co/llava-hf/llava-v1.6-vicuna-13b-hf)
+- Qwen2 VL Instruct [Qwen/Qwen2-VL-2B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-2B-Instruct) [Qwen/Qwen2-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) [Qwen/Qwen2-VL-72B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-72B-Instruct)
+- Llama 3.2 Instruct [meta-llama/Llama-3.2-11B-Vision-Instruct](https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct) [meta-llama/Llama-3.2-90B-Vision-Instruct](https://huggingface.co/meta-llama/Llama-3.2-90B-Vision-Instruct)
+- Molmo-E 1B [allenai/MolmoE-1B-0924](https://huggingface.co/allenai/MolmoE-1B-0924)
+- Molmo-D 7B [allenai/Molmo-7B-D-0924](https://huggingface.co/allenai/Molmo-7B-D-0924)
+- Molmo-O 7B [allenai/Molmo-7B-O-0924](https://huggingface.co/allenai/Molmo-7B-O-0924)
+- Aria 25B  [rhymes-ai/Aria](https://huggingface.co/rhymes-ai/Aria)
+- Phi-3.5 Vision 4B [microsoft/Phi-3.5-vision-instruct](https://huggingface.co/microsoft/Phi-3.5-vision-instruct)
+- Pixtral 12B [mistralai/Pixtral-12B-2409](https://huggingface.co/mistralai/Pixtral-12B-2409)
 
-### Generative LMs:
-- BLOOMZ [bigscience/bloomz-560m](https://huggingface.co/bigscience/bloomz-560m) [bigscience/bloom-1b7](https://huggingface.co/bigscience/bloom-1b7) [bigscience/bloomz-3b](https://huggingface.co/bigscience/bloomz-3b)
-- mT0 [bigscience/mt0-xl](https://huggingface.co/bigscience/mt0-xl)
-- XGLM [facebook/xglm-564M](https://huggingface.co/facebook/xglm-564M) [facebook/xglm-2.9B](https://huggingface.co/facebook/xglm-2.9B)
-- Aya-23 [CohereForAI/aya-23-8B](https://huggingface.co/CohereForAI/aya-23-8B)
-- Aya-101 [CohereForAI/aya-101](https://huggingface.co/CohereForAI/aya-101)
-- Gemma 1.1 Instruct [google/gemma-1.1-7b-it](https://huggingface.co/google/gemma-1.1-7b-it)
-- Llama 3 8B Instruct [meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct)
-- Llama 3 8B Instruct [meta-llama/Meta-Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct)
-- GPT models  (last tested as of June 2024)
-- Cohere Command R  (last tested as of June 2024)
-
+#### Proprietary 
+(last tested as of October 2024)
+- GPT-4o
+- GPT-4o Mini
+- Gemini 1.5 Flash
 
 ## 🚀 How to Contribute?
-Feel free to create [an issue](https://github.com/gentaiscool/miners/issues/) if you have any questions. And, create [a PR](https://github.com/gentaiscool/miners/pulls) for fixing bugs or adding improvements (i.e., adding new datasets or models). 
+Feel free to create [an issue](https://github.com/worldcuisines/worldcuisines/issues) if you have any questions. And, create [a PR](https://github.com/worldcuisines/worldcuisines/pulls) for fixing bugs or adding improvements.
 
 If you are interested to create an extension of this work, feel free to reach out to [us](mailto:gentaindrawinata@gmail.com)!
 
 Support our open source effort ⭐
 
-## On Progress
-We are improving the code to make it more user-friendly and customizable. We have created a new repository for implementing DistFuse, which is available at [https://github.com/gentaiscool/distfuse/](https://github.com/gentaiscool/distfuse/). You can install it by running `pip install distfuse`. Later, it will be integrated to this repository. -->
+## ✏️ On Progress
+We are improving the code, especially on inference part to generate `evaluation/result` and scoring visualization, to make it more user-friendly and customizable.
