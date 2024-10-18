@@ -893,27 +893,27 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # TODO: Take argument as json file maybe so it's easier?
-    parser.add_argument('-o', '--output_csv', type=str, required=True, help="CSV path where sampled data will be saved.")
-    parser.add_argument('-fr', '--food_raw_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_raw_6oct.csv"), help="Path used to load raw food dataframe")
-    parser.add_argument('-fc', '--food_cleaned_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_cleaned.csv"), help="Path used to load cleaned food dataframe")
-    parser.add_argument('-q', '--query_context_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "query_ctx.csv"), help="Path used to load the query context CSV")
-    parser.add_argument('-l', '--loc_cuis_path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "location_and_cuisine.csv"), help="Path used to load the use location/cuisine CSV")
-    parser.add_argument('-n', '--num_samples', type=int, required=False, default=20000, help="Number of samples (multiply by the languages)")
-    parser.add_argument('-ll', '--list_of_languages', type=str, required=False, default="", help="List of languages used (e.g. '[\"en\", \"id_formal\"]')")
-    parser.add_argument('-aw', '--alias_aware', default=False, action=argparse.BooleanOptionalAction, help="Enabling this will have the sampler tries harder to get the adversarial answers with parallel Aliases")
-    parser.add_argument('-nd', '--n_dish_max', type=int, required=False, default=-1, help="Maximum different number of dishes to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np1', '--n_prompt_max_type1', type=int, required=False, default=-1, help="Maximum different number of prompt type 1 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np2', '--n_prompt_max_type2', type=int, required=False, default=-1, help="Maximum different number of prompt type 2 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np3', '--n_prompt_max_type3', type=int, required=False, default=-1, help="Maximum different number of prompt type 3 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np4', '--n_prompt_max_type4', type=int, required=False, default=-1, help="Maximum different number of prompt type 4 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-ie', '--is_eval', default=True, action=argparse.BooleanOptionalAction, help="Whether train or evaluation.")
+    parser.add_argument('-o', '--output-csv', type=str, required=True, help="CSV path where sampled data will be saved.")
+    parser.add_argument('-fr', '--food-raw-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_raw_6oct.csv"), help="Path used to load raw food dataframe")
+    parser.add_argument('-fc', '--food-cleaned-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_cleaned.csv"), help="Path used to load cleaned food dataframe")
+    parser.add_argument('-q', '--query-context-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "query_ctx.csv"), help="Path used to load the query context CSV")
+    parser.add_argument('-l', '--loc-cuis-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "location_and_cuisine.csv"), help="Path used to load the use location/cuisine CSV")
+    parser.add_argument('-n', '--num-samples', type=int, required=False, default=20000, help="Number of samples (multiply by the languages)")
+    parser.add_argument('-ll', '--list-of-languages', type=str, required=False, default="", help="List of languages used (e.g. '[\"en\", \"id_formal\"]')")
+    parser.add_argument('-aw', '--alias-aware', default=False, action=argparse.BooleanOptionalAction, help="Enabling this will have the sampler tries harder to get the adversarial answers with parallel Aliases")
+    parser.add_argument('-nd', '--n-dish-max', type=int, required=False, default=-1, help="Maximum different number of dishes to be sampled (-1 means can sample as many as possible).")
+    parser.add_argument('-np1', '--n-prompt-max-type1a', type=int, required=False, default=-1, help="Maximum different number of prompt type 1 to be sampled (-1 means can sample as many as possible).")
+    parser.add_argument('-np2', '--n-prompt-max-type1b', type=int, required=False, default=-1, help="Maximum different number of prompt type 2 to be sampled (-1 means can sample as many as possible).")
+    parser.add_argument('-np3', '--n-prompt-max-type1c', type=int, required=False, default=-1, help="Maximum different number of prompt type 3 to be sampled (-1 means can sample as many as possible).")
+    parser.add_argument('-np4', '--n-prompt-max-type2', type=int, required=False, default=-1, help="Maximum different number of prompt type 4 to be sampled (-1 means can sample as many as possible).")
+    parser.add_argument('-ie', '--is-eval', default=True, action=argparse.BooleanOptionalAction, help="Whether train or evaluation.")
     args = parser.parse_args()
     
     random.seed(RANDOM_SEED)
     np.random.seed(RANDOM_SEED)
     
     # Cannot have all max_type to be 0
-    assert(not (args.n_prompt_max_type1 == 0 and args.n_prompt_max_type2 == 0 and args.n_prompt_max_type3 == 0 and args.n_prompt_max_type4 == 0))
+    assert(not (args.n_prompt_max_type1a == 0 and args.n_prompt_max_type1b == 0 and args.n_prompt_max_type1c == 0 and args.n_prompt_max_type2 == 0))
     
     os.makedirs(RESOURCE_DIR, exist_ok=True)
     
@@ -930,8 +930,8 @@ if __name__ == '__main__':
 
     samples = sample_dataset(food_raw_df, food_cleaned_df, query_context_df, location_cuisine_df, list_of_languages,
                              n=args.num_samples, alias_aware=args.alias_aware, n_dish_max=args.n_dish_max,
-                             n_prompt_max_type1=args.n_prompt_max_type1, n_prompt_max_type2=args.n_prompt_max_type2,
-                             n_prompt_max_type3=args.n_prompt_max_type3, n_prompt_max_type4=args.n_prompt_max_type4,
+                             n_prompt_max_type1=args.n_prompt_max_type1a, n_prompt_max_type2=args.n_prompt_max_type1b,
+                             n_prompt_max_type3=args.n_prompt_max_type1c, n_prompt_max_type4=args.n_prompt_max_type2,
                              is_eval=args.is_eval)
 
     end_time = time.time()
