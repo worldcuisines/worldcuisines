@@ -1,6 +1,6 @@
 import argparse
 import os
-import evaluation.src.base_model as base_model
+import src.base_model as base_model
 
 MODEL_HANDLE = {
     "rhymes-ai/Aria": "aria-25B-moe-4B",
@@ -37,29 +37,30 @@ if __name__ == "__main__":
     parser.add_argument("-k", "--chunk_id", type=int, default=0, help="Chunk ID (0-based)")
     parser.add_argument("-s", "--st_idx", default=None, type=int, help="Slice data, start index (inclusive).")
     parser.add_argument("-e", "--ed_idx", default=None, type=int, help="Slice data, end index (exclusive).")
+    parser.add_argument("--test", action="store_true", help="Set to true if in test mode.")
 
     args = parser.parse_args()
 
     assert args.model_path in MODEL_HANDLE, f"Model path {args.model_path} not found in MODEL_HANDLE"
 
     if args.model_path == "rhymes-ai/Aria":
-        from evaluation.src.aria import load_model_processor
-        from evaluation.src.aria import eval_instance
+        from src.aria import load_model_processor
+        from src.aria import eval_instance
     elif args.model_path.startswith("meta-llama"):
-        from evaluation.src.llama import load_model_processor
-        from evaluation.src.llama import eval_instance
+        from src.llama import load_model_processor
+        from src.llama import eval_instance
     elif args.model_path.startswith("llava-hf"):
-        from evaluation.src.llava import load_model_processor
-        from evaluation.src.llava import eval_instance
+        from src.llava import load_model_processor
+        from src.llava import eval_instance
     elif args.model_path.startswith("allenai/Molmo"):
-        from evaluation.src.molmo import load_model_processor
-        from evaluation.src.molmo import eval_instance
+        from src.molmo import load_model_processor
+        from src.molmo import eval_instance
     elif args.model_path.startswith("microsoft/Phi"):
-        from evaluation.src.phi import load_model_processor
-        from evaluation.src.phi import eval_instance
+        from src.phi import load_model_processor
+        from src.phi import eval_instance
     elif args.model_path.startswith("Qwen"):
-        from evaluation.src.qwen import load_model_processor
-        from evaluation.src.qwen import eval_instance
+        from src.qwen import load_model_processor
+        from src.qwen import eval_instance
     elif args.model_path.startswith("mistralai/Pixtral"):
         raise NotImplementedError("Pixtral is not implemented yet")
     else:
@@ -69,14 +70,15 @@ if __name__ == "__main__":
     base_model.eval_instance = eval_instance
     base_model.MODEL_HANDLE = MODEL_HANDLE
 
-    if not os.path.exists("./result"):
-        os.makedirs("./result")
-    if not os.path.exists("./result/error"):
-        os.makedirs("./result/error")
+    RESULT_PATH = './result' if not args.test else './test'
+    if not os.path.exists(RESULT_PATH):
+        os.makedirs(RESULT_PATH)
+    if not os.path.exists(f"{RESULT_PATH}/error"):
+        os.makedirs(f"{RESULT_PATH}/error")
 
     result = base_model.main(
         task=args.task,
-        type=args.type,
+        qa_type=args.type,
         model_path=args.model_path,
         fp32=args.fp32,
         multi_gpu=args.multi_gpu,
@@ -88,7 +90,7 @@ if __name__ == "__main__":
     
     base_model.export_result(
         result,
-        f"./result/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_pred"  # ./result/task1_mc_qwen2-vl-72b_pred
+        f"{RESULT_PATH}/task{args.task}_{args.type}_{MODEL_HANDLE[args.model_path]}_pred"  # ./result/task1_mc_qwen2-vl-72b_pred
         + ("" if args.st_idx is None else f"_s{args.st_idx}")  # ./result/task1_mc_qwen2-vl-72b_pred_s0
         + ("" if args.ed_idx is None else f"_e{args.ed_idx}")  # ./result/task1_mc_qwen2-vl-72b_pred_s0_e100
         + (f".chunk{args.chunk_id}_of_{args.chunk_num}" if not ((args.chunk_num == 1) and (args.chunk_id == 0)) else "")  # ./result/task1_mc_qwen2-vl-72b_pred_s0_e100.chunk0_of_1

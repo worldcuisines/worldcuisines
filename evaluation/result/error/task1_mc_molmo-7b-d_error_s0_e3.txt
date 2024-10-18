@@ -1,0 +1,18 @@
+Error at row 400 (ar): all() received an invalid combination of arguments - got (Tensor, keepdim=bool, dim=tuple), but expected one of:
+ * (Tensor input, *, Tensor out)
+      didn't match because some of the keywords were incorrect: keepdim, dim
+ * (Tensor input, int dim, bool keepdim, *, Tensor out)
+ * (Tensor input, name dim, bool keepdim, *, Tensor out)
+
+Error at row 401 (ar): all() received an invalid combination of arguments - got (Tensor, keepdim=bool, dim=tuple), but expected one of:
+ * (Tensor input, *, Tensor out)
+      didn't match because some of the keywords were incorrect: keepdim, dim
+ * (Tensor input, int dim, bool keepdim, *, Tensor out)
+ * (Tensor input, name dim, bool keepdim, *, Tensor out)
+
+Error at row 402 (ar): all() received an invalid combination of arguments - got (Tensor, keepdim=bool, dim=tuple), but expected one of:
+ * (Tensor input, *, Tensor out)
+      didn't match because some of the keywords were incorrect: keepdim, dim
+ * (Tensor input, int dim, bool keepdim, *, Tensor out)
+ * (Tensor input, name dim, bool keepdim, *, Tensor out)
+
