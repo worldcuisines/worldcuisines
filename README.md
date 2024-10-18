@@ -1,6 +1,5 @@
 # 🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark
-![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)
-[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC_BY--SA_4.0-blue.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
+![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ![WorldCuisines Preview](assets/worldcuisines.png)
 
@@ -159,7 +158,7 @@ python run.py --model_path {model_path} --task {task} --type {type}
 - `Qwen/Qwen2-VL-7B-Instruct`
 - `Qwen/Qwen2-VL-72B-Instruct`
 - `mistralai/Pixtral-12B-2409`
-- ***TODO: Proprietary Models***
+- ***WIP: Proprietary Models***
 
 
 ## 📈 Aggregating Experiment Result 
