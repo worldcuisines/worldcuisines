@@ -22,7 +22,7 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
   - [⚡ Environment Setup](#-environment-setup)
     - [Via `pip`](#via-pip)
     - [Via `conda`](#via-conda)
-  - [❓ VQA Dataset Generation](#vqa-dataset-generation)
+  - [❓ VQA Dataset Generation](#-vqa-dataset-generation)
   - [💯 Experiment Result](#-experiment-result)
   - [🧪 Running Experiments (TODO)](#-running-experiments-todo)
   - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
