@@ -1,6 +1,12 @@
 from transformers import MllamaForConditionalGeneration, AutoProcessor
 import torch
+from huggingface_hub import login
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
+# Log in with your API key
+login(os.environ.get("HUGGINGFACE_API_KEY"))
 
 def load_model_processor(model_path, fp32=False, multi_gpu=False):
     processor = AutoProcessor.from_pretrained(model_path)
