@@ -118,22 +118,6 @@ python3 sampling.py -o "generated_data/train_task2.csv" -n 270000 -nd 1800 -np1a
 | `-ll`, `--list-of-languages`        | Specify languages to be used as a list of strings.                                                               | `'[\"en\", \"id_formal\"]'`                                                  |
 | `-aw`, `--alias-aware`               | Enable adversarial answers with parallel aliases instead of replacing dishes without translation with English    | `--alias-aware` for the requirement to find answers that contain parallel translation across all languages, `--no-alias-aware` for relaxing the parallel dishes name requirement                                                  |
 
-
-parser.add_argument('-o', '--output-csv', type=str, required=True, help="CSV path where sampled data will be saved.")
-    parser.add_argument('-fr', '--food-raw-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_raw_6oct.csv"), help="Path used to load raw food dataframe")
-    parser.add_argument('-fc', '--food-cleaned-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "food_cleaned.csv"), help="Path used to load cleaned food dataframe")
-    parser.add_argument('-q', '--query-context-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "query_ctx.csv"), help="Path used to load the query context CSV")
-    parser.add_argument('-l', '--loc-cuis-path', type=str, required=False, default=os.path.join(RESOURCE_DIR, "location_and_cuisine.csv"), help="Path used to load the use location/cuisine CSV")
-    parser.add_argument('-n', '--num-samples', type=int, required=False, default=20000, help="Number of samples (multiply by the languages)")
-    parser.add_argument('-ll', '--list-of-languages', type=str, required=False, default="", help="List of languages used (e.g. '[\"en\", \"id_formal\"]')")
-    parser.add_argument('-aw', '--alias-aware', default=False, action=argparse.BooleanOptionalAction, help="Enabling this will have the sampler tries harder to get the adversarial answers with parallel Aliases")
-    parser.add_argument('-nd', '--n-dish-max', type=int, required=False, default=-1, help="Maximum different number of dishes to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np1', '--n-prompt-max-type1a', type=int, required=False, default=-1, help="Maximum different number of prompt type 1 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np2', '--n-prompt-max-type1b', type=int, required=False, default=-1, help="Maximum different number of prompt type 2 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np3', '--n-prompt-max-type1c', type=int, required=False, default=-1, help="Maximum different number of prompt type 3 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-np4', '--n-prompt-max-type2', type=int, required=False, default=-1, help="Maximum different number of prompt type 4 to be sampled (-1 means can sample as many as possible).")
-    parser.add_argument('-ie', '--is-eval', default=True, action=argparse.BooleanOptionalAction, help="Whether train or evaluation.")
-
 ## 💯 Experiment Result
 If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
 
