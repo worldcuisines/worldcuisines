@@ -9,3 +9,5 @@ transformers
 sentencepiece
 qwen_vl_utils
 bert-score
+python-dotenv
+flash-attn

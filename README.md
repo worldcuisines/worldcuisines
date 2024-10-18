@@ -23,8 +23,12 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
     - [Via `pip`](#via-pip)
     - [Via `conda`](#via-conda)
   - [❓ VQA Dataset Generation](#-vqa-dataset-generation)
+  - [Main Arguments](#main-arguments)
+  - [Additional Arguments](#additional-arguments)
   - [💯 Experiment Result](#-experiment-result)
   - [🧪 Running Experiments (TODO)](#-running-experiments-todo)
+    - [Main Arguments](#main-arguments-1)
+    - [Models Handle](#models-handle)
   - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
   - [🏞️ Visualizing the Scores](#️-visualizing-the-scores)
     - [Examples of Radar Plot](#examples-of-radar-plot)
@@ -126,16 +130,36 @@ All experiment results will be stored in the `evaluation/result/` directory. You
 
 ```
 cd evaluation/
-python {model_name}.py --model_path {model_path} --task {task} --type {type} 
+python run.py --model_path {model_path} --task {task} --type {type} 
 ```
-**Main Arguments:**
-- `model_name`: choose from `aria`, `gemini`, `llama`, `llava`, `molmo`, `phi`, `qwen`, or `pixtral`
-- `model_path`: Hugging Face model handle (e.g., `rhymes-ai/Aria`)
-- `task`: `1` or `2`, refer to [this](#-benchmark) for details
-- `type`: `mc` (multiple-choice) or `oe` (open-ended)
+### Main Arguments
+| Argument         | Description                                       | Example / Default                     |
+|------------------|---------------------------------------------------|---------------------------------------|
+| `--task`         | Task number to evaluate (1 or 2)                  | `1` (default), `2`                    |
+| `--type`         | Type of question to evaluate (`oe` or `mc`)       | `mc` (default), `oe`                  |
+| `--model_path`   | Path to the model                                 | `Qwen/Qwen2-VL-72B-Instruct` (default) + [others](#models) |
+| `--fp32`         | Use `float32` instead of `float16`/`bfloat16`                    | `False` (default)                     |
+| `--multi_gpu`    | Use multiple GPUs                                 | `False` (default)                     |
+| `-n`, `--chunk_num` | Number of chunks to split the data into          | `1` (default)                         |
+| `-k`, `--chunk_id`  | Chunk ID (0-based)                              | `0` (default)                         |
+| `-s`, `--st_idx` | Start index for slicing data (inclusive)          | `None` (default)                      |
+| `-e`, `--ed_idx` | End index for slicing data (exclusive)            | `None` (default)                      |
 
-**Other Arguments:**
-- **TODO**
+### Models Handle
+- `rhymes-ai/Aria`
+- `meta-llama/Llama-3.2-11B-Vision-Instruct`
+- `meta-llama/Llama-3.2-90B-Vision-Instruct`
+- `llava-hf/llava-v1.6-vicuna-7b-hf`
+- `llava-hf/llava-v1.6-vicuna-13b-hf`
+- `allenai/MolmoE-1B-0924`
+- `allenai/Molmo-7B-D-0924`
+- `allenai/Molmo-7B-O-0924`
+- `microsoft/Phi-3.5-vision-instruct`
+- `Qwen/Qwen2-VL-2B-Instruct`
+- `Qwen/Qwen2-VL-7B-Instruct`
+- `Qwen/Qwen2-VL-72B-Instruct`
+- `mistralai/Pixtral-12B-2409`
+
 
 ## 📈 Aggregating Experiment Result 
 Edit `evaluation/score/score.yml` to determine scoring mode, evaluation set, and evaluated VLMs. Note that `mc` means multiple-choice and `oe` means open-ended.
