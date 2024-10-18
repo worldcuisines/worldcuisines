@@ -1,6 +1,6 @@
 # 🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark
 ![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)
-[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC_BY--SA_4.0-blue.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 
 ![WorldCuisines Preview](assets/worldcuisines.png)
 
@@ -40,7 +40,15 @@ This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705)
 
 This code has been written using Python. If you use any code or datasets from this toolkit in your research, please cite the associated paper.
 <pre>
-Pending Google Scholar Indexing
+@misc{winata2024worldcuisinesmassivescalebenchmarkmultilingual,
+      title={WorldCuisines: A Massive-Scale Benchmark for Multilingual and Multicultural Visual Question Answering on Global Cuisines}, 
+      author={Genta Indra Winata and Frederikus Hudi and Patrick Amadeus Irawan and David Anugraha and Rifki Afina Putri and Yutong Wang and Adam Nohejl and Ubaidillah Ariq Prathama and Nedjma Ousidhoum and Afifa Amriani and Anar Rzayev and Anirban Das and Ashmari Pramodya and Aulia Adila and Bryan Wilie and Candy Olivia Mawalim and Ching Lam Cheng and Daud Abolade and Emmanuele Chersoni and Enrico Santus and Fariz Ikhwantri and Garry Kuwanto and Hanyang Zhao and Haryo Akbarianto Wibowo and Holy Lovenia and Jan Christian Blaise Cruz and Jan Wira Gotama Putra and Junho Myung and Lucky Susanto and Maria Angelica Riera Machin and Marina Zhukova and Michael Anugraha and Muhammad Farid Adilazuarda and Natasha Santosa and Peerat Limkonchotiwat and Raj Dabre and Rio Alexander Audino and Samuel Cahyawijaya and Shi-Xiong Zhang and Stephanie Yulia Salim and Yi Zhou and Yinxuan Gui and David Ifeoluwa Adelani and En-Shiun Annie Lee and Shogo Okada and Ayu Purwarianti and Alham Fikri Aji and Taro Watanabe and Derry Tanti Wijaya and Alice Oh and Chong-Wah Ngo},
+      year={2024},
+      eprint={2410.12705},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2410.12705}, 
+}
 </pre>
 
 ## 📊 Benchmark
