@@ -1,7 +1,8 @@
 # 🌎 WorldCuisines: Multilingual Multicultural VQA Benchmark 🥘
 ![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultural VQA benchmark that challenges Vision-Language Models (VLMs) to understand cultural food diversity in over **30 languages and dialects**, across **9 language families**, with over **1 million data points** available generated from  **2.4k** dishes with **6k** images. As benchmark, we have two evaluation sets:
+Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultural VQA benchmark that challenges Vision-Language Models (VLMs) to understand cultural food diversity in over **30 languages and dialects**, across **9 language families**, with over **1 million data points** available generated from  **2.4k** dishes with **6k** images. As benchmark, we have three sets:
+- Training Data (1m). We are in the process of preparing a comprehensive dataset for training purposes. For this benchmark, we have not utilized the training set to enhance the model. Instead, we are organizing this data to support future research endeavors.
 - Test Small (12k). It is meant for compute-efficient evaluation.
 - Test Large (60k). The 12k test set is a subset of the 60k test set.
 
@@ -10,10 +11,10 @@ Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultur
 ## Table of Contents
 
 - [🌎 WorldCuisines: Multilingual Multicultural VQA Benchmark](#-worldcuisines-multilingual-multicultural-vqa-benchmark)
-  - [📜 Paper](#-paper)
   - [📊 Benchmark](#-benchmark)
+  - [📜 Paper](#-paper)
   - [⚡ Environment Setup](#-environment-setup)
-  - [💯 Experiment Result](#-experiment-result)
+  - [💯 Experiment Results](#-experiment-results)
   - [🧪 Running Experiments](#-running-experiments)
     - [Main Arguments](#main-arguments-1)
     - [Models Handle](#models-handle)
@@ -26,10 +27,16 @@ Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultur
   - [🚀 How to Contribute?](#-how-to-contribute)
   - [✏️ On Progress](#️-on-progress)
 
-## 📜 Paper 
-This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705):
+## 📊 Benchmark
 
-This code has been written using Python. If you use any code or datasets from this toolkit in your research, please cite the associated paper.
+🌎 WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**. We provide over **1M training data** and a **60k evaluation data**.
+
+![WorldCuisines Dataset Statistic](assets/data_stat.png)
+
+Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input. 
+
+## 📜 Paper 
+This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705). This code has been written using Python. If you use any code or datasets from this toolkit in your research, please cite the associated paper.
 <pre>
 @article{winata2024worldcuisines,
   title={WorldCuisines: A Massive-Scale Benchmark for Multilingual and Multicultural Visual Question Answering on Global Cuisines},
@@ -39,83 +46,22 @@ This code has been written using Python. If you use any code or datasets from th
 }
 </pre>
 
-## 📊 Benchmark
-
-WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**. We provide over **1M training data** and a **60k evaluation data**.
-
-![WorldCuisines Dataset Statistic](assets/data_stat.png)
-
-Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input.
-
-## ⚡ Environment Setup
-
-### Via `pip`
+### ⚡ Environment Setup
+Please run the following command to install the required libraries to reproduce the benchmark results.
+#### Via `pip`
 ```
 pip install -r requirements.txt
 ```
-### Via `conda`
+#### Via `conda`
 ```
 conda env create -f env.yml
 ```
 
-## ❓ VQA Dataset Generation
-To generate a VQA dataset from the knowledge base, you can refer to the `generate_vqa/sampling.py` script. This script generates the dataset for various tasks in both training and testing sets.
-
-Example Commands:
-To generate datasets for **Test Small**, **Test Large**, and **Train** sets, run the following commands:
-
-```bash
-cd generate_vqa
-mkdir -p generated_data
-
-# Test Small Task 1
-python3 sampling.py -o "generated_data/test_small_task1.csv" -n 9000 -nd 100 -np1a 1 -np1b 0 -np1c 1 -npb 1 --is-eval
-
-# Test Small Task 2
-python3 sampling.py -o "generated_data/test_small_task2.csv" -n 3000 -nd 100 -np1a 0 -np1b 1 -np1c 0 -npb 0 --is-eval
-
-# Test Large Task 1
-python3 sampling.py -o "generated_data/test_large_task1.csv" -n 45000 -nd 500 -np1a 1 -np1b 0 -np1c 1 -npb 1 --is-eval
-
-# Test Large Task 2
-python3 sampling.py -o "generated_data/test_large_task2.csv" -n 15000 -nd 500 -np1a 0 -np1b 1 -np1c 0 -npb 0 --i-eval
-
-# Train Task 1
-python3 sampling.py -o "generated_data/train_task1.csv" -n 810000 -nd 1800 -np1a 5 -np1b 0 -np1c 5 -npb 5 --no-is-eval
-
-# Train Task 2
-python3 sampling.py -o "generated_data/train_task2.csv" -n 270000 -nd 1800 -np1a 0 -np1b 5 -np1c 0 -npb 0 --no-is-eval
-```
-
-## Main Arguments
-
-| Argument                             | Description                                                                                                       | Example                                 |
-|--------------------------------------|-------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
-| `-o`, `--output-csv`                | Output CSV path where the generated VQA dataset will be saved.                                                    | `generated_data/test_small_task1.csv`  |
-| `-n`, `--num-samples`               | Maximum number of instances to be generated. If more samples are requested than possible, the script will adjust. | `9000`                                  |
-| `-nd`, `--n-dish-max`               | Maximum unique number of dishes to sample from.                                                                   | `100`                                   |
-| `-np1a`, `--n-prompt-max-type1a`     | Maximum unique prompts from Task 1(a) (no-context) to sample per dish in each iteration.                        | `1`                                     |
-| `-np1b`, `--n-prompt-max-type1b`     | Maximum unique prompts from Task 1(b) (contextualized) to sample per dish in each iteration.                    | `1`                                     |
-| `-np1c`, `--n-prompt-max-type1c`     | Maximum unique prompts from Task 1(c) (adversarial) to sample per dish in each iteration.                        | `1`                                     |
-| `-np2`, `--n-prompt-max-type2`      | Maximum unique prompts from Task 2 to sample per dish in each iteration.                                        | `1`                                     |
-| `--is-eval`, `--no-is-eval`          | Whether to generate evaluation (test) or training datasets.                                                    | `--is-eval` for test, `--no-is-eval` for train |
-
-## Additional Arguments
-
-| Argument                             | Description                                                                                                       | Example                                         |
-|--------------------------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
-| `-fr`, `--food-raw-path`            | Path to the raw food data CSV.                                                                                   | `food_raw_6oct.csv`                                  |
-| `-fc`, `--food-cleaned-path`        | Path to the cleaned food data CSV.                                                                                | `food_cleaned.csv`                                   |
-| `-q`, `--query-context-path`        | Path to the query context CSV.                                                                                    | `query_ctx.csv`                                      |
-| `-l`, `--loc-cuis-path`             | Path to the location and cuisine CSV.                                                                             | `location_and_cuisine.csv`                            |
-| `-ll`, `--list-of-languages`        | Specify languages to be used as a list of strings.                                                               | `'[\"en\", \"id_formal\"]'`                                                  |
-| `-aw`, `--alias-aware`               | Enable adversarial answers with parallel aliases instead of replacing dishes without translation with English    | `--alias-aware` for the requirement to find answers that contain parallel translation across all languages, `--no-alias-aware` for relaxing the parallel dishes name requirement                                                  |
-
-## 💯 Experiment Result
+## 💯 Experiment Results
 If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
 
 ## 🧪 Running Experiments
-All experiment results will be stored in the `evaluation/result/` directory. You can execute each experiment using the following commands:
+All experiment results will be stored in the `evaluation/result/` directory. The results are evaluated using accuracy for all tasks, specifically for open-ended task (OEQ), we use accuracy computed using **multi-reference**. You can execute each experiment using the following commands:
 
 ```
 cd evaluation/
@@ -231,6 +177,61 @@ Our codebase supports the usage of multiple models for the experiments, providin
 - GPT-4o
 - GPT-4o Mini
 - Gemini 1.5 Flash
+
+
+
+## ❓ VQA Dataset Generation
+To generate a VQA dataset from the knowledge base, you can refer to the `generate_vqa/sampling.py` script. This script generates the dataset for various tasks in both training and testing sets.
+
+Example Commands:
+To generate datasets for **Test Small**, **Test Large**, and **Train** sets, run the following commands:
+
+```bash
+cd generate_vqa
+mkdir -p generated_data
+
+# Test Small Task 1
+python3 sampling.py -o "generated_data/test_small_task1.csv" -n 9000 -nd 100 -np1a 1 -np1b 0 -np1c 1 -npb 1 --is-eval
+
+# Test Small Task 2
+python3 sampling.py -o "generated_data/test_small_task2.csv" -n 3000 -nd 100 -np1a 0 -np1b 1 -np1c 0 -npb 0 --is-eval
+
+# Test Large Task 1
+python3 sampling.py -o "generated_data/test_large_task1.csv" -n 45000 -nd 500 -np1a 1 -np1b 0 -np1c 1 -npb 1 --is-eval
+
+# Test Large Task 2
+python3 sampling.py -o "generated_data/test_large_task2.csv" -n 15000 -nd 500 -np1a 0 -np1b 1 -np1c 0 -npb 0 --i-eval
+
+# Train Task 1
+python3 sampling.py -o "generated_data/train_task1.csv" -n 810000 -nd 1800 -np1a 5 -np1b 0 -np1c 5 -npb 5 --no-is-eval
+
+# Train Task 2
+python3 sampling.py -o "generated_data/train_task2.csv" -n 270000 -nd 1800 -np1a 0 -np1b 5 -np1c 0 -npb 0 --no-is-eval
+```
+
+## Main Arguments
+
+| Argument                             | Description                                                                                                       | Example                                 |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| `-o`, `--output-csv`                | Output CSV path where the generated VQA dataset will be saved.                                                    | `generated_data/test_small_task1.csv`  |
+| `-n`, `--num-samples`               | Maximum number of instances to be generated. If more samples are requested than possible, the script will adjust. | `9000`                                  |
+| `-nd`, `--n-dish-max`               | Maximum unique number of dishes to sample from.                                                                   | `100`                                   |
+| `-np1a`, `--n-prompt-max-type1a`     | Maximum unique prompts from Task 1(a) (no-context) to sample per dish in each iteration.                        | `1`                                     |
+| `-np1b`, `--n-prompt-max-type1b`     | Maximum unique prompts from Task 1(b) (contextualized) to sample per dish in each iteration.                    | `1`                                     |
+| `-np1c`, `--n-prompt-max-type1c`     | Maximum unique prompts from Task 1(c) (adversarial) to sample per dish in each iteration.                        | `1`                                     |
+| `-np2`, `--n-prompt-max-type2`      | Maximum unique prompts from Task 2 to sample per dish in each iteration.                                        | `1`                                     |
+| `--is-eval`, `--no-is-eval`          | Whether to generate evaluation (test) or training datasets.                                                    | `--is-eval` for test, `--no-is-eval` for train |
+
+## Additional Arguments
+
+| Argument                             | Description                                                                                                       | Example                                         |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
+| `-fr`, `--food-raw-path`            | Path to the raw food data CSV.                                                                                   | `food_raw_6oct.csv`                                  |
+| `-fc`, `--food-cleaned-path`        | Path to the cleaned food data CSV.                                                                                | `food_cleaned.csv`                                   |
+| `-q`, `--query-context-path`        | Path to the query context CSV.                                                                                    | `query_ctx.csv`                                      |
+| `-l`, `--loc-cuis-path`             | Path to the location and cuisine CSV.                                                                             | `location_and_cuisine.csv`                            |
+| `-ll`, `--list-of-languages`        | Specify languages to be used as a list of strings.                                                               | `'[\"en\", \"id_formal\"]'`                                                  |
+| `-aw`, `--alias-aware`               | Enable adversarial answers with parallel aliases instead of replacing dishes without translation with English    | `--alias-aware` for the requirement to find answers that contain parallel translation across all languages, `--no-alias-aware` for relaxing the parallel dishes name requirement                                                  |
 
 ## 🚀 How to Contribute?
 Feel free to create [an issue](https://github.com/worldcuisines/worldcuisines/issues) if you have any questions. And, create [a PR](https://github.com/worldcuisines/worldcuisines/pulls) for fixing bugs or adding improvements.
