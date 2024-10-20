@@ -1,9 +1,9 @@
 # 🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark
 ![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-![WorldCuisines Preview](assets/worldcuisines.png)
-
 Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultural VQA benchmark that challenges Vision-Language Models (VLMs) to understand cultural food diversity in over **30 languages and dialects**, across **9 language families**, with over **1 million data points** available.
+
+![WorldCuisines Preview](assets/tasks.png)
 
 ### Key Stats:
 - **Over 1 Million** text-image pairs
@@ -14,13 +14,9 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
 ## Table of Contents
 
 - [🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark](#-worldcuisines-multilingual-multicultural-vqa-benchmark)
-    - [Key Stats:](#key-stats)
-  - [Table of Contents](#table-of-contents)
   - [📜 Paper](#-paper)
   - [📊 Benchmark](#-benchmark)
   - [⚡ Environment Setup](#-environment-setup)
-    - [Via `pip`](#via-pip)
-    - [Via `conda`](#via-conda)
   - [❓ VQA Dataset Generation](#-vqa-dataset-generation)
   - [Main Arguments](#main-arguments)
   - [Additional Arguments](#additional-arguments)
@@ -29,13 +25,8 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
     - [Main Arguments](#main-arguments-1)
     - [Models Handle](#models-handle)
   - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
-  - [🏞️ Visualizing the Scores](#️-visualizing-the-scores)
-    - [Examples of Radar Plot](#examples-of-radar-plot)
-    - [Examples of Other Plots](#examples-of-other-plots)
-  - [💻 Models Support](#-models-support)
-    - [Generative VLMs:](#generative-vlms)
-      - [Open-Source](#open-source)
-      - [Proprietary](#proprietary)
+  - [🏞️ Visualization](#️-visualizing-the-scores)
+  - [💻 Supported Models](#-models-support)
   - [🚀 How to Contribute?](#-how-to-contribute)
   - [✏️ On Progress](#️-on-progress)
 
@@ -59,8 +50,6 @@ WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**.
 ![WorldCuisines Dataset Statistic](assets/data_stat.png)
 
 Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input.
-
-![WorldCuisines Tasks](assets/tasks.png)
 
 ## ⚡ Environment Setup
 
