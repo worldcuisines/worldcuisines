@@ -9,31 +9,22 @@ Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultur
 ![WorldCuisines Preview](assets/tasks.png)
 
 ## Table of Contents
-
-- [🌎 WorldCuisines: Multilingual Multicultural VQA Benchmark](#-worldcuisines-multilingual-multicultural-vqa-benchmark)
-  - [📊 Benchmark](#-benchmark)
-  - [📜 Paper](#-paper)
-  - [⚡ Environment Setup](#-environment-setup)
-  - [💯 Experiment Results](#-experiment-results)
-  - [🧪 Running Experiments](#-running-experiments)
-    - [Main Arguments](#main-arguments-1)
-    - [Models Handle](#models-handle)
-  - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
-  - [🏞️ Visualization](#️-visualizing-the-scores)
-  - [💻 Supported Models](#-models-support)
-  - [❓ VQA Dataset Generation](#-vqa-dataset-generation)
-  - [Main Arguments](#main-arguments)
-  - [Additional Arguments](#additional-arguments)
-  - [🚀 How to Contribute?](#-how-to-contribute)
-  - [✏️ On Progress](#️-on-progress)
+- [📊 Benchmark](#-benchmark)
+- [📜 Paper](#-paper)
+- [⚡ Environment Setup](#-environment-setup)
+- [🏆 Leaderboard and Results](#-leaderboard-and-results)
+- [🧪 Run Experiments](#-run-experiments)
+- [📈 Aggregate Experiment Result](#-aggregate-experiment-result)
+- [🏞️ Visualize Results](#️-visualize-results)
+- [💻 Supported Models](#-supported-models)
+- [❓ VQA Dataset Generation](#-vqa-dataset-generation)
+- [🚀 How to Contribute?](#-how-to-contribute)
+- [✏️ On Progress](#️-on-progress)
 
 ## 📊 Benchmark
-
-🌎 WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**. We provide over **1M training data** and a **60k evaluation data**.
+🌎 WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**. We provide over **1M training data** and a **60k evaluation data**. Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input. 
 
 ![WorldCuisines Dataset Statistic](assets/data_stat.png)
-
-Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input. 
 
 ## 📜 Paper 
 This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705). This code has been written using Python. If you use any code or datasets from this toolkit in your research, please cite the associated paper.
@@ -57,10 +48,10 @@ pip install -r requirements.txt
 conda env create -f env.yml
 ```
 
-## 💯 Experiment Results
+## 🏆 Leaderboard and Results
 If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
 
-## 🧪 Running Experiments
+## 🧪 Run Experiments
 All experiment results will be stored in the `evaluation/result/` directory. The results are evaluated using accuracy for all tasks, specifically for open-ended task (OEQ), we use accuracy computed using **multi-reference**. You can execute each experiment using the following commands:
 
 ```
@@ -80,7 +71,7 @@ python run.py --model_path {model_path} --task {task} --type {type}
 | `-s`, `--st_idx` | Start index for slicing data (inclusive)          | `None` (default)                      |
 | `-e`, `--ed_idx` | End index for slicing data (exclusive)            | `None` (default)                      |
 
-### Models Handle
+### Supported Models
 - `rhymes-ai/Aria`
 - `meta-llama/Llama-3.2-11B-Vision-Instruct`
 - `meta-llama/Llama-3.2-90B-Vision-Instruct`
@@ -97,7 +88,7 @@ python run.py --model_path {model_path} --task {task} --type {type}
 - ***WIP: Proprietary Models***
 
 
-## 📈 Aggregating Experiment Result 
+## 📈 Aggregate Experiment Result 
 Edit `evaluation/score/score.yml` to determine scoring mode, evaluation set, and evaluated VLMs. Note that `mc` means multiple-choice and `oe` means open-ended.
 
 ```yml
@@ -135,8 +126,7 @@ cd evaluation/score/
 python score.py
 ```
 
-
-## 🏞️ Visualizing the Scores
+## 🏞️ Visualize Results
 
 We provide radar, scatter, and connected scatter-line plots to visualize scoring results for all VLMs in `evaluation/score/plot/`.
 
@@ -157,7 +147,7 @@ You can also modify `evaluation/score/score.yml` to select which VLMs to visuali
 
 Other plot generation scripts are available in the `*.ipynb` files within the same directory.
 
-## 💻 Models Support
+## 💻 Supported Models
 Our codebase supports the usage of multiple models for the experiments, providing flexibility for customization of the list shown below:
 
 ### Generative VLMs:
@@ -209,7 +199,7 @@ python3 sampling.py -o "generated_data/train_task1.csv" -n 810000 -nd 1800 -np1a
 python3 sampling.py -o "generated_data/train_task2.csv" -n 270000 -nd 1800 -np1a 0 -np1b 5 -np1c 0 -npb 0 --no-is-eval
 ```
 
-## Main Arguments
+### Main Arguments
 
 | Argument                             | Description                                                                                                       | Example                                 |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
@@ -222,7 +212,7 @@ python3 sampling.py -o "generated_data/train_task2.csv" -n 270000 -nd 1800 -np1a
 | `-np2`, `--n-prompt-max-type2`      | Maximum unique prompts from Task 2 to sample per dish in each iteration.                                        | `1`                                     |
 | `--is-eval`, `--no-is-eval`          | Whether to generate evaluation (test) or training datasets.                                                    | `--is-eval` for test, `--no-is-eval` for train |
 
-## Additional Arguments
+### Additional Arguments
 
 | Argument                             | Description                                                                                                       | Example                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
