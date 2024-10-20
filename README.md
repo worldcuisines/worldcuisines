@@ -1,25 +1,18 @@
-# 🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark
+# 🌎 WorldCuisines: Multilingual Multicultural VQA Benchmark 🥘
 ![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultural VQA benchmark that challenges Vision-Language Models (VLMs) to understand cultural food diversity in over **30 languages and dialects**, across **9 language families**, with over **1 million data points** available.
+Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultural VQA benchmark that challenges Vision-Language Models (VLMs) to understand cultural food diversity in over **30 languages and dialects**, across **9 language families**, with over **1 million data points** available generated from  **2.4k** dishes with **6k** images. As benchmark, we have two evaluation sets:
+- Test Small (12k). It is meant for compute-efficient evaluation.
+- Test Large (60k). The 12k test set is a subset of the 60k test set.
 
 ![WorldCuisines Preview](assets/tasks.png)
 
-### Key Stats:
-- **Over 1 Million** text-image pairs
-- Coverage of **2.4k** dishes with **6k** images.
-- Coverage of **30 languages** across **9 language families**
-
-
 ## Table of Contents
 
-- [🥘 WorldCuisines: Multilingual Multicultural VQA Benchmark](#-worldcuisines-multilingual-multicultural-vqa-benchmark)
+- [🌎 WorldCuisines: Multilingual Multicultural VQA Benchmark](#-worldcuisines-multilingual-multicultural-vqa-benchmark)
   - [📜 Paper](#-paper)
   - [📊 Benchmark](#-benchmark)
   - [⚡ Environment Setup](#-environment-setup)
-  - [❓ VQA Dataset Generation](#-vqa-dataset-generation)
-  - [Main Arguments](#main-arguments)
-  - [Additional Arguments](#additional-arguments)
   - [💯 Experiment Result](#-experiment-result)
   - [🧪 Running Experiments](#-running-experiments)
     - [Main Arguments](#main-arguments-1)
@@ -27,6 +20,9 @@ Introducing **WorldCuisines 🥘**, a massive-scale multilingual and multicultur
   - [📈 Aggregating Experiment Result](#-aggregating-experiment-result)
   - [🏞️ Visualization](#️-visualizing-the-scores)
   - [💻 Supported Models](#-models-support)
+  - [❓ VQA Dataset Generation](#-vqa-dataset-generation)
+  - [Main Arguments](#main-arguments)
+  - [Additional Arguments](#additional-arguments)
   - [🚀 How to Contribute?](#-how-to-contribute)
   - [✏️ On Progress](#️-on-progress)
 
