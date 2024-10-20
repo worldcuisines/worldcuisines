@@ -24,7 +24,7 @@ Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultur
 ## 📊 Benchmark
 🌎 WorldCuisines 🥘 comprises a balanced proportion of its **2 supported tasks**. We provide over **1M training data** and a **60k evaluation data**. Our benchmark evaluates VLMs on two tasks: dish name prediction and dish location prediction. The settings include **no-context**, **contextualized**, and **adversarial** infused prompt as the model's input. 
 
-Our dataset is available at 🤗 [Hugging Face Dataset](https://huggingface.co/datasets/worldcuisines/vqa/). The supporting KB data can be found at 🤗 [Hugging Face Dataset](https://huggingface.co/datasets/worldcuisines/).
+Our dataset is available at 🤗 [Hugging Face Dataset](https://huggingface.co/datasets/worldcuisines/vqa/). The supporting KB data can be found at 🤗 [Hugging Face Dataset](https://huggingface.co/worldcuisines/).
 
 ![WorldCuisines Dataset Statistic](assets/data_stat.png)
 
