@@ -11,8 +11,8 @@ Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultur
 ## Table of Contents
 - [📊 Benchmark](#-benchmark)
 - [📜 Paper](#-paper)
-- [⚡ Environment Setup](#-environment-setup)
 - [🏆 Leaderboard and Results](#-leaderboard-and-results)
+- [⚡ Environment Setup](#-environment-setup)
 - [🧪 Run Experiments](#-run-experiments)
 - [📈 Aggregate Experiment Result](#-aggregate-experiment-result)
 - [🏞️ Visualize Results](#️-visualize-results)
@@ -37,6 +37,9 @@ This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705)
 }
 </pre>
 
+## 🏆 Leaderboard and Results
+If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
+
 ### ⚡ Environment Setup
 Please run the following command to install the required libraries to reproduce the benchmark results.
 #### Via `pip`
@@ -47,9 +50,6 @@ pip install -r requirements.txt
 ```
 conda env create -f env.yml
 ```
-
-## 🏆 Leaderboard and Results
-If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
 
 ## 🧪 Run Experiments
 All experiment results will be stored in the `evaluation/result/` directory. The results are evaluated using accuracy for all tasks, specifically for open-ended task (OEQ), we use accuracy computed using **multi-reference**. You can execute each experiment using the following commands:
