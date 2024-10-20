@@ -32,7 +32,7 @@ Our dataset is available at 🤗 [Hugging Face Dataset](https://huggingface.co/d
 This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705). This code has been written using Python. If you use any code or datasets from this toolkit in your research, please cite the associated paper.
 <pre>
 @article{winata2024worldcuisines,
-  title={WorldCuisines: A Massive-Scale Benchmark for Multilingual and Multicultural Visual Question Answering on Global Cuisines},
+  title={WORLDCUISINES: A Massive-Scale Benchmark for Multilingual and Multicultural Visual Question Answering on Global Cuisines},
   author={Winata, Genta Indra and Hudi, Frederikus and Irawan, Patrick Amadeus and Anugraha, David and Putri, Rifki Afina and Wang, Yutong and Nohejl, Adam and Prathama, Ubaidillah Ariq and Ousidhoum, Nedjma and Amriani, Afifa and others},
   journal={arXiv preprint arXiv:2410.12705},
   year={2024}
