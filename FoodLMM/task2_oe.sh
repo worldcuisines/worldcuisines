@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=1 python my_eval.py --task 1 --type oe
