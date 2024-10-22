@@ -30,14 +30,14 @@ Our dataset is available at 🤗 [Hugging Face Dataset](https://huggingface.co/d
 
 ## 📜 Paper 
 This is the source code of the paper [[Arxiv]](https://arxiv.org/abs/2410.12705). This code has been written using Python. If you use any code or datasets from this toolkit in your research, please cite the associated paper.
-<pre>
+```bibtex
 @article{winata2024worldcuisines,
   title={WorldCuisines: A Massive-Scale Benchmark for Multilingual and Multicultural Visual Question Answering on Global Cuisines},
   author={Winata, Genta Indra and Hudi, Frederikus and Irawan, Patrick Amadeus and Anugraha, David and Putri, Rifki Afina and Wang, Yutong and Nohejl, Adam and Prathama, Ubaidillah Ariq and Ousidhoum, Nedjma and Amriani, Afifa and others},
   journal={arXiv preprint arXiv:2410.12705},
   year={2024}
 }
-</pre>
+```
 
 ## 🏆 Leaderboard and Results
 If you wish to get the final result for all VLLMs that we evaluate, please refer to this [leaderboard](https://huggingface.co/spaces/worldcuisines/worldcuisines) for the summary. The raw results are placed in the `evaluation/score/json` directory.
