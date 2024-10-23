@@ -1,4 +1,4 @@
-from transformers import MllamaForConditionalGeneration, AutoProcessor
+from transformers import MllamaForConditionalGeneration, AutoProcessor, BitsAndBytesConfig
 import torch
 from huggingface_hub import login
 from dotenv import load_dotenv
@@ -10,8 +10,10 @@ login(os.environ.get("HUGGINGFACE_API_KEY"))
 
 def load_model_processor(model_path, fp32=False, multi_gpu=False):
     processor = AutoProcessor.from_pretrained(model_path)
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = MllamaForConditionalGeneration.from_pretrained(
-        model_path,
+        model_path, 
+        quantization_config=quantization_config,
         torch_dtype=torch.float16 if not fp32 else torch.float32,
         low_cpu_mem_usage=True,
         device_map="auto" if multi_gpu else "cuda:0",
