@@ -9,6 +9,7 @@ from io import BytesIO
 from tqdm import tqdm
 import os
 import zipfile
+import pandas as pd
 
 MODEL_HANDLE = {}
 
@@ -139,6 +140,8 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
 
     try:
         if task == 3:
+            if qa_type == "tr":
+                tweet_df = pd.read_csv('data.tsv', sep='\t', header=0)
             for _, row in tqdm(vqa_data.iterrows(), total=len(vqa_data)):
                 res = {}
                 try:
@@ -150,12 +153,22 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
                             image_file = Image.open(img_file)
 
                             if qa_type == "lv":
-                                query1 = 'Ņemot vērā doto tekstu no tvīta latviešu valodā: '+row["text"]+' Vai dotais attēls papildina teksta nozīmi? Atbildi ar “Jā” vai “Nē”.'
-                                query2 = 'Ņemot vērā doto tekstu no tvīta latviešu valodā: '+row["text"]+' Vai šis teksts tiek pārstāvēts dotajā attēlā? Atbildi ar “Jā” vai “Nē”.'
-                            elif qa_type == "en":
-                                query1 = 'Given the following text, extracted from a tweet in Latvian: '+row["text"]+' Is the image adding to the text meaning? Reply “Yes” or “No”.'
-                                query2 = 'Given the following text, extracted from a tweet in Latvian: '+row["text"]+' Is the text represented in the image? Reply “Yes” or “No”.'
+                                given = 'Ņemot vērā doto tekstu no tvīta latviešu valodā: '+row["text"]
+                                answer = 'Atbildi ar “Jā” vai “Nē”.'
+                                query1 = given + ' Vai dotais attēls papildina teksta nozīmi? ' + answer
+                                query2 = given + ' Vai šis teksts tiek pārstāvēts dotajā attēlā? ' + answer
+                            elif qa_type == "en" or qa_type == "tr":
+                                if qa_type == "tr":
+                                    tweet = tweet_df.loc[tweet_df['TweetId'] == int(row["tweet_id"])]
+                                    given = 'Given the following text from a tweet in English: \n'+tweet["Text"]+'\n'
+                                else:
+                                    given = 'Given the following text from a tweet in Latvian: \n'+row["text"]+'\n'
 
+                                answer = "Please beging your answer exactly with either 'Yes' or 'No', and then expand further only if crucial details need to be explained."
+                                query1 = given + ' Does the image supplement the meaning of the text? ' + answer
+                                query2 = given + ' Is the text depicted in the image? ' + answer
+
+                            res["id"] = row["tweet_id"]
                             response = eval_instance(model, processor, image_file, query1)
                             res["adds"] = response
                             response = eval_instance(model, processor, image_file, query2)
