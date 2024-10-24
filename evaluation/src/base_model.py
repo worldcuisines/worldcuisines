@@ -159,14 +159,14 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
                                 query2 = given + ' Vai šis teksts tiek pārstāvēts dotajā attēlā? ' + answer
                             elif qa_type == "en" or qa_type == "tr":
                                 if qa_type == "tr":
-                                    tweet = tweet_df.loc[tweet_df['TweetId'] == int(row["tweet_id"])]
-                                    given = 'Given the following text from a tweet in English: \n'+tweet["Text"]+'\n'
+                                    tweet = tweet_df[tweet_df['TweetId'] == int(row["tweet_id"])]
+                                    translation = tweet["Text"].values[0]
+                                    given = 'Given the following text, extracted from a tweet in English: \n'+translation+'\n'
                                 else:
-                                    given = 'Given the following text from a tweet in Latvian: \n'+row["text"]+'\n'
-
-                                answer = "Please beging your answer exactly with either 'Yes' or 'No', and then expand further only if crucial details need to be explained."
-                                query1 = given + ' Does the image supplement the meaning of the text? ' + answer
-                                query2 = given + ' Is the text depicted in the image? ' + answer
+                                    given = 'Given the following text, extracted from a tweet in Latvian: \n'+row["text"]+'\n'
+                                answer = "Reply “Yes” or “No”."
+                                query1 = given + ' Is the image adding to the text meaning? ' + answer
+                                query2 = given + ' Is the text represented in the image? ' + answer
 
                             res["id"] = row["tweet_id"]
                             response = eval_instance(model, processor, image_file, query1)
