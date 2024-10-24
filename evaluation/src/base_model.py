@@ -160,7 +160,7 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
                             elif qa_type == "en" or qa_type == "tr":
                                 if qa_type == "tr":
                                     tweet = tweet_df[tweet_df['TweetId'] == int(row["tweet_id"])]
-                                    translation = tweet["Text"].values[0]
+                                    translation = tweet["English"].values[0]
                                     given = 'Given the following text, extracted from a tweet in English: \n'+translation+'\n'
                                 else:
                                     given = 'Given the following text, extracted from a tweet in Latvian: \n'+row["text"]+'\n'
