@@ -117,6 +117,7 @@ models:
 - Phi-3.5-vision-instruct
 - pixtral-12b
 - nvlm
+- pangea-7b
 - gpt-4o-2024-08-06
 - gpt-4o-mini-2024-07-18
 - gemini-1.5-flash
