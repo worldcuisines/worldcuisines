@@ -92,6 +92,7 @@ We support the following models (you can modify our code to run evaluation with 
 - `Qwen/Qwen2-VL-7B-Instruct`
 - `Qwen/Qwen2-VL-72B-Instruct`
 - `mistralai/Pixtral-12B-2409`
+- `neulab/Pangea-7B` (please install Llava as mentioned in [⚡ Environment Setup](#-environment-setup))
 - ***WIP: Proprietary Models***
 
 
