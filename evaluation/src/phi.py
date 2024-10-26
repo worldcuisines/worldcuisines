@@ -16,7 +16,7 @@ def load_model_processor(model_path, fp32=False, multi_gpu=False):
     return model, processor
 
 
-def eval_instance(model, processor, image_file, query):
+def eval_instance(model, processor, image_file, query, tokenizer=None):
     # for best performance, use num_crops=4 for multi-frame, num_crops=16 for single-frame.
     images = [image_file]
 

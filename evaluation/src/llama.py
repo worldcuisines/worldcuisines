@@ -21,7 +21,7 @@ def load_model_processor(model_path, fp32=False, multi_gpu=False):
     return model, processor
 
 
-def eval_instance(model, processor, image_file, query):
+def eval_instance(model, processor, image_file, query, tokenizer=None):
     conversation = [
         {
             "role": "user",

@@ -118,7 +118,7 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
         vqa_data = vqa_data.loc[chunk_index]
         suffix_slice += f".chunk{chunk_id}_of_{chunk_num}"
 
-    model, processor = load_model_processor(model_path, fp32, multi_gpu)
+    model, processor, tokenizer = load_model_processor(model_path, fp32, multi_gpu)
 
     list_res = []
     count = 0
@@ -136,8 +136,8 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
             try:
                 image_file = url_jpg_map[row["image_url"]]
                 query = row["multi_choice_prompt"] if qa_type == "mc" else row["open_ended_prompt"]
-                response = eval_instance(model, processor, image_file, query)
-
+                response = eval_instance(model, processor, image_file, query, tokenizer=tokenizer)
+    
                 res["qa_id"] = row["qa_id"]
                 res["prediction"] = response
                 res["lang"] = row["lang"]
