@@ -32,6 +32,6 @@ flash-attn==2.6.3
 huggingface-hub==0.25.2
 evaluate==0.4.3
 bert-score==0.3.13
-llava @ git+https://github.com/gentaiscool/LLaVA-NeXT@79ef45a6d8b89b92d7a8525f077c3a3a9894a87d[train]
+llava[train] @ git+https://github.com/gentaiscool/LLaVA-NeXT@79ef45a6d8b89b92d7a8525f077c3a3a9894a87d
 
 # TODO: Add other proprietary + Pixtral models' dependencies
