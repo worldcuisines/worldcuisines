@@ -57,11 +57,6 @@ For pangea, please run the following
 pip install -e "git+https://github.com/gentaiscool/LLaVA-NeXT@79ef45a6d8b89b92d7a8525f077c3a3a9894a87d#egg=llava[train]"
 ```
 
-For cambrian, please run the following
-```
-pip install "git+https://github.com/cambrian-mllm/cambrian#egg=cambrian[gpu]"
-```
-
 ## 🧪 Run Experiments
 All experiment results will be stored in the `evaluation/result/` directory. The results are evaluated using accuracy for all tasks, specifically for open-ended task (OEQ), we use accuracy computed using **multi-reference**. You can execute each experiment using the following commands:
 
