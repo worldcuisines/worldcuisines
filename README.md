@@ -169,6 +169,8 @@ Our codebase supports the usage of multiple models for the experiments, providin
 - Aria 25B  [rhymes-ai/Aria](https://huggingface.co/rhymes-ai/Aria)
 - Phi-3.5 Vision 4B [microsoft/Phi-3.5-vision-instruct](https://huggingface.co/microsoft/Phi-3.5-vision-instruct)
 - Pixtral 12B [mistralai/Pixtral-12B-2409](https://huggingface.co/mistralai/Pixtral-12B-2409)
+- Pangea 7B [neulab/Pangea-7B](https://huggingface.co/neulab/Pangea-7B)
+- NVLM-D 72B [nvidia/NVLM-D-72B](https://huggingface.co/nvidia/NVLM-D-72B)
 
 #### Proprietary 
 (last tested as of October 2024)
