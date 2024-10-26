@@ -57,11 +57,6 @@ For pangea, please run the following
 pip install -e "git+https://github.com/gentaiscool/LLaVA-NeXT@79ef45a6d8b89b92d7a8525f077c3a3a9894a87d#egg=llava[train]"
 ```
 
-For cambrian, please run the following
-```
-pip install "git+https://github.com/cambrian-mllm/cambrian#egg=cambrian[gpu]"
-```
-
 ## 🧪 Run Experiments
 All experiment results will be stored in the `evaluation/result/` directory. The results are evaluated using accuracy for all tasks, specifically for open-ended task (OEQ), we use accuracy computed using **multi-reference**. You can execute each experiment using the following commands:
 
@@ -97,6 +92,7 @@ We support the following models (you can modify our code to run evaluation with 
 - `Qwen/Qwen2-VL-7B-Instruct`
 - `Qwen/Qwen2-VL-72B-Instruct`
 - `mistralai/Pixtral-12B-2409`
+- `neulab/Pangea-7B` (please install Llava as mentioned in [⚡ Environment Setup](#-environment-setup))
 - ***WIP: Proprietary Models***
 
 
@@ -122,6 +118,7 @@ models:
 - Phi-3.5-vision-instruct
 - pixtral-12b
 - nvlm
+- pangea-7b
 - gpt-4o-2024-08-06
 - gpt-4o-mini-2024-07-18
 - gemini-1.5-flash
@@ -173,6 +170,8 @@ Our codebase supports the usage of multiple models for the experiments, providin
 - Aria 25B  [rhymes-ai/Aria](https://huggingface.co/rhymes-ai/Aria)
 - Phi-3.5 Vision 4B [microsoft/Phi-3.5-vision-instruct](https://huggingface.co/microsoft/Phi-3.5-vision-instruct)
 - Pixtral 12B [mistralai/Pixtral-12B-2409](https://huggingface.co/mistralai/Pixtral-12B-2409)
+- Pangea 7B [neulab/Pangea-7B](https://huggingface.co/neulab/Pangea-7B)
+- NVLM-D 72B [nvidia/NVLM-D-72B](https://huggingface.co/nvidia/NVLM-D-72B)
 
 #### Proprietary 
 (last tested as of October 2024)
