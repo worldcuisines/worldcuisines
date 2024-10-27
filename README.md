@@ -151,7 +151,7 @@ You can also modify `evaluation/score/score.yml` to select which VLMs to visuali
 
 ### Examples of Other Plots
 
-<img src="assets/model_params.png" width="30%"> <img src="assets/model_scatter.png" width="33%"> <img src="assets/scatterplot.png" width="25%">
+<img src="assets/model_params.png" width="60%"> <img src="assets/model_scatter.png" width="60%"> <img src="assets/scatterplot.png" width="60%">
 
 
 Other plot generation scripts are available in the `*.ipynb` files within the same directory.
