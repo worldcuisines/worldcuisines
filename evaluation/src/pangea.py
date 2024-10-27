@@ -44,6 +44,9 @@ def preprocess_qwen(sources, tokenizer: transformers.PreTrainedTokenizer, has_im
 def generate_output(model, processor, tokenizer, prompt, image=None, do_sample=False):
     image_tensors = []
     prompt = "<image>\n" + prompt
+
+    prompt = prompt.replace("Print only the answer with a single answer id (1,2,3,4,5).","Answer with the option from the given choices directly.")
+    
     image_tensor = processor.preprocess(image, return_tensors='pt')['pixel_values']
     image_tensors.append(image_tensor.half().cuda())
     input_ids = preprocess_qwen([{'from': 'human', 'value': prompt},{'from': 'gpt','value': None}], tokenizer, has_image=True).cuda()
