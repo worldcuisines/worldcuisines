@@ -31,9 +31,9 @@ def eval_instance(model, processor, image_file, query):
     inputs = processor(prompt, images, return_tensors="pt").to("cuda:0")
 
     generation_args = {
-        "max_new_tokens": 50,
-        "temperature": 0.0,
-        "do_sample": False,
+        "max_new_tokens": 512,
+        "temperature": 0.2,
+        "do_sample": True,
     }
 
     generate_ids = model.generate(

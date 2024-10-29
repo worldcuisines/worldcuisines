@@ -1,11 +1,13 @@
-from transformers import AutoModelForCausalLM, AutoProcessor
+from transformers import AutoModelForCausalLM, AutoProcessor, BitsAndBytesConfig
 import torch
 
 
 def load_model_processor(model_path, fp32=False, multi_gpu=False):
     processor = AutoProcessor.from_pretrained(model_path, trust_remote_code=True)
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
+        quantization_config=quantization_config,
         torch_dtype=torch.bfloat16 if not fp32 else torch.float32,
         trust_remote_code=True,
         device_map="auto" if multi_gpu else "cuda:0",
@@ -35,7 +37,7 @@ def eval_instance(model, processor, image_file, query):
     ):
         output = model.generate(
             **inputs,
-            max_new_tokens=50,
+            max_new_tokens=512,
             stop_strings=["<|im_end|>"],
             tokenizer=processor.tokenizer,
             do_sample=True,

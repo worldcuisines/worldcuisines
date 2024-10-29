@@ -10,6 +10,7 @@ from tqdm import tqdm
 import os
 import zipfile
 import pandas as pd
+import re
 
 MODEL_HANDLE = {}
 
@@ -151,19 +152,27 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
                         with z.open(img_path) as img_file:
                             # Load the image using PIL
                             image_file = Image.open(img_file)
+                            if image_file.format == 'PNG':
+                                if image_file.mode != 'RGBA':
+                                  image_file.convert("RGBA")
 
                             if qa_type == "lv":
-                                given = 'Ņemot vērā doto tekstu no tvīta latviešu valodā: '+row["text"]
-                                answer = 'Atbildi ar “Jā” vai “Nē”.'
-                                query1 = given + ' Vai dotais attēls papildina teksta nozīmi? ' + answer
-                                query2 = given + ' Vai šis teksts tiek pārstāvēts dotajā attēlā? ' + answer
+                                #Remove URLs from the text
+                                text = re.sub(r'^https?:\/\/.*[\r\n]*', '', row["text"], flags=re.MULTILINE)
+                                given = 'Ņemot vērā šādu tekstu, kas izgūts no tvīta latviešu valodā: \n'+text+'\n'
+                                answer = 'Atbildi “Jā” vai “Nē”.'
+                                query1 = given + ' Vai šis attēls papildina teksta nozīmi? ' + answer
+                                query2 = given + ' Vai šis teksts tiek pārstāvēts attēlā? ' + answer
                             elif qa_type == "en" or qa_type == "tr":
                                 if qa_type == "tr":
                                     tweet = tweet_df[tweet_df['TweetId'] == int(row["tweet_id"])]
                                     translation = tweet["English"].values[0]
+                                    #Remove URLs from the text
+                                    translation = re.sub(r'^https?:\/\/.*[\r\n]*', '', translation, flags=re.MULTILINE)
                                     given = 'Given the following text, extracted from a tweet in English: \n'+translation+'\n'
                                 else:
-                                    given = 'Given the following text, extracted from a tweet in Latvian: \n'+row["text"]+'\n'
+                                    text = re.sub(r'^https?:\/\/.*[\r\n]*', '', row["text"], flags=re.MULTILINE)
+                                    given = 'Given the following text, extracted from a tweet in Latvian: \n'+text+'\n'
                                 answer = "Reply “Yes” or “No”."
                                 query1 = given + ' Is the image adding to the text meaning? ' + answer
                                 query2 = given + ' Is the text represented in the image? ' + answer

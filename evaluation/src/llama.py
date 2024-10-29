@@ -38,7 +38,9 @@ def eval_instance(model, processor, image_file, query):
     inputs = processor(images=image_file, text=prompt, return_tensors="pt").to("cuda:0")
     output = model.generate(
         **inputs,
-        max_new_tokens=50,
+        max_new_tokens=512,
+        do_sample=True,
+        temperature=0.2,
         top_k=1,
     )
     out = processor.decode(
