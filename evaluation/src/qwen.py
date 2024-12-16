@@ -16,7 +16,7 @@ def load_model_processor(model_path, fp32=False, multi_gpu=False):
         attn_implementation="flash_attention_2",
         device_map="auto" if multi_gpu else "cuda:0",
     )
-    return model, processor
+    return model, processor, processor
 
 
 def eval_instance(model, processor, image_file, query, tokenizer=None):
