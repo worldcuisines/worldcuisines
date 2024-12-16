@@ -44,7 +44,7 @@ def get_url_jpg_map(data):
     return url_jpg_map
 
 
-def get_vqa_from_hf(task):
+def get_vqa_from_hf(task, subset="large"):
     if task == 1:
         vqa = load_dataset("world-cuisines/vqa", name="task1")
     elif task == 2:
@@ -54,7 +54,9 @@ def get_vqa_from_hf(task):
             "Invalid task number. Please choose from 1 (dish name) or 2 (region)"
         )
 
-    vqa_data = vqa["test_large"].to_pandas()
+    # Load test_small or test_large based on the subset
+    split = f"test_{subset}"
+    vqa_data = vqa[split].to_pandas()
     return vqa_data
 
 
@@ -96,12 +98,12 @@ def log_error(error_message, log_file="error.txt"):
 
 
 def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
-         st_idx=None, ed_idx=None, chunk_num=1, chunk_id=0):
+         st_idx=None, ed_idx=None, chunk_num=1, chunk_id=0, subset="large"):
     set_all_seed()
 
     kb_data = get_kb_from_hf()
     url_jpg_map = get_url_jpg_map(kb_data)
-    vqa_data = get_vqa_from_hf(task)
+    vqa_data = get_vqa_from_hf(task, subset=subset)
 
     suffix_slice = ""
     if st_idx is not None or ed_idx is not None:
@@ -125,7 +127,7 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
     error_counter = 0
 
     def _log_error(msg, suf=""):
-        pref = f"./result/error/task{task}_{qa_type}_{MODEL_HANDLE[model_path]}"
+        pref = f"./result/error/{subset}_task{task}_{qa_type}_{MODEL_HANDLE[model_path]}"
         cur_suf = suffix_slice + (f".{os.getenv('SLURM_JOB_ID')}" if 'SLURM_JOB_ID' in os.environ else "")
         log_error(msg, f"{pref}_error{cur_suf}.txt")
         export_result(list_res, f"{pref}_pred_{suf}{cur_suf}.jsonl", replace=True)
@@ -158,5 +160,3 @@ def main(task, qa_type, model_path, fp32, multi_gpu, limit=np.inf,
         _log_error(f"KeyboardInterrupt at row {row['qa_id']} ({row['lang']})", "interrupt")
 
     return list_res
-
-
