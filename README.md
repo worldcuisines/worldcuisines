@@ -1,6 +1,8 @@
 # 🌎 WorldCuisines: Multilingual Multicultural VQA Benchmark 🥘
 ![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+The paper has been accepted at NAACL 2025 Main Conference.
+
 Introducing 🌎 **WorldCuisines**, a massive-scale multilingual and multicultural VQA benchmark that challenges Vision-Language Models (VLMs) to understand cultural food diversity in over **30 languages and dialects**, across **9 language families**, with over **1 million data points** available generated from  **2.4k** dishes with **6k** images. As benchmark, we have three sets:
 - Training Data (1m). We are in the process of preparing a comprehensive dataset for training purposes. For this benchmark, we have not utilized the training set to enhance the model. Instead, we are organizing this data to support future research endeavors.
 - Test Small (12k). It is meant for compute-efficient evaluation.
